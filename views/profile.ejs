@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <%- include('include/include', { title: '회원 정보' })%>
+  <body>
+    <h1>회원 정보</h1>
+    <!-- TODO: href 속성값 설정하기 -->
+    <a href="/user">HOME</a>
+    <p>ID 수정 불가능, Password, Name 수정 가능</p>
+
+    <!-- TODO: 각 input의 value 값을 로그인 한 사람의 정보로 채우기 -->
+    <!-- 로그인 완료 후 프로필 페이지 들어오면
+input 창 비어있음  -->
+
+    <!-- {data: result[0]} -->
+    <!-- data:{id, userid, name, pw} -->
+    <% console.log('ejs 정보:',data); %>
+
+    <form name="form_profile">
+      <label for="userid">ID</label>
+      <input type="hidden" id="id" value="<%=data.id %>" />
+      <!-- readonly: userid는 수정 불가능 (조건임) -->
+      <input
+        id="userid"
+        type="text"
+        name="userid"
+        value="<%=data.userid %>"
+        readonly
+      /><br />
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        name="pw"
+        value="<%=data.pw %>"
+        required
+      /><br />
+      <label for="name">Name</label>
+      <input id="name" type="text" name="name" value="<%=data.name %>" required /><br />
+      <button type="button" onclick="profileEdit();">Edit</button>
+      <button type="button" onclick="profileDelete();">Delete</button>
+    </form>
+
+    <script>
+      // TODO: [Login] 버튼 클릭시 서버에 회원 정보 수정 요청하기
+      // POST /user/profile/edit
+      function profileEdit() {
+        const form = document.forms["form_profile"];
+
+        if (!form.checkValidity()) {
+          return form.reportValidity();
+        }
+
+        axios({
+          url: "/user/profile/edit",
+          method: "POST",
+          data: {
+            id: form.id.value, //where 조건으로 사용하기 위해서
+            // userid: form.userid.value, // 변경 불가 하기 때문에 안보내줘도 됨
+            name: form.name.value,
+            pw: form.pw.value,
+          },
+        }).then((res) => {
+          console.log("수정된 데이터", res.data);
+
+          alert("수정 성공");
+        });
+      }
+
+      // TODO: [Login] 버튼 클릭시 서버에 회원 정보 삭제 요청하기
+      // POST /user/profile/delete
+      function profileDelete() {
+        const form = document.forms["form_profile"];
+
+        axios({
+          method: "POST",
+          url: "/user/profile/delete",
+          data: {
+            id: form.id.value, //delete 할 data 를 찾기 위해(where 조건)
+          },
+        }).then((res) => {
+          console.log(res.data); //endData
+          // (1) alert 띄우기
+          alert("회원 탈퇴 성공");
+          // (2) 회원 탈퇴시 profile 페이지에 머무를 이유가 없으므로 /user 경로로 이동
+          // document.location.href란?
+          // javascript에서 페이지 이동할 수 있는 방법
+          // document 객체를 사용하기 때문에 프론트에서 사용 가능
+          document.location.href = "/user";
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,6 +1,18 @@
--- Active: 1733113221858@@127.0.0.1@3306@sesac
+-- Active: 1732850335286@@127.0.0.1@3306@cobra09
+
+CREATE DATABASE cobra09 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 show DATABASES;
-USE SESAC;
+USE cobra09;
+
+CREATE USER 'cobra'@'%' IDENTIFIED BY '1234';
+
+GRANT ALL PRIVILEGES ON *.* TO 'cobra'@'%' WITH GRANT OPTION;
+
+
+ALTER USER 'cobra'@'%' IDENTIFIED WITH mysql_native_password by '1234';
+
+
 CREATE TABLE visitor(
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(10) NOT NULL,
