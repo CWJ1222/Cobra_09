@@ -1,7 +1,7 @@
--- Active: 1732688614523@@127.0.0.1@3306@sesac
+-- Active: 1732850335286@@127.0.0.1@3306@cobra09
 
 DROP DATABASE osh;
-CREATE DATABASE cobra default CHARACTER SET utf8  default COLLATE utf8_general_ci;
+CREATE DATABASE cobra09 default CHARACTER SET utf8  default COLLATE utf8_general_ci;
 show DATABASES;
 show tables;
 
@@ -9,7 +9,7 @@ insert into user VALUES(null, "qqq", "123", "소고기",'2024-12-16 12:00:00', '
 select * from user;
 use cobra;
 
-create USER "osh"@"%" IDENTIFIED BY "1234"
+create USER "cobra"@"%" IDENTIFIED BY "1234"
 
 GRANT ALL PRIVILEGES ON *.* TO 'osh'@'%' WITH GRANT OPTION;
 
