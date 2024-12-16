@@ -1,26 +1,77 @@
-@import 'reset.css';
+/* Global */
+:root {
+  /* App Colors */
+  --color-primary : var()
+  --color-primary-variant: var()
+  --color-text: var(--color-black);
 
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  font-family: 'Gowun Batang', serif;
+  /* colors */
+  --color-white: #ffffff;
+  --color-black: #050a13;
+
+  /* Size */
+  --size-max-width: 1200px;
 }
 
-ol,
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+}
+
+/* reset CSS */
+h1,
+h2,
+h3,
+p,
+ul {
+  margin: 0;
+}
+
 ul {
   list-style: none;
+  padding: 0;
 }
 
 a {
   text-decoration: none;
+  color: var(--color-text);
 }
 
-@import url('/static/css/root.css');
-* {
-  color: var(--text-black);
+button {
+  background-color: transparent;
+  outline: 0;
+  border: 0;
 }
-h1 {
-  font-size: var(--font-title);
-  background-color: var(--main-color);
+
+button:focus {
+  outline: 1px solid transparent;
+}
+
+/* Common */
+.section {
+  padding: 4rem;
+  text-align: center;
+}
+
+.max-container {
+  max-width: var(--size-max-width);
+  margin: auto;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin: 1rem 0;
+}
+
+.description {
+  font-size: 1.5rem;
+  margin: 1rem 0;
 }

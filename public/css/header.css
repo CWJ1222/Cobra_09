@@ -1,0 +1,25 @@
+header {
+  width: 100%;
+  align-items: center;
+  z-index: 1;
+}
+
+.header__title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header__nav {
+  background-color: lightgray;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.header__nav > .header__menu {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}
