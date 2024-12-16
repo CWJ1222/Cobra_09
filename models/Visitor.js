@@ -1,6 +1,6 @@
 const Visitor = function (Sequelize, DataTypes) {
   const model = Sequelize.define(
-    "visitor",
+    'visitor',
     {
       id: {
         // id int not null primary key auto_increment
@@ -16,7 +16,7 @@ const Visitor = function (Sequelize, DataTypes) {
       },
       comment: {
         // comment mediumtext
-        type: DataTypes.TEXT("medium"),
+        type: DataTypes.TEXT('medium'),
       },
     }, // 컬럼 정의
     {
@@ -27,7 +27,7 @@ const Visitor = function (Sequelize, DataTypes) {
       // 기본값 false
       // 첫번째 인자로 전달을 해준 모델 이름 그대로
       // 테이블이름을 고정하겠다!
-    },
+    }
   );
 
   return model;

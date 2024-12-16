@@ -1,7 +1,7 @@
 'use strict';
 const Sequelize = require('sequelize');
-const config = require(__dirname + '/../config/config.js')['devel'];
-
+const config = require(__dirname + '/../config/config.js')['development'];
+console.log(config);
 const db = {};
 
 let sequelize = new Sequelize(
@@ -11,8 +11,10 @@ let sequelize = new Sequelize(
   config
 );
 
-db.sequelize = sequelize;
+const UserModel = require('./User')(sequelize, Sequelize);
 
+db.User = UserModel;
+db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 /*
