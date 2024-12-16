@@ -1,7 +1,6 @@
-'use strict';
 const Sequelize = require('sequelize');
 const config = require(__dirname + '/../config/config.js')['development'];
-console.log(config);
+
 const db = {};
 
 let sequelize = new Sequelize(
@@ -11,64 +10,43 @@ let sequelize = new Sequelize(
   config
 );
 
-const UserModel = require('./User')(sequelize, Sequelize);
+ // 모델 불러와서 인자로 정보 전달
+ const CategoryModel = require("./Category")(sequelize, Sequelize);
+ const ProductModel = require("./Product")(sequelize, Sequelize);
+ const UserModel = require("./User")(sequelize, Sequelize);
+ const OrderModel = require("./Order")(sequelize, Sequelize);
 
-db.User = UserModel;
+// 1 : N 관계
+CategoryModel.hasMany(ProductModel, {foreignKey : 'category_id', onDelete: 'CASCADE'});
+ProductModel.belongsTo(CategoryModel, {foreignKey: 'category_id', onDelete : 'CASCADE'});
+
+// 1 : N 관계
+UserModel.hasMany(ProductModel, {foreignKey: 'user_id', onDelete:'CASCADE'});
+ProductModel.belongsTo(UserModel, {foreignKey : 'host_id', onDelete: 'CASCADE'});
+
+// 1 : N 관계
+UserModel.hasMany(OrderModel, {foreignKey: 'user_id', onDelete : 'CASCADE'});
+OrderModel.belongsTo(UserModel, {foreignKey: 'user_id', onDelete: 'CASCADE'});
+
+// 1 : N 관계
+ProductModel.hasMany(OrderModel, {foreignKey: 'product_id', onDelete: 'CASCADE'});
+OrderModel.belongsTo(ProductModel, {foreignKey: 'product_id', onDelete: 'CASCADE'});
+
+ db.Category = CategoryModel;
+ db.Product = ProductModel;
+ db.User = UserModel;
+ db.Order = OrderModel;
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+module.exports = db; 
 
-/*
-
-// (2) 모델을 불러오면서 인자로 정보 전달
-const PlayerModel = require("./Player")(sequelize, Sequelize);
-const ProfileModel = require("./Profile")(sequelize, Sequelize);
-const GameModel = require("./Game")(sequelize, Sequelize);
-const TeamModel = require("./Team")(sequelize, Sequelize);
-const TeamGameModel = require("./TeamGame")(sequelize, Sequelize);
-
-// (3) 모델간 관계 설정
-// 3-1) Player:Profile=1:1
-PlayerModel.hasOne(ProfileModel, {
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-  foreignKey: "player_id",
-});
-ProfileModel.belongsTo(ProfileModel, {
-  foreignKey: "player_id", // 내가 정해준 이름
-});
-
-// 3-2) Team:Player = 1:N
-TeamModel.hasMany(PlayerModel, {
-  foreignKey: "teamid", // 내가 정해주는 이름
-  sourceKey: "team_id", // 실제로 참조할 이름
-  // 실제 team model의 컬럼명과 일치해야 함
-  // models/Team.js 의 primary Key
-});
-PlayerModel.belongsTo(TeamModel, {
-  foreignKey: "teamid", // 내가 정해주는 이름
-  targetKey: "team_id", // 실제로 참조할 이름
-});
-
-// 3-3) Team:Game = M:N
-// 중개테이블 teamgame 활용해야함
-TeamModel.belongsToMany(GameModel, {
-  through: TeamGameModel,
-  foreignKey: "team_id", // 내가 정해주는 이름, for team model
-});
-
-GameModel.belongsToMany(TeamModel, {
-  through: TeamGameModel,
-  foreignKey: "game_id", // 내가 정해주는 이름
-});
-
-// (4) db 객체에 모델 추가
-db.Player = PlayerModel;
-db.Profile = ProfileModel;
-db.Game = GameModel;
-db.Team = TeamModel;
-db.TeamGame = TeamGameModel;
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-*/
-
-module.exports = db; // app.js
+ // 연결 확인
+ (async () =>{
+  try {
+    await sequelize.authenticate();
+    console.log('Mysql에 연결 성공!');
+  } catch(error) {
+    console.log("데이터베이스 연결 실패 ", error);
+  }
+ })();

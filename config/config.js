@@ -8,12 +8,4 @@ const development = {
   dialect: 'mysql',
 };
 
-const production = {
-  username: process.env.DB_PROD_USERNAME,
-  password: process.env.DB_PROD_PASSWORD,
-  database: process.env.DB_PROD_DATABASE,
-  host: process.env.DB_PROD_HOST,
-  dialect: 'mysql',
-};
-
-module.exports = { development, production };
+module.exports = { development };

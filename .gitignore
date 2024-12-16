@@ -1,5 +1,1 @@
-.DS_Store
-.vscode/
 node_modules/
-.env
-config.json
