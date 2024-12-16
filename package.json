@@ -1,28 +1,18 @@
 {
-  "name": "cobra",
+  "name": "soo",
   "version": "1.0.0",
-  "description": "sesac team project1",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CWJ1222/Cobra.git"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/CWJ1222/Cobra/issues"
-  },
-  "homepage": "https://github.com/CWJ1222/Cobra#readme",
+  "description": "",
   "dependencies": {
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
-    "express-session": "^1.18.1",
-    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.5",
     "sequelize": "^6.37.5",
     "sequelize-cli": "^6.6.2"
