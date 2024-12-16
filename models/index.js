@@ -1,32 +1,52 @@
-"use strict";
-
-const Sequelize = require("sequelize");
-// const config = require(__dirname + "/../config/config.json")["development"];
-
-// dotenv 사용하는 경우, 다음과 같이 설정 가능 (with,config.js)
-const config = require(__dirname + "/../config/config.js")["development"];
-console.log("config >>", config);
+const Sequelize = require('sequelize');
+const config = require(__dirname + '/../config/config.js')['development'];
 
 const db = {};
 
-/* sequelize 객체 선언,
-매개변수로 DB명, 사용자, 비밀번호, 정보전체를 받음
-*/
-let sequelize = new Sequelize(config.database, config.username, config.password, config);
+let sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config
+);
 
-/* 비어있던 db객체에 두 개의 key를 추가하는 작업
- db={"sequelize":sequelize, "Sequelize":Sequelize}
-*/
+ // 모델 불러와서 인자로 정보 전달
+ const CategoryModel = require("./Category")(sequelize, Sequelize);
+ const ProductModel = require("./Product")(sequelize, Sequelize);
+ const UserModel = require("./User")(sequelize, Sequelize);
+ const OrderModel = require("./Order")(sequelize, Sequelize);
+
+// 1 : N 관계
+CategoryModel.hasMany(ProductModel, {foreignKey : 'category_id', onDelete: 'CASCADE'});
+ProductModel.belongsTo(CategoryModel, {foreignKey: 'category_id', onDelete : 'CASCADE'});
+
+// 1 : N 관계
+UserModel.hasMany(ProductModel, {foreignKey: 'user_id', onDelete:'CASCADE'});
+ProductModel.belongsTo(UserModel, {foreignKey : 'host_id', onDelete: 'CASCADE'});
+
+// 1 : N 관계
+UserModel.hasMany(OrderModel, {foreignKey: 'user_id', onDelete : 'CASCADE'});
+OrderModel.belongsTo(UserModel, {foreignKey: 'user_id', onDelete: 'CASCADE'});
+
+// 1 : N 관계
+ProductModel.hasMany(OrderModel, {foreignKey: 'product_id', onDelete: 'CASCADE'});
+OrderModel.belongsTo(ProductModel, {foreignKey: 'product_id', onDelete: 'CASCADE'});
+
+ db.Category = CategoryModel;
+ db.Product = ProductModel;
+ db.User = UserModel;
+ db.Order = OrderModel;
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+module.exports = db; 
 
-// 새로운 모델 만들 때마다 sequeilze 인스턴스 및 Sequelize 모듈 전달
-db.User = require("./User")(sequelize, Sequelize);
-
-module.exports = db;
-
-// db라는 변수를 내보냄
-// sequelize 객체를 만들고 module로써 내보내고
-// "다른 파일에서 모두 같은 객체를 사용할 수 있게" 됨.
-// (만약에 다른 파일에서 sequelize를 쓰고 싶으면 각각의 파일에서 다시 만들어야 함.
-// 그렇다면 각각의 파일에서 다른 객체를 사용하고 있게 되는 것.)
+ // 연결 확인
+ (async () =>{
+  try {
+    await sequelize.authenticate();
+    console.log('Mysql에 연결 성공!');
+  } catch(error) {
+    console.log("데이터베이스 연결 실패 ", error);
+  }
+ })();
