@@ -1,23 +1,34 @@
--- Active: 1732850335286@@127.0.0.1@3306@cobra09
+-- Active: 1732688614523@@127.0.0.1@3306@sesac
 
-CREATE DATABASE cobra09 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
+DROP DATABASE osh;
+CREATE DATABASE cobra default CHARACTER SET utf8  default COLLATE utf8_general_ci;
 show DATABASES;
-USE cobra09;
+show tables;
 
-CREATE USER 'cobra'@'%' IDENTIFIED BY '1234';
+insert into user VALUES(null, "qqq", "123", "소고기",'2024-12-16 12:00:00', '2024-12-16 12:00:00');
+select * from user;
+use cobra;
 
-GRANT ALL PRIVILEGES ON *.* TO 'cobra'@'%' WITH GRANT OPTION;
+create USER "osh"@"%" IDENTIFIED BY "1234"
+
+GRANT ALL PRIVILEGES ON *.* TO 'osh'@'%' WITH GRANT OPTION;
+
+FLUSH PRIVILEGES;
+
+SELECT * FROM mysql.user;
 
 
-ALTER USER 'cobra'@'%' IDENTIFIED WITH mysql_native_password by '1234';
 
 
+###############################
+USE SESAC;
 CREATE TABLE visitor(
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(10) NOT NULL,
     comment MEDIUMTEXT
 );
+
+
 
 
 DESC visitor;
