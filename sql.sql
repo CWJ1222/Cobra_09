@@ -60,3 +60,25 @@ FLUSH PRIVILEGES;
 SELECT * FROM mysql.user;
 
 show GRANTS for 'sesac'@'%';
+
+desc user;
+INSERT INTO Category (category_id, category_name) VALUES
+(1, 'Electronics'),
+(2, 'Foods'),
+(3, 'Books');
+
+INSERT INTO User (email, password, nickname,createdAt, updatedAt ) VALUES
+('soo@naver.com', "1234", "soo" ,'2024-12-16 12:00:00', '2024-12-16 12:00:00'),
+('jin@naver.com', '5678', "jin",'2024-12-16 12:00:00', '2024-12-16 12:00:00');
+
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+VALUES
+('Smartphone', '2024-12-31', 999, 100, '/images/smartphone.jpg', 1, 1),
+('T-Shirt', '2024-12-25', 19, 200, '/images/tshirt.jpg', 2, 2),
+('Novel', '2024-12-20', 10, 50, '/images/novel.jpg', 3, 1);
+
+desc Product;
+
+SELECT * from Product;
+
+alter table Product modify COLUMN name VARCHAR(255)
