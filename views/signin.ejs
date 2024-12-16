@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <%- include('include/include', { title: '로그인' })%>
+  <body>
+    <h1>로그인</h1>
+    <!-- 
+      [로그인] 버튼을 클릭하면 profile.ejs에서 특정 유저 정보를 보여주어야 하기 때문에 
+      userid 정보를 value에 저장(POST /user/signin 요청의 응답을 받은 후 수행)하여
+      폼(input)이 보이지 않도록 hidden 처리함
+    -->
+    <form name="form_info" action="/user/profile" method="POST">
+      <input type="hidden" name="userid" />
+    </form>
+
+    <form name="form_login">
+      <label for="userid">ID</label>
+      <input id="userid" type="text" name="userid" required /><br />
+      <label for="password">Password</label>
+      <input id="password" type="password" name="pw" required /><br />
+      <button type="button" onclick="login();">Login</button>
+    </form>
+
+    <!-- TODO: href 속성값 설정하기 -->
+    <a href="/user/signup">Register</a>
+
+    <script>
+      // TODO: [Login] 버튼 클릭시 서버에 로그인 요청하기
+      // POST /user/signin
+      function login() {
+        const formLogin = document.forms["form_login"];
+        const formInfo = document.forms["form_info"];
+
+        // 유효성 검증
+        if (!form_login.checkValidity()) {
+          form_login.reportValidity();
+          return;
+        }
+
+        axios({
+          method: "POST",
+          url: "/user/signin",
+          data: {
+            // 로그인 버튼을 눌렀을 때,
+            // user table의 데이터와 비교하기 위해 보내주는 정보
+            userid: formLogin.userid.value,
+            pw: formLogin.pw.value,
+          },
+        }).then((res) => {
+          console.log(res);
+          const { data } = res;
+          console.log(data); //true of false
+          if (data) {
+            // true, 로그인 성공
+            /* 로그인 성공시
+              1. "로그인 성공 alert 띄우기, or ~ 님 환영합니다 alert"
+              2. form_login의 userid 정보를 form_info 의 userid value에 저장
+              3. form_info 제출
+            */
+
+            // 1. alert 띄우기
+            alert("로그인 성공");
+            // 2. hidden form인 form_info userid에 정보 채우기
+            // (주의> form info는 userid 만을 보냄)
+            formInfo.userid.value = formLogin.userid.value;
+            // 3.form_info 제출
+            formInfo.submit();
+          } else {
+            // false, 로그인 실패
+            alert("로그인 실패");
+            // 초기화
+            formLogin.reset();
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
