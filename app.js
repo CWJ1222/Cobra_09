@@ -56,22 +56,22 @@ app.post("/login", (req, res) => {
 });
 */
 
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-      const ext = path.extname(file.originalname); // .png, .pdf, ...
-      const filename = path.basename(file.originalname, ext) + Date.now() + ext;
-      cb(null, filename);
-      //   Date.now(): 1970.01.01 0시 0분 0초부터 현재까지 경과된 밀리초
-    },
-  }),
-  limits: {
-    fileSize: 5 * 1024 * 1024,
-  },
-});
+// const upload = multer({
+//   storage: multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, 'uploads/');
+//     },
+//     filename: function (req, file, cb) {
+//       const ext = path.extname(file.originalname); // .png, .pdf, ...
+//       const filename = path.basename(file.originalname, ext) + Date.now() + ext;
+//       cb(null, filename);
+//       //   Date.now(): 1970.01.01 0시 0분 0초부터 현재까지 경과된 밀리초
+//     },
+//   }),
+//   limits: {
+//     fileSize: 5 * 1024 * 1024,
+//   },
+// });
 
 const indexRouter = require('./routes');
 app.use('/', indexRouter);
