@@ -8,7 +8,7 @@ const Order = (sequelize, DataTypes) =>{
                 allowNull :false,
                 autIncrement : true,
             },
-            product_id : {
+            product_key : {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
