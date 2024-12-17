@@ -5,10 +5,24 @@ exports.main = (req, res) =>{
     res.render('index');
 };
 
+// 세션이 있는지를 검증
+exports.isSessionValid = (req, res, next) => {
+    if (req.session.user) {
+      // 인증된 유저인 경우
+      console.log(req.session.user);
+      next();
+    } else {
+        console.log(req.session.user);
+        console.log("error");
+    }
+  };
+
 // GET /products
 exports.getAllProducts = async (req, res) =>{
     try {
-        const target = 1; // 세션 user_id에서 받아올 것
+        console.log(req.session.user);
+        const target = req.session.user.user_pk; // 세션 user_id에서 받아올 것
+        
         // products에서 user_id에 해당하는거 모두 가져옴
         const products = await Product.findAll({
             where : {host_id : target}, // user_id == host_id 같은 의미!
@@ -28,7 +42,7 @@ exports.getAllProducts = async (req, res) =>{
 // GET /joins
 exports.getAllJoins = async (req, res) =>{
     try {
-        const target = 1; // 세션 user_id에서 받아올 것
+        const target =req.session.user.user_pk; // 세션 user_id에서 받아올 것
         // order에서 user_id에 해당하는거 모두 가져옴
         const orders = await Order.findAll({
             where: {user_id : target}, // user_id == host_id 같은 의미!
@@ -44,3 +58,11 @@ exports.getAllJoins = async (req, res) =>{
         res.status(500).send({isSuccess: false, message: '구매 내역을 조회하는 중 오류가 발생했습니다.'});
     }
 }
+
+
+
+
+
+exports.login = (req, res) =>{
+    res.render('/login');
+  }
