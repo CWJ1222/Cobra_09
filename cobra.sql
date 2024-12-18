@@ -75,7 +75,7 @@ INSERT INTO User (email, password, nickname) VALUES
 ('jin@naver.com', '5678', "jin");
 
 -- product 테이블에 데이터 삽입
-INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)
 VALUES
 ('Smartphone', '2024-12-31', 999, 100, '/images/smartphone.jpg', 1, 1),
 ('T-Shirt', '2024-12-25', 19, 200, '/images/tshirt.jpg', 2, 2),
@@ -91,7 +91,7 @@ INSERT INTO Order_item (
     phone
 ) VALUES
 (1, 1, 1, 2, '123 Main St, Seoul', '010-1234-5678'),
-(2, 2, 2, 1, '456 Elm St, Busan', '010-5678-1234');
+(2,3, 2, 1, '456 Elm St, Busan', '010-5678-1234');
 
 -- 테이블에 다 데이터 담겨있는지 확인
 SELECT * FROM category;

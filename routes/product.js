@@ -1,8 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controller/Cproduct');
+const productController = require('../controller/Cproduct');
+const authController = require('../controller/Cauth');
 
-router.get('/', controller.getAllProducts);
-router.get('/:id', controller.getItemsByCategory);
+router.get(
+  '/',
+  authController.isSessionValid,
+  productController.getAllProducts
+);
+router.get(
+  '/:id',
+  authController.isSessionValid,
+  productController.getItemsByCategory
+);
 
 module.exports = router;

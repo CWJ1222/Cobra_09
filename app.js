@@ -30,6 +30,7 @@ app.use(
     },
   })
 );
+
 /*
 app.post("/login", (req, res) => {
   // 로그인 여부 판단
@@ -76,10 +77,12 @@ const upload = multer({
 const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
 const productRouter = require('./routes/product');
+const hostRouter = require('./routes/host');
 app.use('/', indexRouter);
 
 app.use('/auth', authRouter);
 app.use('/activePurchases', productRouter);
+app.use('/host', hostRouter.router);
 
 //가입관련
 const memberRouter = require('./routes/member'); // member 라우터 불러오기
