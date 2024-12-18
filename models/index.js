@@ -29,8 +29,8 @@ UserModel.hasMany(OrderModel, {foreignKey: 'user_id', onDelete : 'CASCADE'});
 OrderModel.belongsTo(UserModel, {foreignKey: 'user_id', onDelete: 'CASCADE'});
 
 // 1 : N 관계
-ProductModel.hasMany(OrderModel, {foreignKey: 'product_id', onDelete: 'CASCADE'});
-OrderModel.belongsTo(ProductModel, {foreignKey: 'product_id', onDelete: 'CASCADE'});
+ProductModel.hasMany(OrderModel, {foreignKey: 'product_key', onDelete: 'CASCADE'});
+OrderModel.belongsTo(ProductModel, {foreignKey: 'product_key', onDelete: 'CASCADE'});
 
  db.Category = CategoryModel;
  db.Product = ProductModel;
