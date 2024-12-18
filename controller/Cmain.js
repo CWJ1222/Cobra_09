@@ -69,6 +69,21 @@ exports.getAllJoins = async (req, res) =>{
     }
 }
 
+// /user
+exports.getAllUser = async (req, res) =>{
+  try {
+      const target =req.session.user.user_pk; 
+      const user = await User.findOne({
+          where : {user_id : target},
+          attributes: ['email', 'nickname']
+      })
+      res.status(200).send({isSuccess:true, user});
+  } catch(err) {
+      console.log('err', err);
+      res.status(500).send({isSuccess:false, message : "사용자 정보가 없습니다."});
+  }
+}
+
 
 exports.login = (req, res) =>{
     res.render('/login');
