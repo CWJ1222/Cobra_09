@@ -1,8 +1,18 @@
 const { Op } = require('sequelize');
-const {Category, Product, User, Order} = require('../models');
+const { Category, Product, User, Order } = require('../models');
 
-exports.main = (req, res) =>{
-    res.render('index');
+/* FE: 렌더링 */
+// 홈페이지
+exports.main = (req, res) => {
+  res.render('index', { title: '홈페이지', currentPage: 'home' });
+};
+// 구매 페이지
+exports.purchase = (req, res) => {
+  res.render('purchase', { title: '구매 페이지', currentPage: 'purchase' });
+};
+// 판매 페이지
+exports.sell = (req, res) => {
+  res.render('sell', { title: '판매 페이지', currentPage: 'sell' });
 };
 
 // 세션이 있는지를 검증
@@ -17,7 +27,7 @@ exports.isSessionValid = (req, res, next) => {
     }
   };
 
-// GET /products
+
 exports.getAllProducts = async (req, res) =>{
     try {
         console.log(req.session.user);
@@ -60,9 +70,7 @@ exports.getAllJoins = async (req, res) =>{
 }
 
 
-
-
-
 exports.login = (req, res) =>{
     res.render('/login');
   }
+

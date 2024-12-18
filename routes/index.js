@@ -2,13 +2,13 @@ const express = require('express');
 const controller = require('../controller/Cmain');
 const router = express.Router();
 
-// 문제 확인하기! 합칠때 유의해야할 듯!
+// FE: 메인페이지 뷰 테스트
+router.get('/', controller.main); //홈페이지
+router.get('/purchase', controller.purchase); // 구매 페이지
+router.get('/sell', controller.sell); //판매 페이지
 
-router.get('/', controller.main);
-router.get('/products', controller.isSessionValid, controller.getAllProducts);
-router.get('/joins', controller.isSessionValid,controller.getAllJoins);
+router.get('/products', controller.getAllProducts);
+router.get('/joins', controller.getAllJoins);
 router.get('/auth', controller.login);
-
-
 
 module.exports = router;

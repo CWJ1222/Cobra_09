@@ -1,13 +1,15 @@
 /* Global */
 :root {
   /* App Colors */
-  --color-primary : var()
-  --color-primary-variant: var()
+  --color-primary: var(--color-purple);
+  --color-secondary: var(--color-gray-light);
   --color-text: var(--color-black);
 
   /* colors */
   --color-white: #ffffff;
   --color-black: #050a13;
+  --color-purple: #7309f6;
+  --color-gray-light: #d5d5d3;
 
   /* Size */
   --size-max-width: 1200px;
@@ -62,7 +64,7 @@ button:focus {
 }
 
 .max-container {
-  max-width: var(--size-max-width);
+  max-width: var(--size-max-width); /* 1200px */
   margin: auto;
 }
 
