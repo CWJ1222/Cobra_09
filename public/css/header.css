@@ -1,0 +1,135 @@
+@import url('./common.css');
+
+header {
+  width: 100%;
+  z-index: 1;
+  background-color: var(--color-white);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header__title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px 75px;
+  height: 85px;
+  cursor: pointer;
+}
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.header__logo a {
+  color: var(--color-primary);
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.header__logo__img {
+  width: 54px;
+}
+
+.header__utils {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.header__auth .login-button {
+  cursor: pointer;
+  background-color: white;
+  border-radius: 9px;
+  border: 1px solid var(--color-secondary);
+
+  width: 120px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header__search {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 9px;
+  border: 1px solid var(--color-secondary);
+}
+
+.search-input {
+  width: 0;
+  opacity: 0;
+  transition: all 0.3s ease;
+  padding: 0;
+  height: 28px;
+  border: 1px solid var(--color-secondary);
+  border-radius: 5px;
+}
+
+.search-icon {
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+}
+
+.search-input.show {
+  width: 200px;
+  opacity: 1;
+  border: none;
+  padding: 1rem;
+}
+
+.header__auth {
+  cursor: pointer;
+}
+
+.header__nav {
+  /* background-color: var(--color-primary); */
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding-left: 40px;
+}
+
+.header__menu {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}
+
+.header__menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 20px;
+  font-weight: bold;
+  position: relative; /* 가상요소 위한 상대위치 */
+  padding-bottom: 10px; /* 밑줄과 글자 사이 간격 */
+}
+
+.header__menu__item:hover {
+  color: var(--color-primary);
+}
+
+.header__menu__item::after {
+  content: ''; /* 가상요소 생성 */
+  position: absolute;
+  bottom: 0; /* 텍스트 아래 선 표시 */
+  left: 50%; /* 선의 시작점 중앙으로 설정 */
+  width: 100%; /* 스케일 기준 너비 */
+  height: 3px;
+  background-color: var(--color-primary);
+  transform: translateX(-50%) scaleX(0); /* 중앙에서 시작, 가로 스케일 0 */
+  transform-origin: center; /* 변형 기준점 중앙으로 설정 */
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.header__menu__item.active::after {
+  width: 100%;
+  transform: translateX(-50%) scaleX(1); /* 스케일 1로 확대*/
+}

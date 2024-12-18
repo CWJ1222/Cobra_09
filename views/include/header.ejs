@@ -1,0 +1,50 @@
+<header class="header">
+  <div class="header__title">
+    <div class="header__logo">
+      <img src="/public/img/logo-title.png" alt="logo" class="header__logo__img" />
+      <h1 class="header__logo__title"><a href="/">코브라09</a></h1>
+    </div>
+  <div class="header__utils">
+    <!-- 로그인/회원가입 -->
+    <div class="header__auth">
+      <!-- (todo) 로그인 후 마이페이지 버튼으로 변경-->
+      <button class="login-button"><a href="/member/signup">로그인/회원가입</a></button>
+      <button class="delete-button"><a href="/member/deleteTest">탈퇴</a></button>
+    </div>
+
+    <!-- 검색 영역 -->
+    <div class="header__search">
+      <input type="text" class="search-input" id="search-input" placeholder="검색어를 입력해주세요">
+      <button class="search-icon" id="search-icon">        
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>    
+    </div>
+  </div>
+  </div>
+
+  <nav class="header__nav">
+    <ul class="header__nav">
+      <ul class="header__menu">
+        <li><a href="/" class="header__menu__item <%=currentPage === 'home' ? 'active': ''%>">홈</a</li>
+        <li><a href="/purchase" class="header__menu__item <%=currentPage ==='purchase'? 'active' : ''%>">구매</a></li>
+        <li><a href="/sell" class="header__menu__item <%=currentPage ==='sell'? 'active':'' %>">판매</a></li>
+      </ul>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  document.addEventListener("DOMContentLoaded", ()=>{
+    const searchIcon = document.getElementById('search-icon')
+    const searchInput = document.getElementById('search-input')
+
+    searchIcon.addEventListener('click', ()=>{
+      console.log('click')
+      searchInput.classList.toggle('show')
+    })
+
+    if(searchInput.classList.contains('show')){
+      searchInput.focus()
+    }
+  })
+</script>

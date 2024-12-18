@@ -39,11 +39,11 @@ OrderModel.belongsTo(UserModel, { foreignKey: 'user_id', onDelete: 'CASCADE' });
 
 // 1 : N 관계
 ProductModel.hasMany(OrderModel, {
-  foreignKey: 'product_id',
+  foreignKey: 'product_key',
   onDelete: 'CASCADE',
 });
 OrderModel.belongsTo(ProductModel, {
-  foreignKey: 'product_id',
+  foreignKey: 'product_key',
   onDelete: 'CASCADE',
 });
 

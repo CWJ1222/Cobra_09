@@ -5,7 +5,7 @@ const multer = require('multer');
 const path = require('path');
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 const { sequelize } = require('./models');
 
@@ -21,7 +21,7 @@ app.use(express.json());
 // 세션 설정, 10분 뒤 세션 종료하도록
 app.use(
   session({
-    secret: 'secretKey',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -77,8 +77,13 @@ const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
 const productRouter = require('./routes/product');
 app.use('/', indexRouter);
+
 app.use('/auth', authRouter);
 app.use('/activePurchases', productRouter);
+
+//가입관련
+const memberRouter = require('./routes/member'); // member 라우터 불러오기
+app.use('/member', memberRouter); // /member 경로에 라우터 연결
 
 app.get('*', (req, res) => {
   res.render('404');
