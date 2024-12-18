@@ -75,8 +75,10 @@ const upload = multer({
 
 const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
-app.use('/auth', authRouter);
+const productRouter = require('./routes/product');
 app.use('/', indexRouter);
+app.use('/auth', authRouter);
+app.use('/activePurchases', productRouter);
 
 app.get('*', (req, res) => {
   res.render('404');
