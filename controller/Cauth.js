@@ -30,7 +30,7 @@ exports.renderLoginPage = (req, res) => {
 // 로그인 처리
 exports.loginUser = async (req, res) => {
   const { userId: inputUserId, password: inputUserPw } = req.body;
-  // db 에서 저장된 id, pw중 일치하는지 여부 체크
+  // TODO : 입력한 패스워드를 암호화한 후에 비교 처리 부분 추가
   const result = await db.User.findOne({
     where: {
       email: inputUserId,

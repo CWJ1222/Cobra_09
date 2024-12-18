@@ -75,9 +75,11 @@ const upload = multer({
 
 const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
+const productRouter = require('./routes/product');
+app.use('/', indexRouter);
 
 app.use('/auth', authRouter);
-app.use('/', indexRouter);
+app.use('/activePurchases', productRouter);
 
 //가입관련
 const memberRouter = require('./routes/member'); // member 라우터 불러오기
