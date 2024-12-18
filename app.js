@@ -12,7 +12,7 @@ const { sequelize } = require('./models');
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-app.use('/static', express.static(__dirname + '/public'));
+app.use('/public', express.static(__dirname + '/public'));
 app.use('/uploads', express.static(__dirname + '/uploads'));
 
 app.use(express.urlencoded({ extended: false }));
