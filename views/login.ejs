@@ -56,7 +56,7 @@
         <br /><br />
         <button type="button" id="login-button">로그인</button>
         <!-- (todo) 회원가입 페이지로 이동 -->
-        <button type="button" id="register-button">회원가입</button>
+        <button type="button" id="signup-button">회원가입</button>
         <div id="error" class="error-message"></div>
       </form>
     </main>
@@ -67,12 +67,12 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const loginButton = document.getElementById('login-button');
-      const registerButton = document.getElementById('register-button');
+      const signupButton = document.getElementById('signup-button');
 
       loginButton.addEventListener('click', login);
 
-      registerButton.addEventListener('click', () => {
-        window.location.href = '/member/register';
+      signupButton.addEventListener('click', () => {
+        window.location.href = '/member/signup';
       });
     });
 
