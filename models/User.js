@@ -13,11 +13,15 @@ const User = (sequelize, DataTypes) => {
         allowNull: false,
       },
       password: {
-        type: DataTypes.STRING(63),
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
       nickname: {
         type: DataTypes.STRING(63),
+        allowNull: false,
+      },
+      salt: {
+        type: DataTypes.STRING(255), // salt 저장 필드 추가
         allowNull: false,
       },
     },

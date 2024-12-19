@@ -1,4 +1,22 @@
 const { User } = require('../models'); // User 모델 불러오기
+const crypto = require('crypto');
+
+// 비밀번호 암호화 함수
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex'); // 랜덤 salt 생성
+  const hash = crypto
+    .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
+    .toString('hex'); // 해시 생성
+  return { salt, hash };
+}
+
+// 비밀번호 검증 함수(탈퇴시)
+function verifyPassword(password, salt, hash) {
+  const newHash = crypto
+    .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
+    .toString('hex');
+  return newHash === hash;
+}
 
 // **1. 회원가입 페이지 렌더링 (GET)**
 exports.signuppage = (req, res) => {
@@ -36,8 +54,10 @@ exports.signup = async (req, res) => {
       return res.status(400).send('이미 존재하는 이메일입니다.');
     }
 
+    // 비밀번호 암호화
+    const { salt, hash } = hashPassword(password);
     // 사용자 생성
-    await User.create({ email, password, nickname });
+    await User.create({ email, password: hash, nickname, salt });
     res.status(201).send('회원가입이 완료되었습니다.');
     // res.render('myInfoTest', { email: User.email, nickname: User.nickname });
   } catch (error) {
@@ -51,17 +71,21 @@ exports.delete = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // 사용자 존재 여부 확인
-    const user = await User.findOne({ where: { email, password } });
+    const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(404).send('이메일 또는 비밀번호가 잘못되었습니다.');
     }
 
-    // 사용자 삭제
+    // 비밀번호 검증
+    const isPasswordValid = verifyPassword(password, user.salt, user.password);
+    if (!isPasswordValid) {
+      return res.status(404).send('이메일 또는 비밀번호가 잘못되었습니다.');
+    }
+
     await User.destroy({ where: { email } });
     res.status(200).send('회원 탈퇴가 완료되었습니다.');
   } catch (error) {
     console.error(error);
-    res.status(500).send('서버 오류가 발생했습니다.');
+    res.status(500).send('서버 오류');
   }
 };

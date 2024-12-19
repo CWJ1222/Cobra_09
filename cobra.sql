@@ -1,3 +1,4 @@
+-- Active: 1734574129848@@127.0.0.1@3306@cobra09
 /*
 - notion의 DB정리 페이지 참고
 - .env 파일에 mysql 연결 정보 개인에 따라 수정 필요
@@ -5,6 +6,19 @@
 create database cobra09; -- cobra09 데이터베이스 생성
 
 use cobra09; -- cobra09 데이터베이스 사용
+
+-- 1. 'cobra' 사용자 생성 (비밀번호는 '1234'로 설정)
+CREATE USER 'cobra'@'%' IDENTIFIED BY '1234';
+
+-- 2. 'cobra' 사용자에게 모든 데이터베이스에 대한 모든 권한 부여
+GRANT ALL PRIVILEGES ON *.* TO 'cobra'@'%';
+
+-- 3. 권한 변경 사항 적용
+FLUSH PRIVILEGES;
+SELECT User, Host FROM mysql.user;
+
+ALTER TABLE user
+ADD COLUMN salt VARCHAR(255) NOT NULL;
 
 -- Category 테이블 생성
 CREATE TABLE Category (
@@ -70,9 +84,9 @@ INSERT INTO Category (category_id, category_name) VALUES
 (3, 'Books');
 
 -- user 테이블에 데이터 삽입
-INSERT INTO User (email, password, nickname) VALUES
-('soo@naver.com', "1234", "soo"),
-('jin@naver.com', '5678', "jin");
+INSERT INTO User (email, password, nickname, salt) VALUES
+('soo@naver.com', "1234", "soo", "1234"),
+('jin@naver.com', '5678', "jin", "5678");
 
 -- product 테이블에 데이터 삽입
 INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)

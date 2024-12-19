@@ -31,11 +31,17 @@ exports.renderLoginPage = (req, res) => {
   res.render('loginTest', {
     url: `${process.env.KAKAO_LOGOUT_URI}?client_id=${process.env.KAKAO_CLIENT_ID}&logout_redirect_uri=${process.env.KAKAO_LOGOUT_REDIRECT_URI}`,
   });
+  res.render('login', { currentPage: 'login' });
 };
 
 // 일반 로그인 처리(세션 생성)
 exports.loginUser = async (req, res) => {
   const { userId: inputUserId, password: inputUserPw } = req.body;
+  // fe: 클라이언트 데이터 확인
+  console.log('입력된 userId:', inputUserId);
+  console.log('입력된 pw:', inputUserPw);
+
+  // TODO : 입력한 패스워드를 암호화한 후에 비교 처리 부분 추가
   const result = await db.User.findOne({
     where: {
       email: inputUserId,
