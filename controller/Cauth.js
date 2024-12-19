@@ -43,7 +43,7 @@ exports.loginUser = async (req, res) => {
     },
     attributes: ['user_id', 'email', 'password', 'nickname'],
   });
-  console.log(result);
+
   if (result) {
     req.session.user = {
       //user 테이블의 pk값 저장
@@ -64,7 +64,6 @@ exports.loginUser = async (req, res) => {
 
 // 카카오 로그인 처리 (세션 생성)
 exports.loginKakaoUser = async (req, res, next) => {
-  console.log('넘겨받은 유저정보', req.kakao_user_info);
   try {
     const findResult = await db.User.findOne({
       where: { email: req.kakao_user_info.email },
@@ -84,7 +83,6 @@ exports.loginKakaoUser = async (req, res, next) => {
       });
       userInfo.user_id = createResult.user_id;
       userInfo.nickname = createResult.nickname;
-      console.log('서버에서 만든 유저 결과', createResult);
     } else {
     }
     req.session.user = {
@@ -109,7 +107,6 @@ exports.logoutUser = (req, res) => {
     }
     res.clearCookie('connect.sid');
     res.redirect('/');
-    // res.status(200).send({ message: '로그아웃에 성공했습니다.' });
   });
 };
 
@@ -123,7 +120,6 @@ exports.redirectKakaoLogin = (req, res) => {
 // kakao 로그인 후에 서버로부터 쿼리스트링으로 인가코드를 받음
 // 카카오 페이지에 등록한 리다이렉트 uri 요청에 실행되는 컨트롤러
 exports.getKaKaoAuthCode = (req, res, next) => {
-  console.log('쿼리스트링 인가코드', req.query);
   if (req.query) {
     req.auth_code = req.query;
     console.log('auth_code', req.auth_code);
@@ -175,12 +171,10 @@ exports.getKakaoUserInfo = (req, res, next) => {
     },
   })
     .then((result) => {
-      console.log('카카오 사용자 정보 응답', result.data);
       req.kakao_user_info = {
         nickname: result.data.properties.nickname,
         email: result.data.kakao_account.email,
       };
-      console.log('req.kakao_user_info', req.kakao_user_info);
       next();
     })
     .catch((err) => {

@@ -13,7 +13,7 @@ router.get(
   controller.redirectKakaoLogin
 );
 
-// auth-code, token, 카카오계정 유저정보(이메일, 닉네임) 획득
+// 카카오 로그인 처리
 router.get(
   '/kakao/login',
   controller.getKaKaoAuthCode,
@@ -21,5 +21,6 @@ router.get(
   controller.getKakaoUserInfo,
   controller.loginKakaoUser
 );
+// 카카오 로그아웃
 router.get('/kakao/logout', controller.logoutUser);
 module.exports = router;
