@@ -24,12 +24,16 @@ exports.isSessionInvalid = (req, res, next) => {
 
 // 로그인 페이지 렌더링
 exports.renderLoginPage = (req, res) => {
-  res.render('login');
+  res.render('login', { currentPage: 'login' });
 };
 
 // 로그인 처리
 exports.loginUser = async (req, res) => {
   const { userId: inputUserId, password: inputUserPw } = req.body;
+  // fe: 클라이언트 데이터 확인
+  console.log('입력된 userId:', inputUserId);
+  console.log('입력된 pw:', inputUserPw);
+
   // TODO : 입력한 패스워드를 암호화한 후에 비교 처리 부분 추가
   const result = await db.User.findOne({
     where: {

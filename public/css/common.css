@@ -28,6 +28,11 @@ body {
   margin: 0;
 }
 
+body > main {
+  /* 133px 은 header 높이, 125px 은 footer 의 높이 */
+  min-height: calc(100vh - 258px);
+}
+
 /* reset CSS */
 h1,
 h2,
