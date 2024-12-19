@@ -92,6 +92,22 @@ exports.getAllUser = async (req, res) => {
   }
 };
 
+// 특정 하나의 판매 물품만 가져옴 - GET /host/list/:id
+exports.getProduct = async (req, res) =>{
+  try{
+    const product_id = 1; // 임시 product_id
+    const product = await Product.findOne({
+      where: {product_key : product_id},
+      attributes : ['name', 'deadline', 'price', 'host_id', 'max_quantity', 'image', 'category_id'],
+      
+    });
+    res.status(200).send({isSuccess:true, product});
+  } catch(err) {
+    console.log('err', err);
+    res.status(200).send({isSuccess: false});
+  }
+};
+
 exports.login = (req, res) => {
   res.render('/login');
 };
