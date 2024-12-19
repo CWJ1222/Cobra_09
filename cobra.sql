@@ -81,6 +81,7 @@ VALUES
 ('T-Shirt', '2024-12-25', 19, 200, '/images/tshirt.jpg', 2, 2),
 ('Novel', '2024-12-20', 10, 50, '/images/novel.jpg', 3, 1);
 
+delete from user where user_id=5;
 -- order_item 테이블에 데이터 삽입
 INSERT INTO Order_item (
     order_item_id, 

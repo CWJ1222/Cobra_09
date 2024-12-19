@@ -28,13 +28,14 @@ exports.isSessionInvalid = (req, res, next) => {
 
 // 로그인 페이지 렌더링
 exports.renderLoginPage = (req, res) => {
-  res.render('loginTest');
+  res.render('loginTest', {
+    url: `${process.env.KAKAO_LOGOUT_URI}?client_id=${process.env.KAKAO_CLIENT_ID}&logout_redirect_uri=${process.env.KAKAO_LOGOUT_REDIRECT_URI}`,
+  });
 };
 
-// 로그인 처리
+// 일반 로그인 처리(세션 생성)
 exports.loginUser = async (req, res) => {
   const { userId: inputUserId, password: inputUserPw } = req.body;
-  // TODO : 입력한 패스워드를 암호화한 후에 비교 처리 부분 추가
   const result = await db.User.findOne({
     where: {
       email: inputUserId,
@@ -42,7 +43,7 @@ exports.loginUser = async (req, res) => {
     },
     attributes: ['user_id', 'email', 'password', 'nickname'],
   });
-
+  console.log(result);
   if (result) {
     req.session.user = {
       //user 테이블의 pk값 저장
@@ -61,7 +62,46 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-// 로그아웃 처리(세션 삭제)
+// 카카오 로그인 처리 (세션 생성)
+exports.loginKakaoUser = async (req, res, next) => {
+  console.log('넘겨받은 유저정보', req.kakao_user_info);
+  try {
+    const findResult = await db.User.findOne({
+      where: { email: req.kakao_user_info.email },
+      attributes: ['user_id', 'email', 'password', 'nickname'],
+    });
+    const userInfo = {};
+    userInfo.user_id = findResult?.user_id;
+    userInfo.nickname = findResult?.nickname;
+    console.log('서버에서 찾은 유저 결과', findResult);
+    // 존재하지 않는 유저라면 가입후 로그인 처리
+    if (!findResult) {
+      // password는 임의값으로 생성
+      const createResult = await db.User.create({
+        email: req.kakao_user_info.email,
+        password: '1234', // 카카오에서 얻는 정보에는 pw가 없어서 임의 값 할당 -  추후 랜덤값으로 변경
+        nickname: req.kakao_user_info.nickname,
+      });
+      userInfo.user_id = createResult.user_id;
+      userInfo.nickname = createResult.nickname;
+      console.log('서버에서 만든 유저 결과', createResult);
+    } else {
+    }
+    req.session.user = {
+      user_pk: userInfo.user_id,
+    };
+    res.status(200).send({
+      isLogin: true,
+      nickname: userInfo.nickname,
+      message: '로그인 성공 했습니다.',
+    });
+  } catch (err) {
+    console.log(err);
+    res.send('서버 에러');
+  }
+};
+
+// 로그아웃 처리(일반 로그인 + 카카오 로그인의 세션 삭제)
 exports.logoutUser = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -93,8 +133,8 @@ exports.getKaKaoAuthCode = (req, res, next) => {
   }
 };
 
-// 인가 코드를 가지고 카카오 서버로 부터 token 발급받음
-exports.getKaKaoToken = (req, res) => {
+// 카카오 로그인 유저에 대한 토큰 획득
+exports.getKaKaoToken = (req, res, next) => {
   axios({
     url: process.env.KAKAO_TOKEN_URI,
     method: 'post',
@@ -109,18 +149,42 @@ exports.getKaKaoToken = (req, res) => {
     },
   })
     .then((result) => {
-      console.log('토큰 응답', result);
+      console.log('getKaKaoToken 토큰 응답', result.data);
       const { access_token, refresh_token } = result.data;
-
-      console.log('access_token', access_token);
-      console.log('refresh_token', refresh_token);
-      req.session.user = {
+      req.token = {
         access_token,
         refresh_token,
       };
-      res.redirect('/');
+      next();
     })
     .catch((err) => {
       console.log(err);
+      res.redirect('/');
+    });
+};
+
+// kakao 서버로부터 사용자의 정보를 가져옴
+exports.getKakaoUserInfo = (req, res, next) => {
+  console.log('getKakaoUserInfo에서 access_token 확인', req.token.access_token);
+  axios({
+    url: process.env.KAKAO_USERINFO_URI,
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${req.token.access_token}`,
+      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+    },
+  })
+    .then((result) => {
+      console.log('카카오 사용자 정보 응답', result.data);
+      req.kakao_user_info = {
+        nickname: result.data.properties.nickname,
+        email: result.data.kakao_account.email,
+      };
+      console.log('req.kakao_user_info', req.kakao_user_info);
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send('서버 에러');
     });
 };

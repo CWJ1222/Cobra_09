@@ -5,16 +5,21 @@ const controller = require('../controller/Cauth');
 router.get('/login', controller.renderLoginPage);
 router.post('/', controller.isSessionInvalid, controller.loginUser);
 router.delete('/', controller.isSessionValid, controller.logoutUser);
+
+// 카카오 로그인창 띄우기
 router.get(
   '/kakao',
   controller.isSessionInvalid,
   controller.redirectKakaoLogin
 );
-// router.get('/kakao/auth-code', controller.handleAuthCode);
+
+// auth-code, token, 카카오계정 유저정보(이메일, 닉네임) 획득
 router.get(
-  '/kakao/auth-code',
+  '/kakao/login',
   controller.getKaKaoAuthCode,
-  controller.getKaKaoToken
+  controller.getKaKaoToken,
+  controller.getKakaoUserInfo,
+  controller.loginKakaoUser
 );
 router.get('/kakao/logout', controller.logoutUser);
 module.exports = router;

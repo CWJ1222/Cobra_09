@@ -31,32 +31,6 @@ app.use(
   })
 );
 
-/*
-app.post("/login", (req, res) => {
-  // 로그인 여부 판단
-  console.log(req.body);
-  if (
-    userInfo.userId === req.body.id &&
-    userInfo.userPw === req.body.pw
-  ) {
-    // console.log("로그인 가능한 user");
-    // 세션 생성
-    // 세션의 user라는 키를 추가하여 userId값을 value로 전달
-    req.session.user = req.body.id;
-    console.log("POST /login", req.session);
-    res.redirect("/");
-  } else {
-    // console.log("로그인 불가능한 user");
-    res.send(`
-      <script>
-        alert("아이디 또는 비밀번호가 틀렸어요. 다시 시도하세요.");
-        document.location.href="/login";
-      </script>
-      `);
-  }
-});
-*/
-
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
@@ -78,6 +52,11 @@ const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
 const productRouter = require('./routes/product');
 const hostRouter = require('./routes/host');
+
+app.use('*', (req, res, next) => {
+  console.log('req.session', req.session);
+  next();
+});
 app.use('/', indexRouter);
 
 app.use('/auth', authRouter);
