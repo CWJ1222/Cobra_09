@@ -1,7 +1,5 @@
-<<<<<<< HEAD
-=======
--- Active: 1734574129848@@127.0.0.1@3306@cobra09
->>>>>>> develop
+-- Active: 1734662483784@@175.121.178.197@3306@cobra09
+
 /*
 - notion의 DB정리 페이지 참고
 - .env 파일에 mysql 연결 정보 개인에 따라 수정 필요
@@ -126,6 +124,12 @@ VALUES
 ('Smartphone11', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
 ('T-Shirt11', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
 ('Novel11', '2024-12-20', 10, 50, 'novel.jpg', 3, 1);
+
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+VALUES
+('Smartphone22', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
+('T-Shirt22', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
+('Novel22', '2024-12-20', 10, 50, 'novel.jpg', 3, 1);
 
 INSERT INTO
     Product (
