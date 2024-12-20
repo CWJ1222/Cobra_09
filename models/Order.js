@@ -6,7 +6,7 @@ const Order = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
-        autIncrement: true,
+        autoIncrement: true,
       },
       product_key: {
         type: DataTypes.INTEGER,

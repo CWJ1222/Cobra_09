@@ -44,12 +44,10 @@ exports.getAllProducts = async (req, res) => {
     res.status(200).send({ isSuccess: true, products });
   } catch (err) {
     console.log('err', err);
-    res
-      .status(200)
-      .send({
-        isSuccess: false,
-        message: '공동 구매 내역을 조회하는 중 오류가 발생했습니다.',
-      });
+    res.status(200).send({
+      isSuccess: false,
+      message: '공동 구매 내역을 조회하는 중 오류가 발생했습니다.',
+    });
   }
 };
 
@@ -66,12 +64,10 @@ exports.getAllJoins = async (req, res) => {
     res.status(200).send({ isSuccess: true, orders });
   } catch (err) {
     console.log('err', err);
-    res
-      .status(500)
-      .send({
-        isSuccess: false,
-        message: '구매 내역을 조회하는 중 오류가 발생했습니다.',
-      });
+    res.status(500).send({
+      isSuccess: false,
+      message: '구매 내역을 조회하는 중 오류가 발생했습니다.',
+    });
   }
 };
 

@@ -1,4 +1,4 @@
--- Active: 1734574129848@@127.0.0.1@3306@cobra09
+-- Active: 1734662496645@@175.121.178.197@3306@cobra09
 /*
 - notion의 DB정리 페이지 참고
 - .env 파일에 mysql 연결 정보 개인에 따라 수정 필요
@@ -84,9 +84,14 @@ INSERT INTO Category (category_id, category_name) VALUES
 (3, 'Books');
 
 -- user 테이블에 데이터 삽입
+-- INSERT INTO User (email, password, nickname, salt) VALUES
+-- ('soo@naver.com', "1234", "soo", "1234"),
+-- ('jin@naver.com', '5678', "jin", "5678");
+
+
 INSERT INTO User (email, password, nickname, salt) VALUES
-('soo@naver.com', "1234", "soo", "1234"),
-('jin@naver.com', '5678', "jin", "5678");
+('soo@naver.com', "202c188564fb28b2b7f617cf550297f77ae66cba5bd4307eb1c0eba3b5c736d333d10bf261ca0272f827158210db450a5a7d8185360c7f8d49da01f16e5651b4", "soo", "b8242edca244aac55b3e0dff8303d2cb"),
+('jin@naver.com', '6a06d42fc6d8fe33c1c3fb1f361a7978e6c933c7d2f97dae12c8389d303391672f2e2118c5e62c800313dee97f0a9b39a1e25a4b72f723b2a9820952d402809f', "jin", "b823e76363ee04926a992e17806adda6");
 
 -- product 테이블에 데이터 삽입
 INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)
@@ -113,3 +118,4 @@ SELECT * FROM user;
 SELECT * FROM product;
 SELECT * FROM order_item;
 
+DELETE user from user where user_id = 4;
