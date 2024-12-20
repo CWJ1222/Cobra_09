@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- axios -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"
+      integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <style>
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+  </head>
+  <body>
+    <form name="form-product">
+      <label>물품명<input type="text" name="name" /></label>
+      <label>마감기한<input type="date" name="deadline" /></label>
+      <label>가격<input type="number" name="price" /></label>
+      <label>최대 판매 수량<input type="number" name="max_quantity" /></label>
+      <label>물품 사진<input type="file" name="image" /></label>
+      <select name="category_id">
+        <option value="1">식품</option>
+        <option value="2">전자기기</option>
+        <option value="3">도서</option>
+        <option value="4">의류</option>
+      </select>
+      <button type="button" onclick="postProductInfo()">등록</button>
+    </form>
+    <script>
+      function postProductInfo() {
+        const form = document.forms['form-product'];
+        const formData = new FormData();
+        console.log('asdasdas', form.max_quantity.value);
+        formData.append('name', form.name.value);
+        formData.append('deadline', form.deadline.value);
+        formData.append('price', form.price.value);
+        formData.append('max_quantity', form.max_quantity.value);
+        formData.append('image', form.image.files[0]);
+        formData.append('category_id', form.category_id.value);
+        console.log('form.image.files[0]', form.image.files[0]);
+
+        axios({
+          url: '/host/register',
+          method: 'post',
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+          .then((res) => console.log(res))
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    </script>
+  </body>
+</html>

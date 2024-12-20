@@ -1,3 +1,4 @@
+-- Active: 1734574129848@@127.0.0.1@3306@cobra09
 /*
 - notion의 DB정리 페이지 참고
 - .env 파일에 mysql 연결 정보 개인에 따라 수정 필요
@@ -88,25 +89,9 @@ VALUES (1, 'Electronics'),
     (3, 'Books');
 
 -- user 테이블에 데이터 삽입
-INSERT INTO
-    User (
-        email,
-        password,
-        nickname,
-        salt
-    )
-VALUES (
-        'soo@naver.com',
-        "1234",
-        "soo",
-        "1234"
-    ),
-    (
-        'jin@naver.com',
-        '5678',
-        "jin",
-        "5678"
-    );
+INSERT INTO User (email, password, nickname, salt) VALUES
+('soo@naver.com', "1234", "soo", "1234"),
+('jin@naver.com', '5678', "jin", "5678");
 
 -- product 테이블에 데이터 삽입
 
@@ -163,31 +148,16 @@ VALUES (
 
 
 -- order_item 테이블에 데이터 삽입
-INSERT INTO
-    Order_item (
-        order_item_id,
-        product_key,
-        user_id,
-        quantity,
-        address,
-        phone
-    )
-VALUES (
-        1,
-        1,
-        1,
-        2,
-        '123 Main St, Seoul',
-        '010-1234-5678'
-    ),
-    (
-        2,
-        2,
-        2,
-        1,
-        '456 Elm St, Busan',
-        '010-5678-1234'
-    );
+INSERT INTO Order_item (
+    order_item_id, 
+    product_key, 
+    user_id, 
+    quantity, 
+    address, 
+    phone
+) VALUES
+(1, 1, 1, 2, '123 Main St, Seoul', '010-1234-5678'),
+(2, 2, 2, 1, '456 Elm St, Busan', '010-5678-1234');
 
 -- 테이블에 다 데이터 담겨있는지 확인
 SELECT * FROM category;
@@ -197,3 +167,4 @@ SELECT * FROM user;
 SELECT * FROM product;
 
 SELECT * FROM order_item;
+
