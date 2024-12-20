@@ -1,3 +1,4 @@
+-- Active: 1732688779058@@127.0.0.1@3306@cobra09
 /*
 - notion의 DB정리 페이지 참고
 - .env 파일에 mysql 연결 정보 개인에 따라 수정 필요
@@ -5,12 +6,15 @@
 create database cobra09; -- cobra09 데이터베이스 생성
 
 use cobra09; -- cobra09 데이터베이스 사용
+DROP DATABASE cobra09;
 
 -- Category 테이블 생성
 CREATE TABLE Category (
     category_id INT PRIMARY KEY, -- 카테고리 ID (Primary Key)
     category_name VARCHAR(255) NOT NULL -- 카테고리 이름
 );
+
+DROP TABLE user
 
 -- User 테이블 생성
 CREATE TABLE User (
@@ -98,4 +102,7 @@ SELECT * FROM category;
 SELECT * FROM user;
 SELECT * FROM product;
 SELECT * FROM order_item;
+select * from mysql.user;
+
+show DATABASES;
 

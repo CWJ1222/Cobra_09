@@ -10,5 +10,8 @@ router.get('/sell', controller.sell); //판매 페이지
 router.get('/products', controller.getAllProducts);
 router.get('/joins', controller.getAllJoins);
 router.get('/auth', controller.login);
+router.get('/user', controller.getAllUser);
+router.get('/user/my-page', controller.getUser);
+router.patch('/user', controller.patchUser);
 
 module.exports = router;

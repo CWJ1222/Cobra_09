@@ -85,6 +85,10 @@ app.use('/activePurchases', productRouter);
 const memberRouter = require('./routes/member'); // member 라우터 불러오기
 app.use('/member', memberRouter); // /member 경로에 라우터 연결
 
+// app.get('/mypage', (req, res) => {
+//   res.render('mypage');
+// });
+
 app.get('*', (req, res) => {
   res.render('404');
 });

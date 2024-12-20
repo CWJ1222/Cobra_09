@@ -44,12 +44,10 @@ exports.getAllProducts = async (req, res) => {
     res.status(200).send({ isSuccess: true, products });
   } catch (err) {
     console.log('err', err);
-    res
-      .status(200)
-      .send({
-        isSuccess: false,
-        message: '공동 구매 내역을 조회하는 중 오류가 발생했습니다.',
-      });
+    res.status(200).send({
+      isSuccess: false,
+      message: '공동 구매 내역을 조회하는 중 오류가 발생했습니다.',
+    });
   }
 };
 
@@ -66,19 +64,18 @@ exports.getAllJoins = async (req, res) => {
     res.status(200).send({ isSuccess: true, orders });
   } catch (err) {
     console.log('err', err);
-    res
-      .status(500)
-      .send({
-        isSuccess: false,
-        message: '구매 내역을 조회하는 중 오류가 발생했습니다.',
-      });
+    res.status(500).send({
+      isSuccess: false,
+      message: '구매 내역을 조회하는 중 오류가 발생했습니다.',
+    });
   }
 };
 
 // /user
 exports.getAllUser = async (req, res) => {
   try {
-    const target = req.session.user.user_pk;
+    // const target = req.session.user.user_pk;
+    const target = 1;
     const user = await User.findOne({
       where: { user_id: target },
       attributes: ['email', 'nickname'],
@@ -90,6 +87,23 @@ exports.getAllUser = async (req, res) => {
       .status(500)
       .send({ isSuccess: false, message: '사용자 정보가 없습니다.' });
   }
+};
+////////////////태원: my-page render////////////////////
+exports.getUser = (req, res) => {
+  console.log(req.body);
+  res.render('mypage', { nickName: 'testname', email: 'testemail' });
+};
+////////////////정보 수정 요청///////////////////////////
+exports.patchUser = (req, res) => {
+  console.log(req.body);
+  // res.send('수정완료', { nickName: 'editname', email: 'editemail' });
+  res.send(req.body);
+  /////////////////이메일 중복 확인////////////////////////////////////
+  // const existingUser = await User.findOne({ where: { email } }); //
+  //     if (existingUser) {                                        //
+  //       return res.status(400).send('이미 존재하는 이메일입니다.');//
+  //     }                                                          //
+  ////////////////////////////////////////////////////////////////////
 };
 
 exports.login = (req, res) => {
