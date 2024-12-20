@@ -109,6 +109,20 @@ VALUES (
     );
 
 -- product 테이블에 데이터 삽입
+
+--이미지 경로 문제때문에 실제 파일명으로 입력받아야함
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+VALUES
+('Smartphone', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
+('T-Shirt', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
+('Novel', '2024-12-20', 10, 50, 'novel.jpg', 3, 1);
+
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+VALUES
+('Smartphone11', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
+('T-Shirt11', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
+('Novel11', '2024-12-20', 10, 50, 'novel.jpg', 3, 1);
+
 INSERT INTO
     Product (
         name,
@@ -146,6 +160,7 @@ VALUES (
         3,
         1
     );
+
 
 -- order_item 테이블에 데이터 삽입
 INSERT INTO
