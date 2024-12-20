@@ -139,7 +139,8 @@ exports.loginKakaoUser = async (req, res, next) => {
         email: req.kakao_user_info.email,
         password: 'kakao_default', // 카카오에서 얻는 정보에는 pw가 없어서 임의 값 할당 -  추후 랜덤값으로 변경
         nickname: req.kakao_user_info.nickname,
-        salt: 'kakao_default', // salt 임의값
+        salt: 'kakao_default',
+        user_type: '2', // salt 임의값
       });
       req.session.user = {
         user_pk: createResult.user_id,
@@ -167,20 +168,28 @@ exports.loginKakaoUser = async (req, res, next) => {
 
 // 로그아웃 처리(일반 로그인 + 카카오 로그인의 세션 삭제)
 // 카카오 유저인 경우 get /auth/kakao/logout 으로 리다이렉트 요청됨
-exports.logoutUser = (req, res) => {
-  const user_type = 'kakao'; // 유저 타입 구분
-  if (false) {
-    req.session.destroy((err) => {
-      if (err) {
-        res.status(500).send({ isSuccess: true, message: '서버 에러 발생' });
-      }
-      res.clearCookie('connect.sid');
-      res.redirect('/');
+exports.logoutUser = async (req, res) => {
+  try {
+    const findResult = await db.User.findOne({
+      where: { user_id: req.session.user.user_pk },
+      attributes: ['user_id', 'email', 'password', 'nickname', 'user_type'],
     });
-  } else {
-    res.redirect(
-      `${process.env.KAKAO_LOGOUT_URI}?client_id=${process.env.KAKAO_CLIENT_ID}&logout_redirect_uri=${process.env.KAKAO_LOGOUT_REDIRECT_URI}`
-    );
+    const user_type = findResult.dataValues.user_type; // 유저 타입 구분
+    if (user_type === 'normal') {
+      req.session.destroy((err) => {
+        if (err) {
+          res.status(500).send({ isSuccess: true, message: '로그아웃 성공' });
+        }
+        res.clearCookie('connect.sid');
+        res.redirect('/');
+      });
+    } else {
+      res.redirect(
+        `${process.env.KAKAO_LOGOUT_URI}?client_id=${process.env.KAKAO_CLIENT_ID}&logout_redirect_uri=${process.env.KAKAO_LOGOUT_REDIRECT_URI}`
+      );
+    }
+  } catch (err) {
+    res.status(400).send({ isSuccess: false, message: '서버 에러' });
   }
 };
 
@@ -195,7 +204,6 @@ exports.logoutKaKaoUser = (req, res) => {
     res.clearCookie('connect.sid');
     res.redirect('/');
   });
-  redirect('/');
 };
 
 // kakao 로그인 후에 서버로부터 쿼리스트링으로 인가코드를 받음
