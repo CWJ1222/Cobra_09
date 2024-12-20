@@ -170,7 +170,6 @@
             errorMessage.innerText = res.data.message;
           }
         } catch (err) {
-          const res = await axios.post('/member/signup', data);
           console.error('🚨회원가입 요청 중 에러 발생:', err);
           errorMessage.innerText = res.data.message;
         }

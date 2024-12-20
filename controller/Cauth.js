@@ -63,7 +63,7 @@ exports.isSessionInvalid = (req, res, next) => {
 // 로그인 페이지 렌더링
 // env 값 클라이언트 노출 시키지 않음
 exports.renderLoginPage = (req, res) => {
-  res.render('loginTest', {
+  res.render('login', {
     currentPage: 'login',
   });
 };
