@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mypage</title>
+    <link rel="stylesheet" href="/public/css/mypage.css" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1>mypage</h1>
+    <form name="userProfile">
+      <section class="q">
+        회원정보
+        <fieldset class="profileBox">
+          <legend>
+            닉네임
+            <input
+              type="text"
+              name="nickName"
+              value="<%=nickName%>"
+              readonly
+              required
+            />
+          </legend>
+          <legend>
+            이메일
+            <input
+              type="text"
+              name="email"
+              value="<%=email%>"
+              readonly
+              required
+            />
+          </legend>
+        </fieldset>
+
+        <div class="btn">
+          <button type="button" onclick="profileEdit();">Edit</button>
+        </div>
+      </section>
+      <br />
+      <section class="q">구매내역 조회</section>
+      <br />
+      <section class="q">판매내역 조회</section>
+    </form>
+
+    <script>
+      function profileEdit() {
+        const form = document.forms['userProfile'];
+        const btnBox = document.querySelector('.btn');
+        const editName = form.nickName;
+        const editEmail = form.email;
+
+        console.log(editName);
+        editName.removeAttribute('readonly');
+        editName.setAttribute('placeholder', form.nickName.value);
+        // editName.removeAttribute('value');
+        editName.value = '';
+
+        editEmail.removeAttribute('readonly');
+        editEmail.setAttribute('placeholder', form.email.value);
+        editEmail.value = '';
+
+        const editBtn = `
+           <button type="button" onclick="editDo()">수정완료</button>
+            <button type="button" onclick="editCancel()">리셋</button>`;
+        btnBox.innerHTML = editBtn;
+      }
+
+      async function editDo() {
+        const form = document.forms['userProfile'];
+
+        try {
+          const response = await axios({
+            method: 'patch',
+            url: '/user',
+            data: {
+              nickName: form.nickName.value,
+              email: form.email.value,
+            },
+          });
+          if (!form.nickName.checkValidity()) {
+            alert('이름을 입력해주세요');
+            return;
+          }
+          console.log(response.data);
+          alert('수정 성공');
+        } catch (err) {
+          console.error(err);
+        }
+
+        const btnBox = document.querySelector('.btn');
+        const editName = form.nickName;
+        const editEmail = form.email;
+        const editBtnsBox = form.editBtns;
+        // console.log(editName.value);
+
+        editName.setAttribute('readonly', '');
+        editName.removeAttribute('placeholder');
+        // editName.setAttribute('value', form.editName.placeholde);
+
+        editEmail.setAttribute('readonly', '');
+        editEmail.removeAttribute('placeholder');
+        // editName.setAttribute('value', form.editEmail.value);
+        const editBtn = `
+          <button type="button" onclick="profileEdit();">Edit</button>
+        `;
+        btnBox.innerHTML = editBtn;
+      }
+
+      function editCancel() {
+        const form = document.forms['userProfile'];
+        form.reset();
+      }
+    </script>
+  </body>
+</html>
