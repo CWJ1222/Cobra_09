@@ -25,4 +25,7 @@ router.get('/user/mypage', controller.getMyUser);
 // PUT, postChangeUser : 내 정보 수정
 router.put('/user', controller.postChangeUser);
 
+// DELETE, deleteMyUser : 탈퇴하기
+router.delete('/delete', controller.deleteMyUser);
+
 module.exports = router;

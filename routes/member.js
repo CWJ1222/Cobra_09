@@ -8,6 +8,4 @@ router.post('/signup', controller.signup);
 
 router.get('/deleteTest', controller.deleteTest);
 
-router.delete('/delete', controller.delete);
-
 module.exports = router;

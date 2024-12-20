@@ -148,3 +148,25 @@ exports.getProduct = async (req, res) => {
       .send({ isSuccess: false, message: '서버 오류가 발생했습니다.' });
   }
 };
+
+// DELETE '/delete' 회원 탈퇴 (아예 삭제)
+exports.deleteMyUser = async (req, res) => {
+  try {
+    // user_id 가져옴
+    const target = req.session.user.user_pk;
+    const deleteresult = await User.destroy({
+      where: { user_id: target },
+    });
+
+    if (deleteresult === 0) {
+      return res.status(404).send({
+        isSuccess: false,
+        message: '해당 사용자를 찾을 수 없습니다.',
+      });
+    }
+    res.status(200).send({ isSuccess: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: '서버 오류가 발생했습니다.' });
+  }
+};

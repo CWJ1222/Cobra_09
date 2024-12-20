@@ -201,7 +201,21 @@ VALUES (
 SELECT * FROM category;
 
 SELECT * FROM user;
-
+SELECT * FROM User WHERE user_id = 9;
 SELECT * FROM product;
 
 SELECT * FROM order_item;
+
+INSERT INTO
+    User (
+        email,
+        password,
+        nickname,
+        salt
+    )
+VALUES (
+        'soo@naver.com',
+        "1234",
+        "soo",
+        "1234"
+    )
