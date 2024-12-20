@@ -61,7 +61,7 @@ exports.getAllJoins = async (req, res) => {
     const orders = await Order.findAll({
       where: { user_id: target }, // user_id == host_id 같은 의미!
       attributes: ['quantity'],
-      include: [{ model: Product, attributes: ['name', 'host_id'] }],
+      include: [{ model: Product, attributes: ['name', 'user_id'] }],
     });
     res.status(200).send({ isSuccess: true, orders });
   } catch (err) {
@@ -89,6 +89,22 @@ exports.getAllUser = async (req, res) => {
     res
       .status(500)
       .send({ isSuccess: false, message: '사용자 정보가 없습니다.' });
+  }
+};
+
+// 특정 하나의 판매 물품만 가져옴 - GET /host/list/:id
+exports.getProduct = async (req, res) =>{
+  try{
+    const product_id = 1; // 임시 product_id
+    const product = await Product.findOne({
+      where: {product_key : product_id},
+      attributes : ['name', 'deadline', 'price', 'user_id', 'max_quantity', 'image', 'category_id'],
+      
+    });
+    res.status(200).send({isSuccess:true, product});
+  } catch(err) {
+    console.log('err', err);
+    res.status(200).send({isSuccess: false});
   }
 };
 
