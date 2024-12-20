@@ -27,6 +27,36 @@ exports.isSessionValid = (req, res, next) => {
   }
 };
 
+// PUT /user -> 내 정보 바꾸기 api
+exports.postChangeUser = async (req, res) => {
+  try{
+    const user = req.session.user.user_pk;
+    const change_email = 'change@naer.com' // 임시 이메일 (클라이언트에서 받아오는 것)
+    const change_nickname = 'change'// 임시 닉네임 (클라이언트에서 받아오는 것)
+    
+    const result_change = await User.update(
+      {
+      nickname : change_nickname,
+      email : change_email
+      },
+      {
+        where : {
+          user_id : user
+        }
+      }
+    );
+    // 성공하면 1로 받아옴!
+    if (result_change[0] > 0) {
+      res.status(200).send({isSuccess: true});
+    } else {
+      res.status(200).send({isSuccess:false})
+    }
+  } catch(err) {
+    console.log('err', err);
+    res.status(200).send({isSuccess:false});
+  }
+}
+
 exports.getAllProducts = async (req, res) => {
   try {
     console.log(req.session.user);
@@ -59,7 +89,7 @@ exports.getAllJoins = async (req, res) => {
     const orders = await Order.findAll({
       where: { user_id: target }, // user_id == host_id 같은 의미!
       attributes: ['quantity'],
-      include: [{ model: Product, attributes: ['name', 'host_id'] }],
+      include: [{ model: Product, attributes: ['name', 'user_id'] }],
     });
     res.status(200).send({ isSuccess: true, orders });
   } catch (err) {
@@ -85,6 +115,22 @@ exports.getAllUser = async (req, res) => {
     res
       .status(500)
       .send({ isSuccess: false, message: '사용자 정보가 없습니다.' });
+  }
+};
+
+// 특정 하나의 판매 물품만 가져옴 - GET /host/list/:id
+exports.getProduct = async (req, res) =>{
+  try{
+    const product_id = 1; // 임시 product_id
+    const product = await Product.findOne({
+      where: {product_key : product_id},
+      attributes : ['name', 'deadline', 'price', 'user_id', 'max_quantity', 'image', 'category_id'],
+      
+    });
+    res.status(200).send({isSuccess:true, product});
+  } catch(err) {
+    console.log('err', err);
+    res.status(200).send({isSuccess: false});
   }
 };
 
