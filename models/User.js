@@ -24,6 +24,10 @@ const User = (sequelize, DataTypes) => {
         type: DataTypes.STRING(255), // salt 저장 필드 추가
         allowNull: false,
       },
+      user_type: {
+        type: DataTypes.ENUM('1', '2'),
+        allowNull: false,
+      },
     },
     {
       freezeTableName: true,

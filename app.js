@@ -31,6 +31,7 @@ app.use(
   })
 );
 
+<<<<<<< HEAD
 // multer 연결
 const upload = multer({
   storage: multer.diskStorage({
@@ -51,6 +52,8 @@ const upload = multer({
 
 // router 연결
 const purchaseRouter = require('./routes/purchase');
+=======
+>>>>>>> develop
 const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
 const productRouter = require('./routes/product');

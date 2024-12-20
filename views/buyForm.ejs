@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   </head>
   <body>
     <h1><%= product.name %> 구매하기</h1>
@@ -15,20 +16,57 @@
       style="max-width: 300px"
     />
     <form action="/purchase" method="POST">
+      <!-- Hidden Field -->
       <input
         type="hidden"
         name="product_key"
         value="<%= product.product_key %>"
       />
-      <label>수량: </label>
+
+      <!-- Quantity -->
+      <label for="quantity">수량: </label>
       <input
         type="number"
+        id="quantity"
         name="quantity"
         required
         min="1"
         max="<%= product.max_quantity %>"
       />
+
+      <!-- Address -->
+      <label for="address">주소: </label>
+      <input
+        type="text"
+        id="address"
+        name="address"
+        required
+        onclick="openSearch()"
+      />
+
+      <!-- Phone -->
+      <label for="phone">전화번호: </label>
+      <input type="text" id="phone" name="phone" required />
+
+      <!-- User ID (Manual Input for Testing) -->
+      <label for="user_id">사용자 ID: </label>
+      <input type="number" id="user_id" name="user_id" required />
+
       <button type="submit">구매하기</button>
     </form>
+    <script>
+      function openSearch() {
+        const inputAddress = document.querySelector('#address');
+        if (!inputAddress.value.trim().length) {
+          new daum.Postcode({
+            oncomplete: function (data) {
+              inputAddress.value = data.address;
+            },
+          }).open();
+        } else {
+          return;
+        }
+      }
+    </script>
   </body>
 </html>

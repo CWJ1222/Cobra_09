@@ -18,8 +18,7 @@ exports.registerProduct = (req, res) => {
     max_quantity: req.body.max_quantity,
     image: '/' + req.file.path,
     category_id: req.body.category_id,
-    // host_id: req.session.user,
-    user_id: 1,
+    user_id: req.session.user.user_pk,
   })
     .then((result) => console.log(result))
     .catch((err) => console.log(err));
