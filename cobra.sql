@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+-- Active: 1734662630414@@175.121.178.197@3306@cobra09
+=======
 -- Active: 1734662496645@@175.121.178.197@3306@cobra09
+>>>>>>> develop
 
 /*
 - notion의 DB정리 페이지 참고
@@ -199,18 +203,23 @@ VALUES (
 
 -- 테이블에 다 데이터 담겨있는지 확인
 SELECT * FROM category;
-<<<<<<< HEAD
-=======
 
 SELECT * FROM user;
-
+SELECT * FROM User WHERE user_id = 9;
 SELECT * FROM product;
 
 SELECT * FROM order_item;
->>>>>>> develop
 
-SELECT * FROM user;
-
-SELECT * FROM product;
-
-SELECT * FROM order_item;
+INSERT INTO
+    User (
+        email,
+        password,
+        nickname,
+        salt
+    )
+VALUES (
+        'soo@naver.com',
+        "1234",
+        "soo",
+        "1234"
+    )

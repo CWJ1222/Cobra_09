@@ -73,31 +73,3 @@ exports.signup = async (req, res) => {
     res.status(500).send('서버 오류');
   }
 };
-
-// **3. 회원 탈퇴 요청 처리 (DELETE)**
-exports.delete = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return res
-        .status(404)
-        .send({ message: '이메일 또는 비밀번호가 잘못되었습니다.' });
-    }
-
-    // 비밀번호 검증
-    const isPasswordValid = verifyPassword(password, user.salt, user.password);
-    if (!isPasswordValid) {
-      return res
-        .status(404)
-        .send({ message: '이메일 또는 비밀번호가 잘못되었습니다.' });
-    }
-
-    await User.destroy({ where: { email } });
-    res.status(200).send({ message: '회원 탈퇴가 완료되었습니다.' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: '서버 오류' });
-  }
-};
