@@ -15,6 +15,7 @@ router.get('/auth', controller.login);
 
 // 특정 물품 정보 가져오기
 router.get('/host/list/:id', controller.getProduct);
+router.get('/user/mypage', controller.getAllUser);
 
 // 내 정보 수정
 router.put('/user', controller.postChangeUser);

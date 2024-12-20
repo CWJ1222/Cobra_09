@@ -9,3 +9,7 @@ form {
   height: 200px;
   background-color: pink;
 }
+
+.section.hide {
+  display: none;
+}

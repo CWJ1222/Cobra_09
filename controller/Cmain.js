@@ -14,7 +14,22 @@ exports.purchase = (req, res) => {
 exports.sell = (req, res) => {
   res.render('sell', { title: '판매 페이지', currentPage: 'sell' });
 };
-
+////////////////////////////////////////////////////////////////////////////////
+// 구매 내역 페이지
+exports.myBuyPage = (req, res) => {
+  res.render('mybuypage', {
+    title: '구매 내역 페이지',
+    currentPage: 'mybuypage',
+  });
+};
+// 판매 내역 페이지
+exports.mySellPage = (req, res) => {
+  res.render('mysellpage', {
+    title: '판매 내역 페이지',
+    currentPage: 'mysellpage',
+  });
+};
+/////////////////////////////////////////////////////////////////////////////////
 // 세션이 있는지를 검증
 exports.isSessionValid = (req, res, next) => {
   if (req.session.user) {
@@ -29,33 +44,34 @@ exports.isSessionValid = (req, res, next) => {
 
 // PUT /user -> 내 정보 바꾸기 api
 exports.postChangeUser = async (req, res) => {
-  try{
-    const user = req.session.user.user_pk;
-    const change_email = 'change@naer.com' // 임시 이메일 (클라이언트에서 받아오는 것)
-    const change_nickname = 'change'// 임시 닉네임 (클라이언트에서 받아오는 것)
-    
+  try {
+    // const user = req.session.user.user_pk;
+    const user = 1;
+    const change_password = req.body.password; // 임시 이메일 (클라이언트에서 받아오는 것)
+    const change_nickname = req.body.nickName; // 임시 닉네임 (클라이언트에서 받아오는 것)
+
     const result_change = await User.update(
       {
-      nickname : change_nickname,
-      email : change_email
+        nickname: change_nickname,
+        password: change_password,
       },
       {
-        where : {
-          user_id : user
-        }
+        where: {
+          user_id: user,
+        },
       }
     );
     // 성공하면 1로 받아옴!
     if (result_change[0] > 0) {
-      res.status(200).send({isSuccess: true});
+      res.status(200).send({ isSuccess: true });
     } else {
-      res.status(200).send({isSuccess:false})
+      res.status(200).send({ isSuccess: false });
     }
-  } catch(err) {
+  } catch (err) {
     console.log('err', err);
-    res.status(200).send({isSuccess:false});
+    res.status(200).send({ isSuccess: false });
   }
-}
+};
 
 exports.getAllProducts = async (req, res) => {
   try {
@@ -101,15 +117,17 @@ exports.getAllJoins = async (req, res) => {
   }
 };
 
-// /user
+// /user/mypage
 exports.getAllUser = async (req, res) => {
   try {
-    const target = req.session.user.user_pk;
+    // const target = req.session.user.user_pk;
+    const target = 1;
     const user = await User.findOne({
       where: { user_id: target },
-      attributes: ['email', 'nickname'],
+      attributes: ['password', 'nickname', 'email'],
     });
-    res.status(200).send({ isSuccess: true, user });
+    res.status(200).render('mypage', { isSuccess: true, user });
+    console.log(target);
   } catch (err) {
     console.log('err', err);
     res
@@ -119,18 +137,25 @@ exports.getAllUser = async (req, res) => {
 };
 
 // 특정 하나의 판매 물품만 가져옴 - GET /host/list/:id
-exports.getProduct = async (req, res) =>{
-  try{
+exports.getProduct = async (req, res) => {
+  try {
     const product_id = 1; // 임시 product_id
     const product = await Product.findOne({
-      where: {product_key : product_id},
-      attributes : ['name', 'deadline', 'price', 'user_id', 'max_quantity', 'image', 'category_id'],
-      
+      where: { product_key: product_id },
+      attributes: [
+        'name',
+        'deadline',
+        'price',
+        'user_id',
+        'max_quantity',
+        'image',
+        'category_id',
+      ],
     });
-    res.status(200).send({isSuccess:true, product});
-  } catch(err) {
+    res.status(200).send({ isSuccess: true, product });
+  } catch (err) {
     console.log('err', err);
-    res.status(200).send({isSuccess: false});
+    res.status(200).send({ isSuccess: false });
   }
 };
 
