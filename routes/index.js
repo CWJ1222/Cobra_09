@@ -13,4 +13,10 @@ router.get('/products', controller.getAllProducts);
 router.get('/joins', controller.getAllJoins);
 router.get('/auth', controller.login);
 
+// 특정 물품 정보 가져오기
+router.get('/host/list/:id', controller.getProduct);
+
+// 내 정보 수정
+router.put('/user', controller.postChangeUser);
+
 module.exports = router;

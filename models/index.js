@@ -29,7 +29,7 @@ ProductModel.belongsTo(CategoryModel, {
 // 1 : N 관계
 UserModel.hasMany(ProductModel, { foreignKey: 'user_id', onDelete: 'CASCADE' });
 ProductModel.belongsTo(UserModel, {
-  foreignKey: 'host_id',
+  foreignKey: 'user_id',
   onDelete: 'CASCADE',
 });
 
