@@ -20,6 +20,18 @@
       #register-button:hover {
         background-color: var(--color-secondary);
       }
+
+      .oauthButton {
+        width: 250px;
+        height: 25px;
+      }
+
+      .oauthButton img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
       .error-message {
         color: red;
       }
@@ -54,10 +66,24 @@
           required
         />
         <br /><br />
-        <button type="button" id="login-button">로그인</button>
+
+        <!-- 로그인 영역 -->
+        <div class="loginContainer">
+          <button type="button" class="loginButton" id="login-button">
+            이메일 로그인
+          </button>
+          <a class="loginButton" href="/auth/kakao">
+            <img src="../public/img/oauthKakao.png" alt="카카오로 시작하기" />
+          </a>
+          <button type="button" class="loginButton">구글 로그인</button>
+          <div id="error" class="error-message"></div>
+        </div>
+
+        <!-- 백엔드 테스트를 위한 로그아웃 버튼 -->
+        <a href="/auth/logout">로그아웃</a>
+
         <!-- (todo) 회원가입 페이지로 이동 -->
         <button type="button" id="signup-button">회원가입</button>
-        <div id="error" class="error-message"></div>
       </form>
     </main>
 
@@ -73,6 +99,7 @@
 
       signupButton.addEventListener('click', () => {
         window.location.href = '/member/signup';
+        console.log('click');
       });
     });
 
@@ -96,7 +123,7 @@
       console.log('로그인 데이터', data);
 
       try {
-        const res = await axios.post('/auth/login', data);
+        const res = await axios.post('/auth', data);
 
         if (res.data.isLogin) {
           alert(res.data.message);
@@ -114,6 +141,13 @@
         console.error('🚨로그인 요청 중 에러 발생:', err);
         document.getElementById('error').innerText = '🚨 서버 오류 발생';
       }
+    }
+
+    // 백엔드 테스트를 위한 로그아웃 (todo) 추후 마이페이지로 이동
+    function handleLogout() {
+      axios({ method: 'delete', url: '/auth' }).then((res) =>
+        console.log(res.data)
+      );
     }
   </script>
 </html>
