@@ -46,7 +46,7 @@
       .inputWrapper input {
         width: 100%;
         height: 50px;
-        padding: 20px;
+        padding: 10px 40px 10px 10px;
         border: 1px solid var(--color-secondary);
         font-size: 16px;
         outline: none;
@@ -80,6 +80,23 @@
       .errorMsg{
         font-size: 14px;
         color: var(--color-error)
+      }
+
+      /* 비밀번호 보기 숨기기 */
+      #toggleBtn{
+        position: absolute;
+        top: 40%;
+        right: 10px;
+        cursor: pointer;
+        color: var(--color-secondary);
+      }
+      #toggleBtn::before{
+        content: '\f070'; /* 눈 감김 */
+        font-family: fontAwesome;
+      }
+      #toggleBtn.show::before{
+        content: '\f06e'; /* 눈 뜸! */
+        font-family: fontAwesome;
       }
 
       /* 로그인 버튼 */
@@ -164,11 +181,13 @@
           <div class="inputWrapper">
             <input
             type="password"
+            id="password"
             name="pw"
             placeholder="비밀번호"
             aira-label="비밀번호"
             required/>
             <label for="password">비밀번호</label>
+            <span id="toggleBtn"></span>
           </div>
           <div id="error" class="errorMsg"></div>
           <button type="button" class="loginBtn email" id="login-button">
@@ -224,38 +243,64 @@
       const userId = form.id.value.trim();
       const password = form.pw.value.trim();
 
+      // 에러 메시지 영역 초기화
+      const errorMsg = document.getElementById('error');
+      errorMsg.innerText = '';
+
       // 유효성 검사
       if (!userId || !password) {
-        document.getElementById('error').innerText =
+        errorMsg.innerText =
           '아이디와 비밀번호를 모두 입력해주세요 🥹';
         return;
       }
 
       // 서버로 데이터 전송
+      // (todo) BE 상태코드 수정된 후 반영하여 수정해야함
       const data = { userId, password };
       console.log('로그인 데이터', data);
 
       try {
         const res = await axios.post('/auth', data);
 
-        if (res.data.isLogin) {
-          alert(res.data.nickname+'님, 안녕하세요! ' + res.data.message);
-          window.location.href = '/';
-        } else if (
-          res.data.message === '회원이 아닙니다.'
-        ) {
-          document.getElementById('error').innerText =
-            '가입되지 않은 사용자입니다. 회원가입을 먼저 진행해주세요🥹';
+        if (res.status===200) {
+            if(res.data.isLogin){
+              alert(`${res.data.nickname}님, 안녕하세요! ${res.data.message}`);
+            window.location.href = '/';
+            } else if(res.data.message === '회원이 아닙니다.' && !resultUser){
+              errorMsg.innerText = '가입되지 않은 사용자입니다. 회원가입을 먼저 진행해주세요.'
+            } else if(res.data.message==='비밀번호가 일치 하지 않습니다.'){
+              errorMsg.innerText= '비밀번호를 다시 한 번 확인해주세요.'
+            } else{
+              errorMsg.innerText=res.data.message||'알 수 없는 오류가 발생했습니다.'
+            }
+          
         } else {
-          document.getElementById('error').innerText = res.data.message;
+          // 서버 오류 응답
+          errorMsg.innerText = '서버 처리 중 문제가 발생했습니다.';
         }
       } catch (err) {
+        // 네트워크 또는 서버 내부 에러 처리
         console.error('🚨로그인 요청 중 에러 발생:', err);
         document.getElementById('error').innerText = '🚨 서버 오류 발생';
       }
     }
 
-    // 백엔드 테스트를 위한 로그아웃 (todo) 추후 마이페이지로 이동
+    // 비밀번호 보기/숨기기
+    document.getElementById('toggleBtn').addEventListener('click', ()=>{
+      const pw = document.getElementById('password')
+      const toggleBtn = document.getElementById('toggleBtn')
+      
+      if(pw.type === 'password'){
+        pw.setAttribute('type', 'text')
+        toggleBtn.classList.add('show')
+      }else{
+        pw.setAttribute('type', 'password')
+        toggleBtn.classList.remove('show')
+      }
+    })
+
+
+    // 백엔드 테스트를 위한 로그아웃 (todo) 추후 마이페이지로 기능 이동
     function handleLogout() {
       axios({ method: 'delete', url: '/auth' }).then((res) =>
         console.log(res.data)
