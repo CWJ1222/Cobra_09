@@ -213,12 +213,13 @@
             url: '/delete',
           });
           alert(' 탈퇴 성공');
+
           document.location.href = '/';
         } catch (err) {
           console.error(err);
         }
       }
-
+      // 구매, 판매 내역 조회 칸 보이기
       function changeSection(btn) {
         const mypageSection = document.querySelector('.mypage');
         const sellSection = document.querySelector('.sell');

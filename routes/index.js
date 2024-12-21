@@ -21,7 +21,7 @@ router.get('/host/list/:id', controller.getProduct);
 router.get('/user/mypage', controller.getAllUser);
 
 // GET, getMyUser : 마이페이지 렌더링 + 내 정보 보여주기
-router.get('/user/mypage', controller.getMyUser);
+// router.get('/user/mypage', controller.getMyUser);
 
 // PUT, postChangeUser : 내 정보 수정
 router.put('/user', controller.postChangeUser);

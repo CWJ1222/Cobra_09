@@ -107,7 +107,7 @@ exports.getAllUser = async (req, res) => {
       where: { user_id: target },
       attributes: ['password', 'nickname', 'email'],
     });
-    res.status(200).send({ isSuccess: true, user });
+    res.status(200).render('mypage', { isSuccess: true, user });
   } catch (err) {
     console.log('err', err);
     res.status(500).render('mypage', {
