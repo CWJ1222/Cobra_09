@@ -43,18 +43,83 @@
           <button type="button" onclick="profileEdit();">Edit</button>
         </div>
         <div class="logout-btn">
-          <button type="button" onclick="handleLogout()">로그아웃</button>
+          <a href="/auth/logout"> 로그아웃 </a>
         </div>
       </section>
-
-      <br />
-      <div class="profile-delete">
-        <button type="button" onclick="userDelete()">회원 탈퇴</button>
-      </div>
     </form>
 
-    <section class="q section buy hide">구매내역</section>
-    <section class="q section sell hide">판매 내역</section>
+    <section class="q section buy hide">
+      이거 살래! 내역
+      <div class="buyBox">
+        <div class="myBuy 1">
+          <a class="buyImg 1" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 참여 상품 1" />
+          </a>
+          <a class="buyProduct 1" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+        <div class="myBuy 2">
+          <a class="buyImg 2" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 참여 상품 2" />
+          </a>
+          <a class="buyProduct 2" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+        <div class="myBuy 3">
+          <a class="buyImg 3" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 참여 상품 3" />
+          </a>
+          <a class="buyProduct 3" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+      </div>
+      <a href="">더보기</a>
+    </section>
+    <section class="q section sell hide">
+      같이 살래? 내역
+      <div class="sellBox">
+        <div class="mySell 1">
+          <a class="sellImg 1" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 올린 상품 1" />
+          </a>
+          <a class="sellProduct 1" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+        <div class="mySell 2">
+          <a class="sellImg 2" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 올린 상품 1" />
+          </a>
+          <a class="buyProduct 2" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+        <div class="mySell 3">
+          <a class="sellImg 3" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 올린 상품 1" />
+          </a>
+          <a class="sellProduct 3" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+      </div>
+      <a href="">더보기</a>
+    </section>
 
     <button onclick="changeSection(this)" class="sell-btn">
       판매페이지 확인
@@ -63,6 +128,10 @@
       구매페이지 확인
     </button>
     <button onclick="changeSection(this)" class="my-btn">마이페이지</button>
+    <div class="profile-delete">
+      <button type="button" onclick="userDelete()">회원 탈퇴</button>
+    </div>
+
     <script>
       //회원 정보 수정
       function profileEdit() {
@@ -134,20 +203,6 @@
         form.reset();
       }
 
-      // 로그 아웃
-      async function handleLogout() {
-        try {
-          const response = await axios({
-            method: 'get',
-            url: '/auth/logout',
-          });
-          console.log(response.data);
-          alert(' 로그아웃 성공');
-        } catch (err) {
-          console.error(error);
-        }
-      }
-
       //회원 탈퇴
       async function userDelete() {
         const form = document.forms['userProfile'];
@@ -158,6 +213,7 @@
             url: '/delete',
           });
           alert(' 탈퇴 성공');
+          document.location.href = '/';
         } catch (err) {
           console.error(err);
         }

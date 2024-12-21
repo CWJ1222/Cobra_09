@@ -14,22 +14,7 @@ exports.purchase = (req, res) => {
 exports.sell = (req, res) => {
   res.render('sell', { title: '판매 페이지', currentPage: 'sell' });
 };
-////////////////////////////////////////////////////////////////////////////////
-// 구매 내역 페이지
-exports.myBuyPage = (req, res) => {
-  res.render('mybuypage', {
-    title: '구매 내역 페이지',
-    currentPage: 'mybuypage',
-  });
-};
-// 판매 내역 페이지
-exports.mySellPage = (req, res) => {
-  res.render('mysellpage', {
-    title: '판매 내역 페이지',
-    currentPage: 'mysellpage',
-  });
-};
-/////////////////////////////////////////////////////////////////////////////////
+
 // 세션이 있는지를 검증
 exports.isSessionValid = (req, res, next) => {
   if (req.session.user) {
