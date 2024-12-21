@@ -11,29 +11,131 @@
         flex-direction: column;
         align-items: center;
       }
-      button {
-        cursor: pointer;
-      }
-      #login-button:hover {
-        background-color: var(--color-secondary);
-      }
-      #register-button:hover {
-        background-color: var(--color-secondary);
+
+      /* 로그인 카드 레이아웃 */
+      .loginCard {
+        width: 340px;
+        padding: 50px 0;
+        text-align: center;
       }
 
-      .oauthButton {
-        width: 250px;
-        height: 25px;
+      .loginCard h1 {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
       }
 
-      .oauthButton img {
+      .loginCard p{
+        margin-bottom: 20px;
+      }
+
+      .loginCard form input {
         width: 100%;
-        height: 100%;
-        object-fit: contain;
+        padding: 8px;
+        margin: 10px 0;
+        
+        border-radius: 6px;
+        font-size: 14px;
       }
 
-      .error-message {
-        color: red;
+      /* 로그인 입력창 */
+      .inputWrapper {
+        position: relative;
+      }
+
+      .inputWrapper input {
+        width: 100%;
+        height: 50px;
+        padding: 20px;
+        border: 1px solid var(--color-secondary);
+        font-size: 16px;
+        outline: none;
+        transition: all 0.4s ease-in-out;
+      }
+
+      .inputWrapper label {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(50%);
+        color: transparent;
+        font-size: 16px;
+        pointer-events: none;
+        transition: all 0.3s ease;
+        pointer-events: none;
+      }
+
+      /* 로그인 입력창 활성화 상태 */
+      .inputWrapper input:focus::placeholder{
+        color: transparent;
+      }
+      .inputWrapper input:focus + label,
+      .inputWrapper input:not(:placeholder-shown) + label {
+        top: 5px; /* 입력창 좌측 상단으로 이동 */
+        left: 10px;
+        font-size: 12px;
+        color: var(--color-text-sub);
+      }
+
+      .errorMsg{
+        font-size: 14px;
+        color: var(--color-error)
+      }
+
+      /* 로그인 버튼 */
+      .loginBtn {
+        width: 100%;
+        padding: 12px;
+        background-color: var(--color-primary-light);
+        color: var(--color-primary);
+        border: none;
+        font-size: 14px;
+        margin-bottom: 10px;
+        transition: all 0.4s ease-in-out;
+      }
+      .loginBtn:hover{
+        filter: brightness(0.9)
+      }
+      
+      .loginBtn.email{
+        margin-top: 20px;
+      }
+      /* OAuth 버튼 */
+      .loginBtn.kakao{
+        background-color: #ffe812;
+        color: #3c1e1e;
+      }
+
+      .loginBtn.naver {
+        background-color: #1ec800;
+        color: white;
+      }
+
+      /* 하단 링크 */
+      .loginFooter {
+        font-size: 14px;
+        margin-top: 40px;
+        color: var(--color-text);
+        position: relative; 
+      }
+
+      .loginFooter::before{
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: 0;;
+        width: 100%;
+        height: 1px;
+        background-color: var(--color-secondary);
+      }
+
+      .loginFooter a {
+        color: var(--color-text);
+        text-decoration: none;
+      }
+
+      .loginFooter a:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
@@ -43,47 +145,58 @@
 
     <!-- 본문 영역 (로그인) -->
     <main class="max-container">
-      <br />
-      <h1>여기는 로그인 페이지🏡</h1>
-      <br />
-      <form name="loginForm" id="loginForm">
-        <p>테스트 ID: soo@naver.com, PW: 1234</p>
-        <br />
-        <span>ID</span>
-        <input
-          type="text"
-          name="id"
-          placeholder="이메일을 입력해주세요"
-          required
-        />
-        <br />
-        <br />
-        <span>PW</span>
-        <input
-          type="password"
-          name="pw"
-          placeholder="비밀번호를 입력해주세요"
-          required
-        />
-        <br /><br />
-
-        <!-- 로그인 영역 -->
-        <div class="loginContainer">
-          <button type="button" class="loginButton" id="login-button">
-            이메일 로그인
+      
+      <!-- 로그인 카드 -->
+      <div class="loginCard">
+        <h1>로그인</h1>
+        <p>테스트 ID: test@naver.com, PW: 1234</p>
+        <!-- 로그인 폼 -->
+        <form id="loginForm" name="loginForm">
+          <div class="inputWrapper">
+            <input
+            type="text"
+            name="id"
+            placeholder="이메일"
+            aria-label="이메일"
+            required />
+            <label for="userId">이메일</label>
+          </div>
+          <div class="inputWrapper">
+            <input
+            type="password"
+            name="pw"
+            placeholder="비밀번호"
+            aira-label="비밀번호"
+            required/>
+            <label for="password">비밀번호</label>
+          </div>
+          <div id="error" class="errorMsg"></div>
+          <button type="button" class="loginBtn email" id="login-button">
+            이메일로 로그인하기
           </button>
-          <a class="loginButton" href="/auth/kakao">
-            <img src="../public/img/oauthKakao.png" alt="카카오로 시작하기" />
+          
+        </form>
+
+        <!-- OAuth 로그인 버튼 -->
+         <!-- (todo) 왼쪽에 아이콘 넣기 -->
+        <button class="loginBtn kakao">
+          <a href="/auth/kakao">
+            카카오로 시작하기
           </a>
-          <button type="button" class="loginButton">구글 로그인</button>
-          <div id="error" class="error-message"></div>
+        </button>
+        <!-- <button class="loginBtn naver">네이버로 시작하기</button> -->
+
+         <!-- 하단 링크 -->
+         <div class="loginFooter">
+          <a href="/">아이디/비밀번호 찾기</a> |
+          <a href="/member/signup">회원가입</a>
         </div>
+      </div>
 
         <!-- 백엔드 테스트를 위한 로그아웃 버튼 -->
-        <a href="/auth/logout">로그아웃</a>
-
-        <!-- (todo) 회원가입 페이지로 이동 -->
-        <button type="button" id="signup-button">회원가입</button>
+          <a href="/auth/logout">로그아웃</a>
+          <br>
+          <br>
       </form>
     </main>
 
@@ -126,11 +239,10 @@
         const res = await axios.post('/auth', data);
 
         if (res.data.isLogin) {
-          alert(res.data.message);
+          alert(res.data.nickname+'님, 안녕하세요! ' + res.data.message);
           window.location.href = '/';
         } else if (
-          !res.data.isLogin &&
-          res.data.message === '로그인 실패 했습니다.'
+          res.data.message === '회원이 아닙니다.'
         ) {
           document.getElementById('error').innerText =
             '가입되지 않은 사용자입니다. 회원가입을 먼저 진행해주세요🥹';
