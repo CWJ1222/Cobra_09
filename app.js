@@ -31,28 +31,44 @@ app.use(
   })
 );
 
+<<<<<<< HEAD
+// multer 연결
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+      const ext = path.extname(file.originalname); // .png, .pdf, ...
+      const filename = path.basename(file.originalname, ext) + Date.now() + ext;
+      cb(null, filename);
+      //   Date.now(): 1970.01.01 0시 0분 0초부터 현재까지 경과된 밀리초
+    },
+  }),
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+});
+
+// router 연결
+const purchaseRouter = require('./routes/purchase');
+=======
+>>>>>>> develop
 const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
 const productRouter = require('./routes/product');
-const hostRouter = require('./routes/host');
+const memberRouter = require('./routes/member');
 
 app.use('*', (req, res, next) => {
   console.log('req.session', req.session);
   next();
 });
-app.use('/', indexRouter);
 
+app.use('/', purchaseRouter);
+app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/activePurchases', productRouter);
-app.use('/host', hostRouter.router);
-
-//가입관련
-const memberRouter = require('./routes/member'); // member 라우터 불러오기
-app.use('/member', memberRouter); // /member 경로에 라우터 연결
-
-//구매페이지 관련
-const purchaseRouter = require('./routes/purchase'); // purchase 라우터 불러오기
-app.use('/', purchaseRouter); // /purchase 경로에 라우터 연결
+app.use('/member', memberRouter);
 
 app.get('*', (req, res) => {
   res.render('404');

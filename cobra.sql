@@ -1,3 +1,4 @@
+-- Active: 1734662496645@@175.121.178.197@3306@cobra09
 
 /*
 - notion의 DB정리 페이지 참고
@@ -198,6 +199,15 @@ VALUES (
 
 -- 테이블에 다 데이터 담겨있는지 확인
 SELECT * FROM category;
+<<<<<<< HEAD
+=======
+
+SELECT * FROM user;
+
+SELECT * FROM product;
+
+SELECT * FROM order_item;
+>>>>>>> develop
 
 SELECT * FROM user;
 
