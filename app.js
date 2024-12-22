@@ -51,7 +51,6 @@ const upload = multer({
 
 // router 연결
 const purchaseRouter = require('./routes/purchase');
-
 const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
 const productRouter = require('./routes/product');
