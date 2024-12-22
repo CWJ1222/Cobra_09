@@ -2,14 +2,20 @@
 :root {
   /* App Colors */
   --color-primary: var(--color-purple);
+  --color-primary-light: var(--color-purple-light);
   --color-secondary: var(--color-gray-light);
   --color-text: var(--color-black);
+  --color-text-sub: var(--color-gray);
+  --color-error: var(--color-red);
 
   /* colors */
   --color-white: #ffffff;
   --color-black: #050a13;
   --color-purple: #7309f6;
+  --color-purple-light: #eddfff;
+  --color-gray: #a6a6a6;
   --color-gray-light: #d5d5d3;
+  --color-red: #ff0000;
 
   /* Size */
   --size-max-width: 1200px;
