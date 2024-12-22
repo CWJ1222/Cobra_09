@@ -5,3 +5,4 @@ node_modules/
 uploads/*
 # 예외 처리: 폴더는 포함
 !uploads/.gitkeep
+.env
