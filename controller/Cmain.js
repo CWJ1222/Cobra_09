@@ -32,11 +32,9 @@ exports.isSessionValid = (req, res, next) => {
 // PUT /user -> 내 정보 수정 API
 exports.postChangeUser = async (req, res) => {
   try {
-    // session의 user_pk를 가져옴
     const user = req.session.user.user_pk;
-    console.log(req.body);
-    const change_password = req.body.password;
-    const change_nickname = req.body.nickName;
+    const change_email = 'change@naer.com'; // 임시 이메일 (클라이언트에서 받아오는 것)
+    const change_nickname = 'change'; // 임시 닉네임 (클라이언트에서 받아오는 것)
 
     const result_change = await User.update(
       {
@@ -53,17 +51,11 @@ exports.postChangeUser = async (req, res) => {
     if (result_change[0] > 0) {
       res.status(200).send({ isSuccess: true });
     } else {
-      res.status(400).send({
-        isSuccess: false,
-        message: '사용자 정보 수정 중 오류가 발생했습니다.',
-      });
+      res.status(200).send({ isSuccess: false });
     }
   } catch (err) {
     console.log('err', err);
-    res.status(500).send({
-      isSuccess: false,
-      message: '서버에서 요청을 처리하는 중 오류 발생했습니다.',
-    });
+    res.status(200).send({ isSuccess: false });
   }
 };
 
@@ -106,13 +98,14 @@ exports.getMyJoins = async (req, res) => {
   }
 };
 
-// GET '/user/mypage' -> 마이페이지 렌더링 + 내 정보 보내주는 API
-exports.getMyUser = async (req, res) => {
+// /user
+exports.getAllUser = async (req, res) => {
   try {
-    const target = req.session.user.user_pk;
+    // const target = req.session.user.user_pk;
+    const target = 1;
     const user = await User.findOne({
       where: { user_id: target },
-      attributes: ['email', 'nickname'],
+      attributes: ['password', 'nickname', 'email'],
     });
     res.status(200).render('mypage', { isSuccess: true, user });
   } catch (err) {
@@ -124,7 +117,7 @@ exports.getMyUser = async (req, res) => {
   }
 };
 
-// GET '/host/list/:id' -> 특정 하나의 판매 물품만 가져오는 API
+// 특정 하나의 판매 물품만 가져옴 - GET /host/list/:id
 exports.getProduct = async (req, res) => {
   try {
     const product_id = 1; // 임시 product_id
@@ -143,9 +136,7 @@ exports.getProduct = async (req, res) => {
     res.status(200).send({ isSuccess: true, product });
   } catch (err) {
     console.log('err', err);
-    res
-      .status(500)
-      .send({ isSuccess: false, message: '서버 오류가 발생했습니다.' });
+    res.status(200).send({ isSuccess: false });
   }
 };
 
