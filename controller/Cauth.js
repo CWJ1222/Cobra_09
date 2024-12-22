@@ -132,28 +132,40 @@ exports.loginKakaoUser = async (req, res, next) => {
         ...req.session.user,
         user_pk: createResult.user_id,
       };
-      res.status(200).send({
-        isLogin: true,
-        nickname: createResult.nickname,
-        message: '회원가입 후 로그인 성공',
+      req.token_for_msg = req.session.user.token.access_token;
+      this.sendKakaoMsg({
+        text: `카카오 회원가입 후 로그인 처리되었습니다.     ${new Date().toLocaleString(
+          'ko-KR'
+        )}`,
+      })(req, res, () => {
+        res.status(200).send({
+          isLogin: true,
+          nickname: createResult.nickname,
+          message: '회원가입 후 로그인 성공',
+        });
       });
+      // res.status(200).send({
+      //   isLogin: true,
+      //   nickname: createResult.nickname,
+      //   message: '회원가입 후 로그인 성공',
+      // });
     } else {
       req.session.user = {
         ...req.session.user,
         user_pk: findResult.user_id,
       };
       req.token_for_msg = req.session.user.token.access_token;
-      this.sendKakaoMsg({ text: '카카오 로그인 처리되었습니다.' })(
-        req,
-        res,
-        () => {
-          res.status(200).send({
-            isLogin: true,
-            nickname: findResult.nickname,
-            message: '로그인 성공',
-          });
-        }
-      );
+      this.sendKakaoMsg({
+        text: `카카오 로그인 처리되었습니다.     ${new Date().toLocaleString(
+          'ko-KR'
+        )}`,
+      })(req, res, () => {
+        res.status(200).send({
+          isLogin: true,
+          nickname: findResult.nickname,
+          message: '로그인 성공',
+        });
+      });
     }
   } catch (err) {
     console.log(err);
@@ -203,18 +215,18 @@ exports.logoutKaKaoUser = (req, res, next) => {
     if (err) {
       res
         .status(500)
-        .send({ isSuccess: true, message: '카카오 세션 삭제 실패' });
+        .send({ isSuccess: true, message: '카카오 유저 세션 삭제 실패' });
     }
-    console.log('this값은', this);
-    this.sendKakaoMsg({ text: '카카오 로그아웃 처리되었습니다.' })(
-      req,
-      res,
-      () => {
-        res.clearCookie('connect.sid');
-        res.redirect('/');
-      }
-    );
-    console.log('메세지 보낸 후 동작되는 부분');
+
+    this.sendKakaoMsg({
+      text: `카카오 로그아웃 처리되었습니다.     ${new Date().toLocaleString(
+        'ko-KR'
+      )}`,
+    })(req, res, () => {
+      res.clearCookie('connect.sid');
+      res.redirect('/');
+      console.log('메세지 보낸 후 동작되는 부분');
+    });
   });
 };
 
