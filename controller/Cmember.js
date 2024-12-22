@@ -63,13 +63,21 @@ exports.signup = async (req, res) => {
     // 비밀번호 암호화
     const { salt, hash } = hashPassword(password);
     // 사용자 생성
-    await User.create({ email, password: hash, nickname, salt });
+    await User.create({
+      email,
+      password: hash,
+      nickname,
+      salt,
+      user_type: '1',
+    });
     res
       .status(201)
       .send({ isSuccess: true, message: '회원가입이 완료되었습니다.' });
     // res.render('myInfoTest', { email: User.email, nickname: User.nickname });
   } catch (error) {
     console.error(error);
-    res.status(500).send('서버 오류');
+    res
+      .status(500)
+      .send({ isSuccess: false, message: '서버 오류가 발생했습니다.' });
   }
 };

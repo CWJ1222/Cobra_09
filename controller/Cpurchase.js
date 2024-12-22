@@ -23,10 +23,21 @@ exports.buyForm = async (req, res) => {
       return res.status(404).send('상품을 찾을 수 없습니다.');
     }
 
-    // 사용자 데이터를 추가 (테스트용: 임의의 user 객체 전달)
-    // const user = { id: 1, name: 'Test User' }; // 실제로는 로그인 세션이나 데이터베이스에서 가져와야 함
+    // 세션에서 사용자 ID 가져오기
+    const userId = req.session.user ? req.session.user.user_pk : null;
 
-    res.render('buyForm', { product });
+    // 사용자 ID가 없으면 로그인 페이지로 리다이렉트
+    // if (!userId) {
+    //   return res.redirect('/auth/login');
+    // }
+    // 로그인 후 원래 가려 했던 페이지로 이동하기
+    if (!userId) {
+      // 세션에 redirectUrl 저장
+      req.session.redirectUrl = `/buyform/${req.params.product_key}`;
+      return res.redirect('/auth/login'); // 쿼리스트링 제거
+    }
+
+    res.render('buyForm', { product, userId });
   } catch (error) {
     console.error(error);
     res.status(500).send('서버 오류');

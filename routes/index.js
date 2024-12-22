@@ -18,7 +18,10 @@ router.get('/join', controller.getMyJoins);
 
 // GET, getProduct : 특정 하나의 판매 물품만 가져오기
 router.get('/host/list/:id', controller.getProduct);
-router.get('/user/mypage', controller.getAllUser);
+// router.get('/user/mypage', controller.getAllUser);
+
+// 마이페이지 렌더링
+router.get('/user/mypage', controller.renderMypage);
 
 // GET, getMyUser : 마이페이지 렌더링 + 내 정보 보여주기
 // router.get('/user/mypage', controller.getMyUser);
