@@ -3,6 +3,7 @@ const axios = require('axios');
 require('dotenv').config();
 
 const crypto = require('crypto');
+const { where } = require('sequelize');
 // 비밀번호 암호화 함수
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString('hex'); // 랜덤 salt 생성
@@ -141,11 +142,18 @@ exports.loginKakaoUser = async (req, res, next) => {
         ...req.session.user,
         user_pk: findResult.user_id,
       };
-      res.status(200).send({
-        isLogin: true,
-        nickname: findResult.nickname,
-        message: '로그인 성공',
-      });
+      req.token_for_msg = req.session.user.token.access_token;
+      this.sendKakaoMsg({ text: '카카오 로그인 처리되었습니다.' })(
+        req,
+        res,
+        () => {
+          res.status(200).send({
+            isLogin: true,
+            nickname: findResult.nickname,
+            message: '로그인 성공',
+          });
+        }
+      );
     }
   } catch (err) {
     console.log(err);
@@ -188,16 +196,25 @@ exports.logoutUser = async (req, res) => {
 
 // 카카오 로그아웃 처리
 // 사용자가 브라우저 카카오 브라우저창에서 처리한 후 리다이렉션 되는 uri api
-exports.logoutKaKaoUser = (req, res) => {
+exports.logoutKaKaoUser = (req, res, next) => {
   console.log('카카오 유저 로그아웃 실행');
+  req.token_for_msg = req.session.user.token.access_token;
   req.session.destroy((err) => {
     if (err) {
       res
         .status(500)
         .send({ isSuccess: true, message: '카카오 세션 삭제 실패' });
     }
-    res.clearCookie('connect.sid');
-    res.redirect('/');
+    console.log('this값은', this);
+    this.sendKakaoMsg({ text: '카카오 로그아웃 처리되었습니다.' })(
+      req,
+      res,
+      () => {
+        res.clearCookie('connect.sid');
+        res.redirect('/');
+      }
+    );
+    console.log('메세지 보낸 후 동작되는 부분');
   });
 };
 
@@ -288,7 +305,9 @@ exports.getKakaoUserInfo = (req, res, next) => {
     });
 };
 
-// 카카오와 애플리케이션 연결 끊기(회원탈퇴)
+// 카카오와 애플리케이션 연결 끊기(회원탈퇴 - 동의창 새로 띄우기)
+// 엑세스, 리프레쉬 토큰 만료처리(로그아웃)도 같이 됨
+// 일반 회원탈퇴처리와 카카오 탈퇴처리를 어떻게 구분할것인지 ??
 exports.unlinkKakaoUser = (req, res) => {
   axios({
     url: process.env.KAKAO_UNLINK_URI,
@@ -300,7 +319,17 @@ exports.unlinkKakaoUser = (req, res) => {
     .then((result) => {
       // 카카오서버의 회원 id를 응답받음
       console.log(result.data);
-      res.send(result.data);
+      db.User.destroy({
+        where: {
+          user_id: req.session.user.user_pk,
+        },
+      })
+        .then((result) => {
+          console.log('카카오 탈퇴결과', result);
+          res.status(200).send({ message: '회원 탈퇴가 완료되었습니다.' });
+        })
+        .catch();
+      // res.send(result.data);
     })
     .catch((err) => {
       console.log(err);
@@ -387,4 +416,40 @@ exports.checkExpireKakaoToken = (req, res, next) => {
   } else {
     next();
   }
+};
+
+// 카카오 메세지 보내기
+
+exports.sendKakaoMsg = (template) => {
+  const data = {
+    template_object: JSON.stringify({
+      object_type: 'text',
+      text: template.text || '입력 텍스트가 없습니다.',
+      link: {
+        web_url: template.web_url || 'http://localhost:8080',
+        mobile_web_url: template.web_url || 'http://localhost:8080',
+      },
+    }),
+  };
+
+  return (req, res, next) => {
+    console.log('메세지 보내기 함수에서의 req', req.token_for_msg);
+    axios({
+      url: process.env.KAKAO_SEND_MSG_URI,
+      method: 'post',
+      data: data,
+      headers: {
+        Authorization: `Bearer ${req.token_for_msg}`,
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      },
+    })
+      .then((result) => {
+        console.log('메시지 보내기 result', result.data);
+        next();
+      })
+      .catch((err) => {
+        console.log('메시지 보내기 err', err);
+        next();
+      });
+  };
 };

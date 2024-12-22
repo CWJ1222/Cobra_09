@@ -33,4 +33,5 @@ router.get(
 router.get('/kakao/logout', controller.logoutKaKaoUser);
 module.exports = router;
 
+// 카카오 유저 회원탈퇴
 router.post('/kakao/unlink', controller.unlinkKakaoUser);
