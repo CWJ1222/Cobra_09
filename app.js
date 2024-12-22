@@ -50,24 +50,20 @@ app.use('*', (req, res, next) => {
   next();
 });
 
+// router 연결
+const purchaseRouter = require('./routes/purchase');
 const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
 const productRouter = require('./routes/product');
+const memberRouter = require('./routes/member');
 const hostRouter = require('./routes/host');
 
+app.use('/', purchaseRouter);
 app.use('/', indexRouter);
-
 app.use('/auth', authRouter);
 app.use('/activePurchases', productRouter);
-app.use('/host', hostRouter.router);
-
-//가입관련
-const memberRouter = require('./routes/member'); // member 라우터 불러오기
-app.use('/member', memberRouter); // /member 경로에 라우터 연결
-
-//구매페이지 관련
-const purchaseRouter = require('./routes/purchase'); // purchase 라우터 불러오기
-app.use('/', purchaseRouter); // /purchase 경로에 라우터 연결
+app.use('/member', memberRouter);
+app.use('/host', hostRouter);
 
 app.get('*', (req, res) => {
   res.render('404');

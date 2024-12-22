@@ -1,16 +1,18 @@
 const { Op } = require('sequelize');
 const { Category, Product, User, Order } = require('../models');
 
-/* FE: 렌더링 */
-// 홈페이지
+// GET '/' : 메인 페이지 렌더링
 exports.main = (req, res) => {
   res.render('index', { title: '홈페이지', currentPage: 'home' });
 };
-// 구매 페이지
+
+// 사용하고 있지 않음 API -> 수정 필요
 exports.purchase = (req, res) => {
   res.render('purchase', { title: '구매 페이지', currentPage: 'purchase' });
 };
-// 판매 페이지
+
+// 판매 페이지 -> 수정 필요
+// POST '/host/register' : 공동구매 진행하고 싶은 물품 등록
 exports.sell = (req, res) => {
   res.render('sell', { title: '판매 페이지', currentPage: 'sell' });
 };
@@ -27,67 +29,62 @@ exports.isSessionValid = (req, res, next) => {
   }
 };
 
-// PUT /user -> 내 정보 바꾸기 api
+// PUT /user -> 내 정보 수정 API
 exports.postChangeUser = async (req, res) => {
-  try{
+  try {
     const user = req.session.user.user_pk;
-    const change_email = 'change@naer.com' // 임시 이메일 (클라이언트에서 받아오는 것)
-    const change_nickname = 'change'// 임시 닉네임 (클라이언트에서 받아오는 것)
-    
+    const change_email = 'change@naer.com'; // 임시 이메일 (클라이언트에서 받아오는 것)
+    const change_nickname = 'change'; // 임시 닉네임 (클라이언트에서 받아오는 것)
+
     const result_change = await User.update(
       {
-      nickname : change_nickname,
-      email : change_email
+        nickname: change_nickname,
+        password: change_password,
       },
       {
-        where : {
-          user_id : user
-        }
+        where: {
+          user_id: user,
+        },
       }
     );
     // 성공하면 1로 받아옴!
     if (result_change[0] > 0) {
-      res.status(200).send({isSuccess: true});
+      res.status(200).send({ isSuccess: true });
     } else {
-      res.status(200).send({isSuccess:false})
+      res.status(200).send({ isSuccess: false });
     }
-  } catch(err) {
+  } catch (err) {
     console.log('err', err);
-    res.status(200).send({isSuccess:false});
+    res.status(200).send({ isSuccess: false });
   }
-}
+};
 
-exports.getAllProducts = async (req, res) => {
+// GET '/host/lists' -> 내가 주선한 공동구매 물품 보여주는 API
+exports.getMyProducts = async (req, res) => {
   try {
     console.log(req.session.user);
-    const target = req.session.user.user_pk; // 세션 user_id에서 받아올 것
+    const target = req.session.user.user_pk;
 
-    // products에서 user_id에 해당하는거 모두 가져옴
     const products = await Product.findAll({
-      where: { host_id: target }, // user_id == host_id 같은 의미!
+      where: { user_id: target },
       attributes: ['name', 'deadline', 'max_quantity'],
-
-      // include :[
-      //     {model : User, attributes: ['user_id']}
-      // ],
     });
     res.status(200).send({ isSuccess: true, products });
   } catch (err) {
     console.log('err', err);
-    res.status(200).send({
+    res.status(500).send({
       isSuccess: false,
-      message: '공동 구매 내역을 조회하는 중 오류가 발생했습니다.',
+      message: '서버 오류가 발생했습니다.',
     });
   }
 };
 
-// GET /joins
-exports.getAllJoins = async (req, res) => {
+// GET '/join' -> 내가 구매한 물품 모두 보여주는 API
+exports.getMyJoins = async (req, res) => {
   try {
-    const target = req.session.user.user_pk; // 세션 user_id에서 받아올 것
-    // order에서 user_id에 해당하는거 모두 가져옴
+    const target = req.session.user.user_pk;
     const orders = await Order.findAll({
-      where: { user_id: target }, // user_id == host_id 같은 의미!
+      where: { user_id: target },
       attributes: ['quantity'],
       include: [{ model: Product, attributes: ['name', 'user_id'] }],
     });
@@ -96,7 +93,7 @@ exports.getAllJoins = async (req, res) => {
     console.log('err', err);
     res.status(500).send({
       isSuccess: false,
-      message: '구매 내역을 조회하는 중 오류가 발생했습니다.',
+      message: '서버 오류가 발생했습니다.',
     });
   }
 };
@@ -104,36 +101,63 @@ exports.getAllJoins = async (req, res) => {
 // /user
 exports.getAllUser = async (req, res) => {
   try {
-    const target = req.session.user.user_pk;
+    // const target = req.session.user.user_pk;
+    const target = 1;
     const user = await User.findOne({
       where: { user_id: target },
-      attributes: ['email', 'nickname'],
+      attributes: ['password', 'nickname', 'email'],
     });
-    res.status(200).send({ isSuccess: true, user });
+    res.status(200).render('mypage', { isSuccess: true, user });
   } catch (err) {
     console.log('err', err);
-    res
-      .status(500)
-      .send({ isSuccess: false, message: '사용자 정보가 없습니다.' });
+    res.status(500).render('mypage', {
+      isSuccess: false,
+      message: '서버 오류가 발생했습니다.',
+    });
   }
 };
 
 // 특정 하나의 판매 물품만 가져옴 - GET /host/list/:id
-exports.getProduct = async (req, res) =>{
-  try{
+exports.getProduct = async (req, res) => {
+  try {
     const product_id = 1; // 임시 product_id
     const product = await Product.findOne({
-      where: {product_key : product_id},
-      attributes : ['name', 'deadline', 'price', 'user_id', 'max_quantity', 'image', 'category_id'],
-      
+      where: { product_key: product_id },
+      attributes: [
+        'name',
+        'deadline',
+        'price',
+        'user_id',
+        'max_quantity',
+        'image',
+        'category_id',
+      ],
     });
-    res.status(200).send({isSuccess:true, product});
-  } catch(err) {
+    res.status(200).send({ isSuccess: true, product });
+  } catch (err) {
     console.log('err', err);
-    res.status(200).send({isSuccess: false});
+    res.status(200).send({ isSuccess: false });
   }
 };
 
-exports.login = (req, res) => {
-  res.render('/login');
+// DELETE '/delete' 회원 탈퇴 (아예 삭제)
+exports.deleteMyUser = async (req, res) => {
+  try {
+    // user_id 가져옴
+    const target = req.session.user.user_pk;
+    const deleteresult = await User.destroy({
+      where: { user_id: target },
+    });
+
+    if (deleteresult === 0) {
+      return res.status(404).send({
+        isSuccess: false,
+        message: '해당 사용자를 찾을 수 없습니다.',
+      });
+    }
+    res.status(200).send({ isSuccess: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: '서버 오류가 발생했습니다.' });
+  }
 };

@@ -2,21 +2,31 @@ const express = require('express');
 const controller = require('../controller/Cmain');
 const router = express.Router();
 
-// FE: 메인페이지 뷰 테스트
-router.get('/', controller.main); //홈페이지
+// GET, main : 메인 페이지 렌더링
+router.get('/', controller.main);
 
 // router.get('/purchaseTest', controller.purchasepage); // 구매 페이지 purchase로 따로 만듬
 
-router.get('/sell', controller.sell); //판매 페이지
+// 확인 필요
+router.get('/sell', controller.sell);
 
-router.get('/products', controller.getAllProducts);
-router.get('/joins', controller.getAllJoins);
-router.get('/auth', controller.login);
+// GET, getMyProducts : 내가 주선한 공동구매 물품 가져오기
+router.get('/host/lists', controller.getMyProducts);
 
-// 특정 물품 정보 가져오기
+// GET, getMyJoins : 내가 구매한 물품 모두 가져오기
+router.get('/join', controller.getMyJoins);
+
+// GET, getProduct : 특정 하나의 판매 물품만 가져오기
 router.get('/host/list/:id', controller.getProduct);
+router.get('/user/mypage', controller.getAllUser);
 
-// 내 정보 수정
+// GET, getMyUser : 마이페이지 렌더링 + 내 정보 보여주기
+// router.get('/user/mypage', controller.getMyUser);
+
+// PUT, postChangeUser : 내 정보 수정
 router.put('/user', controller.postChangeUser);
+
+// DELETE, deleteMyUser : 탈퇴하기
+router.delete('/delete', controller.deleteMyUser);
 
 module.exports = router;
