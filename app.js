@@ -4,6 +4,8 @@ const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
 
+const authController = require('./controller/Cauth');
+
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -31,15 +33,28 @@ app.use(
   })
 );
 
+// 유효하지 않은 세션 쿠키 삭제
+app.use('*', (req, res, next) => {
+  if (!req.session.user) {
+    res.clearCookie('connect.sid');
+  }
+  next();
+});
+
+// 토큰 만료 검증
+app.use(authController.checkExpireKakaoToken);
+
+// 세션 체크
+app.use('*', (req, res, next) => {
+  console.log('req.session', req.session.user);
+  next();
+});
+
 const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
 const productRouter = require('./routes/product');
 const hostRouter = require('./routes/host');
 
-app.use('*', (req, res, next) => {
-  console.log('req.session', req.session);
-  next();
-});
 app.use('/', indexRouter);
 
 app.use('/auth', authRouter);
