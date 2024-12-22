@@ -6,9 +6,11 @@ exports.purchasePage = async (req, res) => {
   try {
     // Product 테이블에서 모든 데이터 가져오기
     const products = await Product.findAll();
+    // fe: 데이터 확인
+    console.log('상품', products);
 
     // 데이터를 purchaseTest.ejs로 전달
-    res.render('purchaseTest', { products, currentPage: 'purchaseTest' });
+    res.render('purchase', { products, currentPage: 'purchase' });
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).send('서버 오류');
