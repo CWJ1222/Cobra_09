@@ -161,3 +161,40 @@ exports.deleteMyUser = async (req, res) => {
     res.status(500).send({ message: '서버 오류가 발생했습니다.' });
   }
 };
+
+// POST '/wishlist/:product_key' 찜하기 기능
+exports.postWishlists = async (req, res) => {
+  try {
+    // const userId = req.session.user_pk;
+    const userId = 2; // 임시
+    const productKey = 2; // 임시
+
+    // db에서 상태 확인
+    const wishlist = await Wishlists.findOne({
+      where: { user_id: userId, product_key: productKey },
+    });
+
+    if (wishlist) {
+      // 위시 리스트에서 삭제
+      await wishlist.destroy();
+      return res.send({
+        isSuccess: true,
+        message: '위시 리스트에서 삭제되었습니다.',
+      });
+    } else {
+      await Wishlists.create({
+        user_id: userId,
+        product_key: productKey,
+      });
+      return res.send({
+        isSuccess: true,
+        message: '위시 리스트에 추가되었습니다.',
+      });
+    }
+  } catch (error) {
+    console.log('err', error);
+    return res
+      .status(500)
+      .send({ isSuccess: false, message: '서버 오류가 발생했습니다.' });
+  }
+};

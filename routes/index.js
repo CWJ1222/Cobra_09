@@ -29,4 +29,7 @@ router.put('/user', controller.postChangeUser);
 // DELETE, deleteMyUser : 탈퇴하기
 router.delete('/delete', controller.deleteMyUser);
 
+// POST, postWishlists : 찜하기 기능
+router.post('/wishlist/:product_key', controller.postWishlists);
+
 module.exports = router;
