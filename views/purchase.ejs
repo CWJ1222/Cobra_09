@@ -1,12 +1,197 @@
 <head>
   <%- include('include/head') %>
-  <title><%= title %></title>
+  <title><%#= title %></title>
+  <!-- (todo)public/css 분리 예정 -->
+  <style>
+
+    /* 상품 카테고리 필터 */
+    .categoryFilter {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .filterBtn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s ease, color 0.3s;
+    }
+
+    .filterBtn img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+      transition: transform 0.3s;
+    }
+
+    .filterBtn.clotehs img{
+      background-color: lightblue;
+      border-radius: 50%;
+      padding: 5px;
+    }
+
+    .filterBtn.books img {
+      background-color: #EDEDED; 
+      border-radius: 50%; 
+      padding: 5px;
+    }
+
+    .filterBtn span {
+      font-size: 14px;
+      color: var(--color-text);
+    }
+
+    .filterBtn.active img {
+      /* border: 2px solid var(--color-primary); */
+      transform: scale(1.1);
+    }
+
+    .filterBtn.active span {
+      font-weight: bold;
+      color: var(--color-primary);
+    }
+
+    .filterBtn:hover img {
+      transform: scale(1.1);
+    }
+    /* 상품 목록 */
+    .productGrid {
+      display: flex;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding: 30px;
+      flex-wrap:wrap;
+      margin: 0 30px;
+    }
+    .productCard {
+      background-color: var(--color-white);
+      border-radius: 9px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      position: relative;
+      text-align: center;
+      padding: 20px;
+      
+    }
+    .productCard img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      margin-bottom: 20px;
+      border-radius: 9px;
+    }
+    
+    .productDetails {
+      padding: 15px;
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: column;
+    }
+
+    .productName {
+      font-size: 18px;
+      margin: 10px 0;
+      color: var(--color-text);
+    }
+
+    .productPrice {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--color-text);
+      margin: 10px 0;
+    }
+
+    /* 좋아요 */
+  </style>
 </head>
 <body>
   <%- include('include/header') %>
   <br />
   <main class="max-container">
-    <h1>구매 페이지</h1>
-    <p>공동 구매를 진행해보세요!</p>
+    <!-- 카테고리 필터 -->
+    <ul class="categoryFilter">
+      <li>
+        <button class="filterBtn active" data-category="all">
+          <img src="/public/img/filter-all.png" alt="전체" />
+          <span>전체</span>
+        </button>
+      </li>
+      <li>
+        <button class="filterBtn" data-category="1">
+          <img src="/public/img/filter-electronics.png" alt="전자기기" />
+          <span>전자기기</span>
+        </button>
+      </li>
+      <li>
+        <button class="filterBtn clothes" data-category="2">
+          <img src="/public/img/filter-clothes.png" alt="의류" />
+          <span>의류</span>
+        </button>
+      </li>
+      <li>
+        <button class="filterBtn books" data-category="3">
+          <img src="/public/img/filter-books.png" alt="도서" />
+          <span>도서</span>
+        </button>
+      </li>
+    </ul>
+
+    <!-- 상품 목록 -->
+    <div class="productGrid max-container">
+      <% if(products && products.length > 0){ products.forEach((product)=>{ %>
+
+      <!-- 상품 카드 클릭 시 상품 구매 페이지 창 열기 -->
+      <a href="/buyform/<%= product.product_key %>" target="buyform" onclick="window.open(this.href, 'buyform', 'width=800,height=600'); return false;">
+        <!-- 상품 카드 -->
+        <div class="productCard" data-category-id="<%=product.category_id%>">
+            <img src="/public/img/<%=product.image%>" alt="<%=product.name%>" />
+            <div class="productDtails">
+              <div class="productName"><%=product.name%></div>
+              <div class="productPrice"><%=product.price%> 원</div>
+            </div>
+            <!-- (todo) 좋아요 -->
+          </div>
+          <% }) }else{ %>
+          <p>등록된 상품이 없습니다</p>
+          <% } %>
+        </div>
+      </a>
   </main>
 </body>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  const filterButtons = document.querySelectorAll('.filterBtn');
+  const productCards = document.querySelectorAll('.productCard');
+
+  // 상품 필터링 버튼
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      filterButtons.forEach((btn) => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      // 선택된 카테고리 가져오기
+      const selectedCategory = button.dataset.category;
+
+      // 상품 필터링
+      productCards.forEach((card) => {
+        const cardCategory = card.dataset.categoryId;
+        if (selectedCategory === 'all' || cardCategory === selectedCategory) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+});
+
+  // (Todo) 좋아요 기능
+</script>

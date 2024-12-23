@@ -11,7 +11,7 @@ router.post('/', controller.isSessionInvalid, controller.loginUser);
 // router.delete('/', controller.isSessionValid, controller.logoutUser);
 
 // 일반 유저 로그아웃
-router.get('/logout', controller.logoutUser);
+router.get('/logout', controller.isSessionValid, controller.logoutUser);
 
 // 카카오 로그인창 띄우기
 router.get(
@@ -32,3 +32,6 @@ router.get(
 // 카카오 로그아웃 리다이렉션 처리
 router.get('/kakao/logout', controller.logoutKaKaoUser);
 module.exports = router;
+
+// 카카오 유저 회원탈퇴
+router.post('/kakao/unlink', controller.unlinkKakaoUser);

@@ -170,6 +170,10 @@
         <!-- 로그인 폼 -->
         <form id="loginForm" name="loginForm">
           <div class="inputWrapper">
+
+            <!-- url전달시키기 -->
+            <input type="hidden" name="redirectUrl" value="<%= redirectUrl %>" />
+
             <input
             type="text"
             name="id"
@@ -265,7 +269,10 @@
         if (res.status===200) {
             if(res.data.isLogin){
               alert(`${res.data.nickname}님, 안녕하세요! ${res.data.message}`);
-            window.location.href = '/';
+            // window.location.href = '/';
+
+            window.location.href = res.data.redirectUrl || '/'; // 리다이렉트 URL로 이동
+
             } else if(res.data.message === '회원이 아닙니다.' && !resultUser){
               errorMsg.innerText = '가입되지 않은 사용자입니다. 회원가입을 먼저 진행해주세요.'
             } else if(res.data.message==='비밀번호가 일치 하지 않습니다.'){
