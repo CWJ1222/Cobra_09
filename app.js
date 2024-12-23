@@ -4,6 +4,8 @@ const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
 
+const authController = require('./controller/Cauth');
+
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -31,31 +33,14 @@ app.use(
   })
 );
 
-// 유효하지 않은 세션 쿠키 삭제
+// 세션 체크
 app.use('*', (req, res, next) => {
-  if (!req.session.user) {
-    res.clearCookie('connect.sid');
-  }
+  console.log('req.session', req.session.user);
   next();
 });
 
-// multer 연결
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-      const ext = path.extname(file.originalname); // .png, .pdf, ...
-      const filename = path.basename(file.originalname, ext) + Date.now() + ext;
-      cb(null, filename);
-      //   Date.now(): 1970.01.01 0시 0분 0초부터 현재까지 경과된 밀리초
-    },
-  }),
-  limits: {
-    fileSize: 5 * 1024 * 1024,
-  },
-});
+// 토큰 만료 검증
+app.use(authController.checkExpireKakaoToken);
 
 // router 연결
 const purchaseRouter = require('./routes/purchase');
@@ -64,6 +49,7 @@ const authRouter = require('./routes/auth');
 const productRouter = require('./routes/product');
 const memberRouter = require('./routes/member');
 const commentRouter = require('./routes/comment');
+const hostRouter = require('./routes/host');
 
 app.use('*', (req, res, next) => {
   console.log('req.session', req.session);
@@ -76,9 +62,7 @@ app.use('/auth', authRouter);
 app.use('/products', productRouter);
 app.use('/member', memberRouter);
 app.use('/comments', commentRouter);
-//판매탭 관련
-const hostRouter = require('./routes/host');
-app.use('/host', hostRouter.router);
+app.use('/host', hostRouter);
 
 app.get('*', (req, res) => {
   res.render('404');

@@ -1,4 +1,4 @@
--- Active: 1732688614523@@127.0.0.1@3306@cobra09
+-- Active: 1734662496645@@175.121.178.197@3306@cobra09
 
 /*
 - notion의 DB정리 페이지 참고
@@ -22,6 +22,7 @@ FLUSH PRIVILEGES;
 SELECT User, Host FROM mysql.user;
 
 ALTER TABLE user ADD COLUMN salt VARCHAR(255) NOT NULL;
+
 
 -- Category 테이블 생성
 CREATE TABLE Category (
@@ -67,6 +68,17 @@ CREATE TABLE Order_item (
     FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE -- 사용자 참조
 );
 
+-- 찜 기능 테이블
+CREATE TABLE Wishlists (
+    wishlist_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    product_key INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE, -- 사용자 삭제 시 관련 데이터도 삭제
+    FOREIGN KEY (product_key) REFERENCES Product(product_key) ON DELETE CASCADE,
+    UNIQUE (user_id, product_key)
+);
+
 -- 테이블 잘 만들어졌는지 확인
 DESC category;
 
@@ -75,6 +87,8 @@ DESC user;
 DESC product;
 
 DESC order_item;
+
+DESC Wishlists;
 
 -- 테스트를 위해 테이블에 데이터 삽입
 /*
@@ -208,11 +222,10 @@ SELECT * FROM user;
 SELECT * FROM product;
 
 SELECT * FROM order_item;
+>>>>>>> develop
 
 SELECT * FROM user;
 
 SELECT * FROM product;
 
 SELECT * FROM order_item;
-
-SELECT * FROM comment;

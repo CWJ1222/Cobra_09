@@ -46,7 +46,4 @@ router.post(
   hostController.registerProduct
 );
 
-module.exports = {
-  router,
-  profileUpload,
-};
+module.exports = router;

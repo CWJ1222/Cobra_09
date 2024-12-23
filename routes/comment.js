@@ -1,9 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controller/Ccomment');
+const commentController = require('../controller/Ccomment');
+const authController = require('../controller/Cauth');
 
-router.get('/', controller.getCommentsByProduct);
-router.post('/', controller.writeComment);
-router.delete('/', controller.removeComment);
+router.get('/', commentController.getCommentsByProduct);
+router.post('/', authController.isSessionValid, commentController.writeComment);
+router.delete(
+  '/',
+  authController.isSessionValid,
+  commentController.removeComment
+);
 
 module.exports = router;
