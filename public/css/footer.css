@@ -1,0 +1,97 @@
+li {
+  list-style-type: none;
+  display: flex;
+}
+
+#q {
+  width: 100px;
+  height: auto;
+  padding-top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+img {
+  width: 55px;
+  height: 55px;
+  border-radius: 15px;
+  /* margin-left: 40px; */
+}
+
+p {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 100;
+}
+/* teamIcon */
+.teamIcon {
+  width: calc(50vw);
+  height: auto;
+  text-align: end;
+}
+
+.teamName {
+  opacity: 0;
+}
+
+.teamIcon:hover {
+  transform: scale(1.2);
+  translate: -45px;
+  transition: 1s ease 0s;
+}
+
+.teamIcon:hover + .teamName {
+  opacity: 1;
+  transform: translateX(20px);
+  transition: 1s ease 0s;
+}
+
+/* teamGithub */
+.teamGithubIcon {
+  width: calc(50vw);
+  height: auto;
+  text-align: end;
+}
+
+.teamGithub {
+  opacity: 0;
+}
+
+.teamGithubIcon:hover {
+  transform: scale(1.2);
+  translate: -45px;
+  transition: 1s ease 0s;
+}
+
+.teamGithubIcon:hover + .teamGithub {
+  opacity: 1;
+  transform: translateX(20px);
+  transition: 1s ease 0s;
+}
+
+/* teamPlayer */
+.teamPlayers {
+  width: calc(50vw);
+  height: auto;
+  text-align: end;
+}
+
+.teamPlayersName {
+  opacity: 0;
+  width: 45vw;
+  height: auto;
+  padding-top: 15px;
+  font-size: 15px;
+}
+
+.teamPlayers:hover {
+  transform: scale(1.2);
+  translate: -45px;
+  transition: 1s ease 0s;
+}
+
+.teamPlayers:hover + .teamPlayersName {
+  opacity: 1;
+  transform: translateX(30px);
+  transition: 1s ease 0s;
+}

@@ -1,0 +1,92 @@
+/* Global */
+:root {
+  /* App Colors */
+  --color-primary: var(--color-purple);
+  --color-primary-light: var(--color-purple-light);
+  --color-secondary: var(--color-gray-light);
+  --color-text: var(--color-black);
+  --color-text-sub: var(--color-gray);
+  --color-error: var(--color-red);
+
+  /* colors */
+  --color-white: #ffffff;
+  --color-black: #050a13;
+  --color-purple: #7309f6;
+  --color-purple-light: #eddfff;
+  --color-gray: #a6a6a6;
+  --color-gray-light: #d5d5d3;
+  --color-red: #ff0000;
+
+  /* Size */
+  --size-max-width: 1200px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+}
+
+body > main {
+  /* 133px 은 header 높이, 125px 은 footer 의 높이 */
+  min-height: calc(100vh - 258px);
+}
+
+/* reset CSS */
+h1,
+h2,
+h3,
+p,
+ul {
+  margin: 0;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+button {
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+  border-radius: 9px;
+}
+
+button:focus {
+  outline: 1px solid transparent;
+}
+
+/* Common */
+.section {
+  padding: 4rem;
+  text-align: center;
+}
+
+.max-container {
+  max-width: var(--size-max-width); /* 1200px */
+  margin: auto;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin: 1rem 0;
+}
+
+.description {
+  font-size: 1.5rem;
+  margin: 1rem 0;
+}

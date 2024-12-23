@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <%-include('include/head')%>
+    <title><%= title %></title>
+  </head>
+  <body>
+    <!-- 헤더 -->
+    <%- include('include/header') %>
+
+    <!-- 메인 -->
+    <main class="max-container">
+      <br />
+      <h1>여기는 메인페이지🏡</h1>
+    </main>
+
+    <!-- footer -->
+    <%- include('include/footer', { title: 'test' })%>
+  </body>
+</html>

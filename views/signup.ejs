@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <%-include('include/head')%>
+    <title>Signup</title>
+    <!-- (todo) 나중에 Public/css 분리 -->
+    <style>
+      @import url('../public/css/common.css');
+
+      main {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        padding: 50px 0;
+      }
+      .form-container {
+        padding: 1rem;
+        width: 100%;
+        max-width: 400px;
+      }
+      #signup-button {
+        border: 1px solid var(--color-secondary);
+        padding: 10px;
+      }
+      #signup-button:hover {
+        background-color: var(--color-secondary);
+      }
+
+      .info-wrapper {
+        padding: 1rem;
+      }
+
+      #signupForm input {
+        margin-bottom: 1rem;
+        width: 300px;
+        height: 42px;
+        padding: 12px;
+        border: 1px solid var(--color-secondary);
+        border-radius: 9px;
+      }
+      .error-message {
+        color: red;
+        font-size: 0.8rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 헤더 -->
+    <%-include('include/header')%>
+
+    <!-- 본문영역 (회원가입) -->
+    <main class="max-container">
+      <h1>회원가입</h1>
+      <br />
+      <div class="form-container">
+        <form name="signupForm" id="signupForm">
+          <!-- 이메일 입력 -->
+          <label for="email">이메일</label>
+          <div class="info-wrapper">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="예: example@gmail.com"
+              required
+            />
+          </div>
+
+          <!-- 비밀번호 입력 -->
+          <label for="password">비밀번호</label>
+          <div class="info-wrapper">
+            <div class="passwordInput-wrapper">
+              <input
+                type="password"
+                name="password"
+                placeholder="비밀번호(영문+숫자+특수문자 8자 이상)"
+                required
+              />
+            </div>
+
+            <div class="error-message" id="password-error"></div>
+          </div>
+
+          <!-- 비밀번호 확인 -->
+          <label for="confirmPassword">비밀번호 확인</label>
+          <div class="info-wrapper">
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirmPassword"
+              placeholder="비밀번호 확인"
+              required
+            />
+            <div class="error-message" id="confirmPasswordError"></div>
+          </div>
+
+          <!-- 닉네임 입력 (자동으로 채워짐) -->
+          <label for="nickname">닉네임</label>
+          <div class="info-wrapper">
+            <input
+              type="text"
+              id="nickname"
+              name="nickname"
+              placeholder="닉네임을 입력해주세요."
+              required
+            />
+            <div class="error-message" id="nickname-error"></div>
+          </div>
+          <!-- 가입하기 버튼 -->
+          <button type="button" id="signup-button">가입하기</button>
+          <div id="error" class="error-message"></div>
+        </form>
+      </div>
+    </main>
+
+    <!-- footer -->
+    <%- include('include/footer', { title: 'test' })%>
+  </body>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.forms['signupForm'];
+      const emailInput = form.email;
+      const nicknameInput = form.nickname;
+      const passwordInput = form.password;
+      const confirmPasswordInput = form.confirmPassword;
+      const signupButton = document.getElementById('signup-button');
+      const errorMessage = document.getElementById('error');
+
+      // 이메일 입력 시 nickname 자동 설정
+      emailInput.addEventListener('input', () => {
+        const email = emailInput.value;
+        if (email.includes('@')) {
+          const nickname = email.split('@')[0]; // @ 앞부분 가져오기
+          nicknameInput.value = nickname;
+        }
+        // (todo) 이메일 형식 유효성 검사
+      });
+
+      // 회원가입
+      signupButton.addEventListener('click', async () => {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+        const confirmPassword = confirmPasswordInput.value.trim();
+        const nickname = nicknameInput.value.trim();
+
+        // 유효성 검사
+        if (!email || !password || !nickname) {
+          alert('이메일, 비밀번호, 닉네임은 필수 입력값입니다.');
+          return;
+        }
+        if (password !== confirmPassword) {
+          document.getElementById('confirmPasswordError').innerText =
+            '비밀번호 불일치';
+          return;
+        }
+
+        // 서버로 데이터 전송
+        const data = { email, password, nickname };
+        console.log('회원가입 데이터', data);
+
+        try {
+          // POST /member/signup
+          const res = await axios.post('/member/signup', data);
+
+          if (res.data.isSuccess) {
+            alert(res.data.message);
+            window.location.href = '/auth/login';
+          } else {
+            errorMessage.innerText = res.data.message;
+          }
+        } catch (err) {
+          console.error('🚨회원가입 요청 중 에러 발생:', err);
+          errorMessage.innerText = res.data.message;
+        }
+      });
+    });
+
+    // (todo) 비밀번호 보이기/숨기기 토글
+  </script>
+</html>

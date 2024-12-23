@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  </head>
+  <body>
+    <h1><%= product.name %> 구매하기</h1>
+    <p>가격: <%= product.price %>원</p>
+    <p>마감일: <%= product.deadline %></p>
+    <img
+      src="/uploads/<%= product.image %>"
+      alt="<%= product.name %>"
+      style="max-width: 300px"
+    />
+    <form action="/purchase" method="POST">
+      <!-- Hidden Field -->
+      <input
+        type="hidden"
+        name="product_key"
+        value="<%= product.product_key %>"
+      />
+
+      <!-- Quantity -->
+      <label for="quantity">수량: </label>
+      <input
+        type="number"
+        id="quantity"
+        name="quantity"
+        required
+        min="1"
+        max="<%= product.max_quantity %>"
+      />
+
+      <!-- Address -->
+      <label for="address">주소: </label>
+      <input
+        type="text"
+        id="address"
+        name="address"
+        required
+        onclick="openSearch()"
+      />
+
+      <!-- Phone -->
+      <label for="phone">전화번호: </label>
+      <input type="text" id="phone" name="phone" required />
+
+      <!-- Cpurchase에서 온 userId -->
+      <input type="hidden" id="user_id" name="user_id" value="<%= userId %>" />
+
+      <button type="submit">구매하기</button>
+    </form>
+    <script>
+      // 주소검색기능
+      function openSearch() {
+        const inputAddress = document.querySelector('#address');
+        if (!inputAddress.value.trim().length) {
+          new daum.Postcode({
+            oncomplete: function (data) {
+              inputAddress.value = data.address;
+            },
+          }).open();
+        } else {
+          return;
+        }
+      }
+    </script>
+  </body>
+</html>

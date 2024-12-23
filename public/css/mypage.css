@@ -1,0 +1,34 @@
+form {
+  min-width: 700px;
+  min-height: 200px;
+  /* background-color: yellow; */
+}
+.q {
+  border: 1px solid green;
+  width: 500px;
+  height: 200px;
+  background-color: pink;
+}
+
+.section.hide {
+  /* display: none; */
+}
+
+li {
+  list-style-type: none;
+}
+
+.mybuyProduct {
+  border: 1 solid black;
+  border-radius: 15px;
+  background-color: yellowgreen;
+}
+
+.buyBox {
+  display: flex;
+  justify-content: space-evenly;
+}
+.sellBox {
+  display: flex;
+  justify-content: space-evenly;
+}
