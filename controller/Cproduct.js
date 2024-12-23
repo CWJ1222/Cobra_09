@@ -14,10 +14,12 @@ exports.getAllProducts = (req, res) => {
   })
     .then((result) => {
       console.log('result', result);
-      res.status(200).send(result);
+      res
+        .status(200)
+        .render('purchase', { result: result, currentPage: 'product' });
     })
     .catch((err) => {
-      res.status(500).send({
+      res.status(500).render('purchase', {
         isSuccess: false,
         message: '서버 에러가 발생했습니다.',
       });
@@ -41,7 +43,7 @@ exports.getItemsByCategory = (req, res) => {
   })
     .then((result) => {
       console.log('result', result);
-      res.status(200).send(result);
+      res.status(200).render({ result });
     })
     .catch((err) => {
       res.status(500).send({
