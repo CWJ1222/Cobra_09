@@ -1,2 +1,8 @@
 node_modules/
 .DS_Store
+
+# 폴더 내부의 모든 파일 무시
+uploads/*
+# 예외 처리: 폴더는 포함
+!uploads/.gitkeep
+.env

@@ -11,7 +11,7 @@
     <p>가격: <%= product.price %>원</p>
     <p>마감일: <%= product.deadline %></p>
     <img
-      src="/public/img/<%= product.image %>"
+      src="/uploads/<%= product.image %>"
       alt="<%= product.name %>"
       style="max-width: 300px"
     />
@@ -48,13 +48,13 @@
       <label for="phone">전화번호: </label>
       <input type="text" id="phone" name="phone" required />
 
-      <!-- User ID (Manual Input for Testing) -->
-      <label for="user_id">사용자 ID: </label>
-      <input type="number" id="user_id" name="user_id" required />
+      <!-- Cpurchase에서 온 userId -->
+      <input type="hidden" id="user_id" name="user_id" value="<%= userId %>" />
 
       <button type="submit">구매하기</button>
     </form>
     <script>
+      // 주소검색기능
       function openSearch() {
         const inputAddress = document.querySelector('#address');
         if (!inputAddress.value.trim().length) {

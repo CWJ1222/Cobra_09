@@ -65,6 +65,10 @@ app.use('/activePurchases', productRouter);
 app.use('/member', memberRouter);
 app.use('/host', hostRouter);
 
+//판매탭 관련
+const hostRouter = require('./routes/host');
+app.use('/host', hostRouter.router);
+
 app.get('*', (req, res) => {
   res.render('404');
 });
