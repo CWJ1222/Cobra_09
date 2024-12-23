@@ -3,7 +3,6 @@
   <title><%#= title %></title>
   <!-- (todo)public/css 분리 예정 -->
   <style>
-
     /* 상품 카테고리 필터 */
     .categoryFilter {
       display: flex;
@@ -31,15 +30,15 @@
       transition: transform 0.3s;
     }
 
-    .filterBtn.clotehs img{
+    .filterBtn.clotehs img {
       background-color: lightblue;
       border-radius: 50%;
       padding: 5px;
     }
 
     .filterBtn.books img {
-      background-color: #EDEDED; 
-      border-radius: 50%; 
+      background-color: #ededed;
+      border-radius: 50%;
       padding: 5px;
     }
 
@@ -67,7 +66,7 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
       padding: 30px;
-      flex-wrap:wrap;
+      flex-wrap: wrap;
       margin: 0 30px;
     }
     .productCard {
@@ -78,7 +77,6 @@
       position: relative;
       text-align: center;
       padding: 20px;
-      
     }
     .productCard img {
       width: 200px;
@@ -87,7 +85,7 @@
       margin-bottom: 20px;
       border-radius: 9px;
     }
-    
+
     .productDetails {
       padding: 15px;
       display: flex;
@@ -116,7 +114,7 @@
   <br />
   <main class="max-container">
     <!-- 카테고리 필터 -->
-     <!-- 식품/ 전자기기/의류 -->
+    <!-- 식품/ 전자기기/의류 -->
     <ul class="categoryFilter">
       <li>
         <button class="filterBtn active" data-category="all">
@@ -136,63 +134,113 @@
           <span>의류</span>
         </button>
       </li>
+      <!-- (todo) 필터 버튼 이미지 교체하기 -->
       <li>
         <button class="filterBtn books" data-category="3">
-          <img src="/public/img/filter-books.png" alt="도서" />
+          <img src="/public/img/filter-books.png" alt="식품" />
           <span>도서</span>
         </button>
       </li>
     </ul>
 
     <!-- 상품 목록 -->
-    <div class="productGrid max-container">
-      <% if(products && products.length > 0){ products.forEach((product)=>{ %>
-
-      <!-- 상품 카드 클릭 시 상품 구매 페이지 창 열기 -->
-      <a href="/buyform/<%= product.product_key %>" target="buyform" onclick="window.open(this.href, 'buyform', 'width=800,height=600'); return false;">
-        <!-- 상품 카드 -->
-        <div class="productCard" data-category-id="<%=product.category_id%>">
-            <img src="/public/img/<%=product.image%>" alt="<%=product.name%>" />
-            <div class="productDtails">
-              <div class="productName"><%=product.name%></div>
-              <div class="productPrice"><%=product.price%> 원</div>
-            </div>
-            <!-- (todo) 좋아요 -->
-          </div>
-          <% }) }else{ %>
-          <p>등록된 상품이 없습니다</p>
-          <% } %>
-        </div>
-      </a>
+    <div class="productGrid max-container"></div>
   </main>
 </body>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-  const filterButtons = document.querySelectorAll('.filterBtn');
-  const productCards = document.querySelectorAll('.productCard');
+  document.addEventListener('DOMContentLoaded', async () => {
+    const productGrid = document.querySelector('.productGrid');
+    const filterButtons = document.querySelectorAll('.filterBtn');
+    // const productCards = document.querySelectorAll('.productCard');
 
-  // 상품 필터링 버튼
-  filterButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      filterButtons.forEach((btn) => btn.classList.remove('active'));
-      button.classList.add('active');
+    // 상품 목록 업데이트 함수
+    const updateProductGrid = (products) => {
+      productGrid.innerHTML = '';
 
-      // 선택된 카테고리 가져오기
-      const selectedCategory = button.dataset.category;
+      // 상품 카드
+      if (products.length > 0) {
+        productGrid.forEach((product) => {
+          const productCard = `
+              <div class="productCard" data-category-id="${product.product_id}">
+                <img src="/public/img/${product.image}" alt="${product.name}" />
+                <div class="productDetails">
+                  <div class="productName">${product.name}</div>
+                  <div class="productPrice">${product.price} 원</div>
+                </div>
+              </div>`;
+          productGrid.innerHTML += productCard;
+        });
+      } else {
+        productGrid.innerHTML = `<p>등록된 상품이 없습니다.</p>`;
+      }
+    };
 
-      // 상품 필터링
-      productCards.forEach((card) => {
-        const cardCategory = card.dataset.categoryId;
-        if (selectedCategory === 'all' || cardCategory === selectedCategory) {
-          card.style.display = 'block';
+    // GET /products : 전체 상품 가져오기
+    const getAllProducts = async () => {
+      try {
+        const res = await axios.get('/products');
+        console.log('전체 상품:', res.data);
+        updateProductGrid(res.data);
+      } catch (err) {
+        console.error('전체 상품 가져오기 오류:', err);
+      }
+    };
+
+    // GET /product/:id : 특정 카테고리 상품 가져오기
+    const getItemsByCategory = async (categoryId) => {
+      try {
+        const res = await axios.get(`/products/${categoryId}`);
+        console.log(`카테고리 ${categoryId} 상품: `, res.data);
+        updateProductGrid(res.data);
+      } catch (err) {
+        console.error(`카테고리 ${categoryId} 상품 가져오기 오류: `, err);
+      }
+    };
+
+    // 구매 페이지 초기 진입 시 전체 상품 보여주기
+    getAllProducts();
+
+    // 상품 카테고리 필터링
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        // (!) 필터링 버튼 활성화 시 스타일 변경
+        filterButtons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        // 상품 카테고리 ID 가져오기
+        const categoryId = button.dataset.category;
+
+        // 카테고리에 따라 상품들 가져오기
+        if (categoryId === 'all') {
+          getAllProducts();
         } else {
-          card.style.display = 'none';
+          getItemsByCategory(categoryId);
         }
       });
     });
+
+    // --------- (수정 전) 상품 필터링 버튼 ----------------
+    // filterButtons.forEach((button) => {
+    //   button.addEventListener('click', () => {
+    //     filterButtons.forEach((btn) => btn.classList.remove('active'));
+    //     button.classList.add('active');
+
+    //     // 선택된 카테고리 가져오기
+    //     const selectedCategory = button.dataset.category;
+
+    //     // 상품 필터링
+    //     productCards.forEach((card) => {
+    //       const cardCategory = card.dataset.categoryId;
+    //       if (selectedCategory === 'all' || cardCategory === selectedCategory) {
+    //         card.style.display = 'block';
+    //       } else {
+    //         card.style.display = 'none';
+    //       }
+    //     });
+    //   });
+    // });
   });
-});
 
   // (Todo) 좋아요 기능
 </script>

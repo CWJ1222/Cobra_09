@@ -4,7 +4,7 @@ const db = require('../models');
 exports.getAllProducts = (req, res) => {
   db.Product.findAll({
     attributes: [
-      'product_id',
+      'product_key',
       'name',
       'deadline',
       'price',

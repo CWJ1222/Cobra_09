@@ -64,7 +64,7 @@ app.use('*', (req, res, next) => {
 app.use('/', purchaseRouter);
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
-app.use('/activePurchases', productRouter);
+app.use('/products', productRouter);
 app.use('/member', memberRouter);
 
 //판매탭 관련
