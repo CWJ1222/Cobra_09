@@ -32,4 +32,6 @@ router.delete('/delete', controller.deleteMyUser);
 // POST, postWishlists : 찜하기 기능
 router.post('/wishlist/:product_key', controller.postWishlists);
 
+// GET, getWishlists : 내가 찜한 상품 가져오기
+router.get('/wishlist/my', controller.getWishlists);
 module.exports = router;
