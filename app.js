@@ -61,7 +61,7 @@ const hostRouter = require('./routes/host');
 app.use('/', purchaseRouter);
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
-app.use('/activePurchases', productRouter);
+app.use('/products', productRouter);
 app.use('/member', memberRouter);
 app.use('/host', hostRouter);
 
