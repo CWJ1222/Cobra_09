@@ -153,26 +153,40 @@ exports.getMyAllJoins = async (req, res) => {
 // GET '/user/mypage' : 마이페이지 렌더링 + 사용자 정보 조회
 exports.renderMypage = async (req, res) => {
   try {
-    // 세션에서 사용자 ID 가져오기
-    const userId = req.session.user ? req.session.user.user_pk : null;
+    // // 세션에서 사용자 ID 가져오기
+    // const userId = 2;
 
-    if (!userId) {
-      // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
-      return res.redirect('/auth/login');
-    }
+    // if (!userId) {
+    //   // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
+    //   return res.redirect('/auth/login');
+    // }
 
     // 데이터베이스에서 사용자 정보 조회
-    const target = req.session.user.user_pk;
+    //const target = req.session.user.user_pk;
+    const target = 2;
     const user = await User.findOne({
       where: { user_id: target },
       attributes: ['email', 'nickname'], // 필요한 필드만 선택
+      include: [
+        {
+          model: Order,
+          include: [
+            {
+              model: Product,
+            },
+          ],
+        },
+      ],
     });
+    console.log('user', user.Order_items);
+
     if (!user) {
       return res.status(404).send('사용자를 찾을 수 없습니다.');
     }
 
     // mypage.ejs로 사용자 정보 전달
-    res.render('mypage', { user });
+    // res.send({ product: user.Order_items[0].product });
+    res.render('mypage', { user, product: user.Order_items[0].product });
   } catch (error) {
     console.error('마이페이지 렌더링 오류:', error);
     res.status(500).send('서버 오류');

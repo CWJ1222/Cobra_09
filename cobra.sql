@@ -1,4 +1,4 @@
--- Active: 1734662630414@@175.121.178.197@3306@cobra09
+-- Active: 1732844010235@@127.0.0.1@3306@cobra09
 
 /*
 - notion의 DB정리 페이지 참고
@@ -239,3 +239,5 @@ WHERE category_id = 3;
 -- Product 테이블에 정가 컬럼 추가
 ALTER TABLE product
 ADD COLUMN net_price INT NOT NULL DEFAULT 0;
+
+INSERT INTO wishlists(user_id, product_key) values (30, 17);
