@@ -23,6 +23,7 @@ SELECT User, Host FROM mysql.user;
 
 ALTER TABLE user ADD COLUMN salt VARCHAR(255) NOT NULL;
 
+
 -- Category 테이블 생성
 CREATE TABLE Category (
     category_id INT PRIMARY KEY, -- 카테고리 ID (Primary Key)
@@ -67,6 +68,17 @@ CREATE TABLE Order_item (
     FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE -- 사용자 참조
 );
 
+-- 찜 기능 테이블
+CREATE TABLE Wishlists (
+    wishlist_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    product_key INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE, -- 사용자 삭제 시 관련 데이터도 삭제
+    FOREIGN KEY (product_key) REFERENCES Product(product_key) ON DELETE CASCADE,
+    UNIQUE (user_id, product_key)
+);
+
 -- 테이블 잘 만들어졌는지 확인
 DESC category;
 
@@ -75,6 +87,8 @@ DESC user;
 DESC product;
 
 DESC order_item;
+
+DESC Wishlists;
 
 -- 테스트를 위해 테이블에 데이터 삽입
 /*
@@ -205,3 +219,23 @@ SELECT * FROM user;
 SELECT * FROM product;
 
 SELECT * FROM order_item;
+
+SELECT * from wishlists;
+
+
+-- category : category_name 바꾸기
+UPDATE category
+SET category_name = 'Foods'
+WHERE category_id = 1;
+
+UPDATE category
+SET category_name = 'Electronics'
+WHERE category_id = 2;
+
+UPDATE category
+SET category_name = 'Clothes'
+WHERE category_id = 3;
+
+-- Product 테이블에 정가 컬럼 추가
+ALTER TABLE product
+ADD COLUMN net_price INT NOT NULL DEFAULT 0;
