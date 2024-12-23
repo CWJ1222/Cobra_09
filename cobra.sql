@@ -1,4 +1,4 @@
--- Active: 1734662496645@@175.121.178.197@3306@cobra09
+-- Active: 1732688614523@@127.0.0.1@3306@cobra09
 
 /*
 - notion의 DB정리 페이지 참고
@@ -95,37 +95,40 @@ INSERT INTO
         email,
         password,
         nickname,
-        salt
+        salt,
+        user_type
     )
 VALUES (
-        'soo@naver.com',
-        "1234",
+        'test@naver.com',
+        "1fe2eeeb2bc899ca1ec855549557d858a5371f51509db90346f63dd16e109bc2ddb370ac9f96f52cdc9d100bd126317ad793df70b3e1347226cb51918af61d40",
         "soo",
-        "1234"
+        "43c03ab8122ba157830a2f968b98d786"
+        ,"1"
     ),
     (
-        'jin@naver.com',
-        '5678',
+        'soo@naver.com',
+        '1fe2eeeb2bc899ca1ec855549557d858a5371f51509db90346f63dd16e109bc2ddb370ac9f96f52cdc9d100bd126317ad793df70b3e1347226cb51918af61d40',
         "jin",
-        "5678"
+        "43c03ab8122ba157830a2f968b98d786",
+        "1"
     );
 
 -- product 테이블에 데이터 삽입
 
 --이미지 경로 문제때문에 실제 파일명으로 입력받아야함
-INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)
 VALUES
 ('Smartphone', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
 ('T-Shirt', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
 ('Novel', '2024-12-20', 10, 50, 'novel.jpg', 3, 1);
 
-INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)
 VALUES
 ('Smartphone11', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
 ('T-Shirt11', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
 ('Novel11', '2024-12-20', 10, 50, 'novel.jpg', 3, 1);
 
-INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)
 VALUES
 ('Smartphone22', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
 ('T-Shirt22', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
@@ -199,18 +202,17 @@ VALUES (
 
 -- 테이블에 다 데이터 담겨있는지 확인
 SELECT * FROM category;
-<<<<<<< HEAD
-=======
 
 SELECT * FROM user;
 
 SELECT * FROM product;
 
 SELECT * FROM order_item;
->>>>>>> develop
 
 SELECT * FROM user;
 
 SELECT * FROM product;
 
 SELECT * FROM order_item;
+
+SELECT * FROM comment;

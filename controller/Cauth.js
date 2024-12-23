@@ -131,7 +131,7 @@ exports.loginUser = async (req, res) => {
 // 사용자가 kakao id,pw입력 후 처리 리다이렉트 요청 처리
 exports.redirectKakaoLogin = (req, res) => {
   res.redirect(
-    `${process.env.KAKAO_AUTH_CODE_URI}?client_id=${process.env.KAKAO_CLIENT_ID}&redirect_uri=${process.env.KAKAO_REDIRECT_URI}&response_type=code`
+    `${process.env.KAKAO_AUTH_CODE_URI}?client_id=${process.env.KAKAO_CLIENT_ID}&redirect_uri=${process.env.KAKAO_REDIRECT_URI}&response_type=code&prompt=login`
   );
 };
 

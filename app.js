@@ -31,6 +31,14 @@ app.use(
   })
 );
 
+// 유효하지 않은 세션 쿠키 삭제
+app.use('*', (req, res, next) => {
+  if (!req.session.user) {
+    res.clearCookie('connect.sid');
+  }
+  next();
+});
+
 // multer 연결
 const upload = multer({
   storage: multer.diskStorage({
@@ -55,6 +63,7 @@ const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
 const productRouter = require('./routes/product');
 const memberRouter = require('./routes/member');
+const commentRouter = require('./routes/comment');
 
 app.use('*', (req, res, next) => {
   console.log('req.session', req.session);
@@ -64,9 +73,9 @@ app.use('*', (req, res, next) => {
 app.use('/', purchaseRouter);
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
-app.use('/activePurchases', productRouter);
+app.use('/products', productRouter);
 app.use('/member', memberRouter);
-
+app.use('/comments', commentRouter);
 //판매탭 관련
 const hostRouter = require('./routes/host');
 app.use('/host', hostRouter.router);

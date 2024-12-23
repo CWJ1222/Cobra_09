@@ -3,15 +3,7 @@ const router = express.Router();
 const productController = require('../controller/Cproduct');
 const authController = require('../controller/Cauth');
 
-router.get(
-  '/',
-  authController.isSessionValid,
-  productController.getAllProducts
-);
-router.get(
-  '/:id',
-  authController.isSessionValid,
-  productController.getItemsByCategory
-);
+router.get('/', productController.getAllProducts);
+router.get('/:id', productController.getItemsByCategory);
 
 module.exports = router;
