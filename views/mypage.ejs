@@ -9,109 +9,282 @@
   </head>
   <body>
     <h1>mypage</h1>
-    <form name="userProfile">
+    <form name="userProfile " class="section mypage">
       <section class="q">
         회원정보
         <fieldset class="profileBox">
+          <legend>
+            이메일
+            <input type="text" name="email" value="<%=user.email%>" readonly />
+          </legend>
           <legend>
             닉네임
             <input
               type="text"
               name="nickName"
-              value="<%=nickName%>"
-              readonly
+              value="<%=user.nickname%>"
               required
             />
           </legend>
           <legend>
-            이메일
+            새 비밀번호
             <input
-              type="text"
-              name="email"
-              value="<%=email%>"
-              readonly
+              type="password"
+              id="password"
+              name="password"
+              placeholder="새 비밀번호를 입력하세요"
               required
             />
           </legend>
         </fieldset>
 
         <div class="btn">
-          <button type="button" onclick="profileEdit();">Edit</button>
+          <button type="button" onclick="editUserProfile();">Edit</button>
+        </div>
+        <div class="logout-btn">
+          <a href="/auth/logout"> 로그아웃 </a>
         </div>
       </section>
-      <br />
-      <section class="q">구매내역 조회</section>
-      <br />
-      <section class="q">판매내역 조회</section>
     </form>
 
+    <section class="q section buy hide">
+      이거 살래! 내역
+      <div class="buyBox">
+        <div class="myBuy 1">
+          <a class="buyImg 1" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 참여 상품 1" />
+          </a>
+          <a class="buyProduct 1" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+        <div class="myBuy 2">
+          <a class="buyImg 2" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 참여 상품 2" />
+          </a>
+          <a class="buyProduct 2" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+        <div class="myBuy 3">
+          <a class="buyImg 3" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 참여 상품 3" />
+          </a>
+          <a class="buyProduct 3" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+      </div>
+      <a href="/2024-12-21/views/mybuypage.ejs">더보기</a>
+    </section>
+    <section class="q section sell hide">
+      같이 살래? 내역
+      <div class="sellBox">
+        <div class="mySell 1">
+          <a class="sellImg 1" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 올린 상품 1" />
+          </a>
+          <a class="sellProduct 1" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+        <div class="mySell 2">
+          <a class="sellImg 2" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 올린 상품 1" />
+          </a>
+          <a class="buyProduct 2" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+        <div class="mySell 3">
+          <a class="sellImg 3" href="구매 하는 상품 폼으로 이동">
+            <img src="" alt="공구 올린 상품 1" />
+          </a>
+          <a class="sellProduct 3" href="구매하는 상품 폼으로 이동">
+            <li>상품명 / 구매 수량</li>
+            <li>상품 가격</li>
+            <li>Dead-Line</li>
+          </a>
+        </div>
+      </div>
+      <a href="/2024-12-21/views/mysellpage.ejs">더보기</a>
+    </section>
+
+    <button onclick="changeSection(this)" class="sell-btn">
+      판매페이지 확인
+    </button>
+    <button onclick="changeSection(this)" class="buy-btn">
+      구매페이지 확인
+    </button>
+    <button onclick="changeSection(this)" class="my-btn">마이페이지</button>
+    <div class="profile-delete">
+      <button type="button" onclick="confirmUserDelete()">회원 탈퇴</button>
+    </div>
+
     <script>
-      function profileEdit() {
-        const form = document.forms['userProfile'];
-        const btnBox = document.querySelector('.btn');
-        const editName = form.nickName;
-        const editEmail = form.email;
+      //회원 정보 수정
+      // function profileEdit() {
+      //   const form = document.forms['userProfile'];
+      //   const btnBox = document.querySelector('.btn');
+      //   const editName = form.nickName;
+      //   const editPassword = form.password;
 
-        console.log(editName);
-        editName.removeAttribute('readonly');
-        editName.setAttribute('placeholder', form.nickName.value);
-        // editName.removeAttribute('value');
-        editName.value = '';
+      //   editName.removeAttribute('readonly');
+      //   editName.setAttribute('placeholder', form.nickName.value);
 
-        editEmail.removeAttribute('readonly');
-        editEmail.setAttribute('placeholder', form.email.value);
-        editEmail.value = '';
+      //   editName.value = '';
 
-        const editBtn = `
-           <button type="button" onclick="editDo()">수정완료</button>
-            <button type="button" onclick="editCancel()">리셋</button>`;
-        btnBox.innerHTML = editBtn;
-      }
+      //   editPassword.removeAttribute('readonly');
+      //   // editPassword.setAttribute('placeholder', form.password.value);
+      //   editPassword.value = '';
 
-      async function editDo() {
-        const form = document.forms['userProfile'];
+      //   const editBtn = `
+      //      <button type="button" onclick="editDo()">수정완료</button>
+      //       <button type="button" onclick="editCancel()">리셋</button>`;
+      //   btnBox.innerHTML = editBtn;
+      // }
 
-        try {
-          const response = await axios({
-            method: 'patch',
-            url: '/user',
-            data: {
-              nickName: form.nickName.value,
-              email: form.email.value,
-            },
-          });
-          if (!form.nickName.checkValidity()) {
-            alert('이름을 입력해주세요');
-            return;
-          }
-          console.log(response.data);
-          alert('수정 성공');
-        } catch (err) {
-          console.error(err);
+      // //회원 정보 수정완료
+      // async function editDo() {
+      //   const form = document.forms['userProfile'];
+
+      //   try {
+      //     const response = await axios({
+      //       method: 'put',
+      //       url: '/user',
+      //       data: {
+      //         nickName: form.nickName.value,
+      //         password: form.password.value,
+      //       },
+      //     });
+      //     if (
+      //       !form.nickName.checkValidity() ||
+      //       !form.password.checkValidity()
+      //     ) {
+      //       alert('빈칸을 입력해주세요');
+      //       return;
+      //     }
+      //   } catch (err) {
+      //     console.error(err);
+      //   }
+
+      //   const btnBox = document.querySelector('.btn');
+      //   const editName = form.nickName;
+      //   const editPassword = form.password;
+      //   const editBtnsBox = form.editBtns;
+      //   // console.log(editName.value);
+
+      //   editName.setAttribute('readonly', '');
+      //   editName.removeAttribute('placeholder');
+
+      //   editPassword.setAttribute('readonly', '');
+      //   // editPassword.removeAttribute('placeholder');
+
+      //   const editBtn = `
+      //     <button type="button" onclick="profileEdit();">Edit</button>
+      //   `;
+      //   btnBox.innerHTML = editBtn;
+      // }
+
+      //정보 수정칸 리셋
+      // function editCancel() {
+      //   const form = document.forms['userProfile'];
+      //   form.reset();
+      // }
+
+      async function editUserProfile() {
+        const nickname = document
+          .querySelector('input[name="nickName"]')
+          .value.trim();
+        const password = document
+          .querySelector('input[name="password"]')
+          .value.trim();
+
+        if (!nickname && !password) {
+          alert('닉네임 또는 비밀번호 중 하나를 입력해주세요.');
+          return;
         }
 
-        const btnBox = document.querySelector('.btn');
-        const editName = form.nickName;
-        const editEmail = form.email;
-        const editBtnsBox = form.editBtns;
-        // console.log(editName.value);
+        try {
+          const response = await axios.put('/user', { nickname, password });
 
-        editName.setAttribute('readonly', '');
-        editName.removeAttribute('placeholder');
-        // editName.setAttribute('value', form.editName.placeholde);
-
-        editEmail.setAttribute('readonly', '');
-        editEmail.removeAttribute('placeholder');
-        // editName.setAttribute('value', form.editEmail.value);
-        const editBtn = `
-          <button type="button" onclick="profileEdit();">Edit</button>
-        `;
-        btnBox.innerHTML = editBtn;
+          if (response.data.isSuccess) {
+            alert(response.data.message); // 성공 메시지 출력
+            location.reload(); // 페이지 새로고침
+          } else {
+            alert(response.data.message); // 실패 메시지 출력
+          }
+        } catch (err) {
+          console.error('사용자 정보 수정 중 오류:', err);
+          alert('최소 1개의 항목을 수정해야 합니다.');
+        }
       }
 
-      function editCancel() {
-        const form = document.forms['userProfile'];
-        form.reset();
+      //회원 탈퇴
+      // async function userDelete() {
+      //   const form = document.forms['userProfile'];
+      //   const email = form.email.value;
+      //   try {
+      //     const response = await axios({
+      //       method: 'delete',
+      //       url: '/delete',
+      //     });
+      //     alert(' 탈퇴 성공');
+
+      //     document.location.href = '/';
+      //   } catch (err) {
+      //     console.error(err);
+      //   }
+      // }
+
+      async function confirmUserDelete() {
+        if (confirm('정말 탈퇴하시겠습니까?')) {
+          try {
+            const response = await axios.delete('/delete'); // 탈퇴 요청 전송
+            if (response.status === 200 && response.data.isSuccess) {
+              alert('탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.');
+              window.location.href = '/'; // 메인 페이지로 이동
+            } else {
+              alert('탈퇴에 실패했습니다. 다시 시도해주세요.');
+            }
+          } catch (err) {
+            console.error('회원 탈퇴 중 오류:', err);
+            alert('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.');
+          }
+        }
+      }
+
+      // 구매, 판매 내역 조회 칸 보이기
+      function changeSection(btn) {
+        const mypageSection = document.querySelector('.mypage');
+        const sellSection = document.querySelector('.sell');
+        const buySection = document.querySelector('.buy');
+        console.log(mypageSection);
+        console.log(sellSection);
+        console.log(buySection);
+        if (btn.classList.contains('sell-btn')) {
+          sellSection.classList.remove('hide');
+          mypageSection.classList.add('hide');
+          buySection.classList.add('hide');
+        } else if (btn.classList.contains('buy-btn')) {
+          sellSection.classList.add('hide');
+          mypageSection.classList.add('hide');
+          buySection.classList.remove('hide');
+        } else if (btn.classList.contains('my-btn')) {
+          sellSection.classList.add('hide');
+          mypageSection.classList.remove('hide');
+          buySection.classList.add('hide');
+        }
       }
     </script>
   </body>
