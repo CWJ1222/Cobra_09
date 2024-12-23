@@ -17,14 +17,14 @@ router.get('/host/lists', controller.getMyProducts);
 router.get('/join', controller.getMyJoins);
 
 // GET, getProduct : 특정 하나의 판매 물품만 가져오기
-router.get('/host/list/:id', controller.getProduct);
+router.get('/host/list/:product_key', controller.getProduct);
 // router.get('/user/mypage', controller.getAllUser);
 
 // 마이페이지 렌더링
 router.get('/user/mypage', controller.renderMypage);
 
-// GET, getMyUser : 마이페이지 렌더링 + 내 정보 보여주기
-// router.get('/user/mypage', controller.getMyUser);
+// 단일 상품 조회
+router.get('/join/list', controller.getMyAllJoins);
 
 // PUT, postChangeUser : 내 정보 수정
 router.put('/user', controller.postChangeUser);

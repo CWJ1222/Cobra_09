@@ -4,14 +4,17 @@ form {
   /* background-color: yellow; */
 }
 .q {
-  border: 1px solid green;
-  width: 500px;
-  height: 200px;
-  background-color: pink;
+  border: 5px solid green;
+  border-radius: 25px;
+  width: 700px;
+  height: 350px;
+  padding-left: 50px;
+  margin-right: 50px;
+  /* background-color: pink; */
 }
 
 .section.hide {
-  /* display: none; */
+  display: none;
 }
 
 li {
@@ -31,4 +34,9 @@ li {
 .sellBox {
   display: flex;
   justify-content: space-evenly;
+}
+
+.profileBox {
+  width: 500px;
+  height: 250px;
 }

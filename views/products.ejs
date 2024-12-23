@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <%- include('include/head', { title: 'mybuypage' })%>
+    <title>title</title>
+  </head>
+  <body>
+    <main class="Product">
+      <h1><%= product.name %></h1>
+      <p>상품 상세 설명!</p>
+      <br />
+
+      <ul>
+        <li>상품명:<%= product.name %></li>
+        <br />
+        <li>마감일:<%= product.deadline %></li>
+
+        <br />
+        <li>상품 가격:<%= product.price %></li>
+        <br />
+        <li>user_id:<%= product.user_id %></li>
+        <br />
+        <li>category_id:<%= product.category_id %></li>
+        <br />
+        <li>최대 구매 수량:<%= product.max_quantity %></li>
+        <br />
+        <li><img src="/public/img/<%= product.image %>" alt="상품이미지" /></li>
+        <br />
+        <li>
+          <a
+            href="/buyform/<%= product.product_key %>"
+            target="buyform"
+            onclick="window.open(this.href, 'buyform', 'width=800,height=600'); return false;"
+          >
+            <img
+              src="/public/img/<%= product.image %>"
+              alt="<%= product.name %>"
+              style="max-width: 100px"
+            />
+          </a>
+        </li>
+      </ul>
+    </main>
+  </body>
+</html>
