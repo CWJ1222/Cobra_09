@@ -50,6 +50,7 @@ exports.isSessionInvalid = (req, res, next) => {
 // env 값 클라이언트 노출 시키지 않음
 exports.renderLoginPage = (req, res) => {
   const redirectUrl = req.session.redirectUrl || '/'; // 세션에 저장된 URL 사용
+
   res.render('login', {
     currentPage: 'login',
     redirectUrl, // 로그인 성공 후 이동할 URL 전달
@@ -115,8 +116,7 @@ exports.loginUser = async (req, res) => {
 // 사용자가 kakao id,pw입력 후 처리 리다이렉트 요청 처리
 exports.redirectKakaoLogin = (req, res) => {
   // 이전 url 이동 테스트
-  // req.session.redirectUrl = `/products`;
-  //
+  // 사용자가 카카오 로그인 버튼을 누르는곳.
   res.redirect(
     `${process.env.KAKAO_AUTH_CODE_URI}?client_id=${process.env.KAKAO_CLIENT_ID}&redirect_uri=${process.env.KAKAO_REDIRECT_URI}&response_type=code&prompt=login`
   );
@@ -127,7 +127,10 @@ exports.loginKakaoUser = async (req, res, next) => {
   console.log('loginKakaoUser에서 url', req.session.redirectUrl);
   try {
     const findResult = await db.User.findOne({
-      where: { email: req.kakao_user_info.email },
+      where: {
+        email: req.kakao_user_info.email,
+        user_type: req.kakao_user_info.user_type,
+      },
       attributes: ['user_id', 'email', 'password', 'nickname'],
     });
 
@@ -140,7 +143,7 @@ exports.loginKakaoUser = async (req, res, next) => {
         password: 'kakao_default', // 카카오에서 얻는 정보에는 pw가 없어서 임의 값 할당 -  추후 랜덤값으로 변경
         nickname: req.kakao_user_info.nickname,
         salt: 'kakao_default',
-        user_type: '2', // salt 임의값
+        user_type: req.kakao_user_info.user_type, // salt 임의값
       });
 
       req.session.user = {
@@ -171,7 +174,9 @@ exports.loginKakaoUser = async (req, res, next) => {
         )}`,
       })(req, res, () => {
         console.log('최종 세션', req.session);
-        res.redirect(`${req.session.redirectUrl || '/'}`);
+        const redirectUrl = req.session.redirectUrl || '/'; // 기본값은 홈
+        delete req.session.redirectUrl; // 사용 후 세션에서 삭제
+        res.redirect(`${redirectUrl || '/'}`);
         // res.status(200).send({
         //   isLogin: true,
         //   nickname: findResult.nickname,
@@ -323,6 +328,7 @@ exports.getKakaoUserInfo = (req, res, next) => {
       req.kakao_user_info = {
         nickname: result.data.properties.nickname,
         email: result.data.kakao_account.email,
+        user_type: '2',
       };
       next();
     })
