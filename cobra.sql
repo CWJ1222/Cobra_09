@@ -235,3 +235,7 @@ WHERE category_id = 2;
 UPDATE category
 SET category_name = 'Clothes'
 WHERE category_id = 3;
+
+-- Product 테이블에 정가 컬럼 추가
+ALTER TABLE product
+ADD COLUMN net_price INT NOT NULL DEFAULT 0;
