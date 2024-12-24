@@ -159,18 +159,28 @@
     const productGrid = document.querySelector('.productGrid');
     const filterButtons = document.querySelectorAll('.filterBtn');
 
-    // 상품 목록 업데이트 함수 (SPA)
+    // 상품 목록 업데이트 함수 (SPA 방식)
     const updateProductGrid = (products) => {
       productGrid.innerHTML = '';
       if (Array.isArray(products) && products.length > 0) {
         products.forEach((product) => {
+          // 상품 카드
           const productCard = `
             <div class="productCard">
-              <img src="/public/img/${product.image}" alt="${product.name}" />
-              <div class="productDetails">
-                <div>${product.name}</div>
-                <div>${product.price}원</div>
-              </div>
+              <a
+                href="/buyform/${product.product_key}"
+                target="buyform"
+                onclick="window.open(this.href, 'buyform', 'width=800,height=600'); return false;"
+              >
+                <img src="/public/img/${product.image}" alt="${product.name}" />
+                <div class="productDetails">
+                  <div>${product.name}</div>
+                  <div>${product.price}원</div>
+                </div>
+              </a>
+
+              <!-- 임시 찜 버튼(wishlist) -->
+              <button class="addWishBtn">임시 찜 버튼</button>
             </div>`;
           productGrid.innerHTML += productCard;
         });
