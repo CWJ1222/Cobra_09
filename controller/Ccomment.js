@@ -2,12 +2,12 @@ const db = require('../models');
 
 // 댓글 생성
 exports.writeComment = (req, res) => {
-  const { content, product_id } = req.body;
+  const { content, product_key } = req.body;
   const user_id = req.session.user.user_pk;
 
   db.Comment.create({
     content,
-    product_id,
+    product_key,
     user_id,
   })
     .then((result) => {
@@ -86,16 +86,16 @@ exports.modifyComment = (req, res) => {
 
 // 물품 전체 댓글 조회
 exports.getCommentsByProduct = (req, res) => {
-  const { product_id } = req.body;
+  const product_key = req.params.id;
 
   db.Comment.findAll({
     where: {
-      product_id: product_id,
+      product_key: product_key,
     },
     attributes: ['comment_id', 'content', 'createdAt', 'updatedAt'],
     include: [
       { model: db.User, attributes: ['nickname', 'user_id'] },
-      { model: db.Product, attributes: ['product_id'] },
+      { model: db.Product, attributes: ['product_key'] },
     ],
   })
     .then((result) => {
