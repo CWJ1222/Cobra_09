@@ -3,7 +3,7 @@ const axios = require('axios');
 require('dotenv').config();
 
 const crypto = require('crypto');
-const { where } = require('sequelize');
+
 // 비밀번호 암호화 함수
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString('hex'); // 랜덤 salt 생성
@@ -47,7 +47,6 @@ exports.isSessionInvalid = (req, res, next) => {
 };
 
 // 로그인 페이지 렌더링
-// env 값 클라이언트 노출 시키지 않음
 exports.renderLoginPage = (req, res) => {
   const redirectUrl = req.session.redirectUrl || '/'; // 세션에 저장된 URL 사용
 
@@ -65,9 +64,6 @@ exports.loginUser = async (req, res) => {
   const redirectUrl = req.session.redirectUrl || '/'; // 기본값은 홈
   delete req.session.redirectUrl; // 사용 후 세션에서 삭제
 
-  // fe: 클라이언트 데이터 확인
-  console.log('입력된 userId:', inputUserId);
-  console.log('입력된 pw:', inputUserPw);
   try {
     const resultUser = await db.User.findOne({
       where: {
@@ -94,9 +90,7 @@ exports.loginUser = async (req, res) => {
       res.status(200).send({
         isLogin: true,
         nickname: resultUser.nickname,
-
         redirectUrl, // 로그인 성공 후 리다이렉트할 URL
-
         message: '로그인 성공 했습니다.',
       });
     } else {
@@ -113,18 +107,105 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-// 사용자가 kakao id,pw입력 후 처리 리다이렉트 요청 처리
+// 카카오 로그인 페이지로 리다이렉트
 exports.redirectKakaoLogin = (req, res) => {
-  // 이전 url 이동 테스트
-  // 사용자가 카카오 로그인 버튼을 누르는곳.
   res.redirect(
     `${process.env.KAKAO_AUTH_CODE_URI}?client_id=${process.env.KAKAO_CLIENT_ID}&redirect_uri=${process.env.KAKAO_REDIRECT_URI}&response_type=code&prompt=login`
   );
 };
 
+// kakao 로그인 후에 서버로부터 쿼리스트링으로 인가코드를 받음
+// 카카오 페이지에 등록한 리다이렉트 uri 요청에 실행되는 컨트롤러
+// 서버측에서 처리하도록 변경하기
+exports.getKaKaoAuthCode = (req, res, next) => {
+  const isEmpty = Object.keys(req.query).length;
+  if (isEmpty) {
+    req.auth_code = req.query;
+    console.log('auth_code', req.auth_code);
+    next();
+  } else {
+    res.redirect('/');
+  }
+};
+
+// 카카오 로그인 유저에 대한 토큰 획득
+exports.getKaKaoToken = (req, res, next) => {
+  axios({
+    url: process.env.KAKAO_TOKEN_URI,
+    method: 'post',
+    data: {
+      grant_type: 'authorization_code',
+      client_id: process.env.KAKAO_CLIENT_ID,
+      redirect_uri: process.env.KAKAO_REDIRECT_URI,
+      code: req.query.code,
+    },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+    },
+  })
+    .then((result) => {
+      console.log('getKaKaoToken 토큰 응답', result.data);
+      const {
+        access_token,
+        refresh_token,
+        expires_in,
+        refresh_token_expires_in,
+      } = result.data;
+      const access_token_expire = new Date(
+        new Date().getTime() + expires_in * 1000
+      );
+      // 엑세스 토큰 테스트용으로 만료 시간
+      // const access_token_expire = new Date(new Date().getTime() + 30 * 1000);
+      const refresh_token_expire = new Date(
+        new Date().getTime() + refresh_token_expires_in * 1000
+      );
+
+      console.log('getKaKaoToken에서 url 확인 1', req.session.redirectUrl);
+      req.session.user = {
+        ...req.session.user,
+        token: {
+          access_token,
+          access_token_expire,
+          refresh_token,
+          refresh_token_expire,
+        },
+      };
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.redirect('/');
+    });
+};
+
+// kakao 서버로부터 사용자의 정보를 가져옴
+exports.getKakaoUserInfo = (req, res, next) => {
+  console.log('getKakaoUserInfo에서 access_token 확인', req.session.user);
+  axios({
+    url: process.env.KAKAO_USERINFO_URI,
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${req.session.user.token.access_token}`,
+      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+    },
+  })
+    .then((result) => {
+      console.log('카카오 로그인 회원정보', result.data);
+      req.kakao_user_info = {
+        nickname: result.data.properties.nickname,
+        email: result.data.kakao_account.email,
+        user_type: '2',
+      };
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send('서버 에러');
+    });
+};
+
 // 카카오 로그인 처리 (세션 생성)
 exports.loginKakaoUser = async (req, res, next) => {
-  console.log('loginKakaoUser에서 url', req.session.redirectUrl);
   try {
     const findResult = await db.User.findOne({
       where: {
@@ -177,11 +258,6 @@ exports.loginKakaoUser = async (req, res, next) => {
         const redirectUrl = req.session.redirectUrl || '/'; // 기본값은 홈
         delete req.session.redirectUrl; // 사용 후 세션에서 삭제
         res.redirect(`${redirectUrl || '/'}`);
-        // res.status(200).send({
-        //   isLogin: true,
-        //   nickname: findResult.nickname,
-        //   message: '로그인 성공',
-        // });
       });
     }
   } catch (err) {
@@ -247,100 +323,8 @@ exports.logoutKaKaoUser = (req, res, next) => {
   });
 };
 
-// kakao 로그인 후에 서버로부터 쿼리스트링으로 인가코드를 받음
-// 카카오 페이지에 등록한 리다이렉트 uri 요청에 실행되는 컨트롤러
-// 서버측에서 처리하도록 변경하기
-exports.getKaKaoAuthCode = (req, res, next) => {
-  const isEmpty = Object.keys(req.query).length;
-  if (isEmpty) {
-    req.auth_code = req.query;
-    console.log('auth_code', req.auth_code);
-    next();
-  } else {
-    res.redirect('/');
-  }
-};
-
-// 카카오 로그인 유저에 대한 토큰 획득
-exports.getKaKaoToken = (req, res, next) => {
-  axios({
-    url: process.env.KAKAO_TOKEN_URI,
-    method: 'post',
-    data: {
-      grant_type: 'authorization_code',
-      client_id: process.env.KAKAO_CLIENT_ID,
-      redirect_uri: process.env.KAKAO_REDIRECT_URI,
-      code: req.query.code,
-    },
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-    },
-  })
-    .then((result) => {
-      console.log('getKaKaoToken 토큰 응답', result.data);
-      const {
-        access_token,
-        refresh_token,
-        expires_in,
-        refresh_token_expires_in,
-      } = result.data;
-      const access_token_expire = new Date(
-        new Date().getTime() + expires_in * 1000
-      );
-      // 엑세스 토큰 테스트용으로 만료 시간
-      // const access_token_expire = new Date(new Date().getTime() + 30 * 1000);
-      const refresh_token_expire = new Date(
-        new Date().getTime() + refresh_token_expires_in * 1000
-      );
-
-      console.log('getKaKaoToken에서 url 확인 1', req.session.redirectUrl);
-      req.session.user = {
-        ...req.session.user,
-        token: {
-          access_token,
-          access_token_expire,
-          refresh_token,
-          refresh_token_expire,
-        },
-      };
-      console.log('getKaKaoToken에서 url 확인 2', req.session.redirectUrl);
-      next();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.redirect('/');
-    });
-};
-
-// kakao 서버로부터 사용자의 정보를 가져옴
-exports.getKakaoUserInfo = (req, res, next) => {
-  console.log('getKakaoUserInfo에서 access_token 확인', req.session.user);
-  axios({
-    url: process.env.KAKAO_USERINFO_URI,
-    method: 'post',
-    headers: {
-      Authorization: `Bearer ${req.session.user.token.access_token}`,
-      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-    },
-  })
-    .then((result) => {
-      console.log('카카오 로그인 회원정보', result.data);
-      req.kakao_user_info = {
-        nickname: result.data.properties.nickname,
-        email: result.data.kakao_account.email,
-        user_type: '2',
-      };
-      next();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send('서버 에러');
-    });
-};
-
 // 카카오와 애플리케이션 연결 끊기(회원탈퇴 - 동의창 새로 띄우기)
 // 엑세스, 리프레쉬 토큰 만료처리(로그아웃)도 같이 됨
-// 일반 회원탈퇴처리와 카카오 탈퇴처리를 어떻게 구분할것인지 ??
 exports.unlinkKakaoUser = (req, res) => {
   axios({
     url: process.env.KAKAO_UNLINK_URI,
@@ -390,7 +374,6 @@ exports.expireKakaoToken = (req, res) => {
 };
 
 // access 토큰 만료 검증
-
 exports.checkExpireKakaoToken = (req, res, next) => {
   if (req.session.user?.token) {
     if (
@@ -452,7 +435,6 @@ exports.checkExpireKakaoToken = (req, res, next) => {
 };
 
 // 카카오 메세지 보내기
-
 exports.sendKakaoMsg = (template) => {
   const data = {
     template_object: JSON.stringify({
@@ -464,7 +446,6 @@ exports.sendKakaoMsg = (template) => {
       },
     }),
   };
-
   return (req, res, next) => {
     console.log('메세지 보내기 함수에서의 req', req.token_for_msg);
     axios({
