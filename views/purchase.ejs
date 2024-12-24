@@ -120,7 +120,7 @@
   <br />
   <main class="max-container">
     <!-- 카테고리 필터 -->
-    <!-- 식품/ 전자기기/의류 -->
+    <!-- 1 식품/ 2 전자기기/ 3 도서-->
     <ul class="categoryFilter">
       <li>
         <button class="filterBtn active" data-category="all">
@@ -128,57 +128,29 @@
           <span>전체</span>
         </button>
       </li>
+      <!-- (todo) 필터 버튼 이미지 교체하기 -->
       <li>
-        <button class="filterBtn" data-category="1">
+        <button class="filterBtn foods" data-category="1">
+          <img src="/public/img/filter-books.png" alt="식품" />
+          <span>식품</span>
+        </button>
+      </li>
+      <li>
+        <button class="filterBtn" data-category="2">
           <img src="/public/img/filter-electronics.png" alt="전자기기" />
           <span>전자기기</span>
         </button>
       </li>
       <li>
-        <button class="filterBtn clothes" data-category="2">
-          <img src="/public/img/filter-clothes.png" alt="의류" />
-          <span>의류</span>
-        </button>
-      </li>
-      <!-- (todo) 필터 버튼 이미지 교체하기 -->
-      <li>
-        <button class="filterBtn foods" data-category="3">
-          <img src="/public/img/filter-books.png" alt="식품" />
-          <span>식품</span>
+        <button class="filterBtn clothes" data-category="3">
+          <img src="/public/img/filter-clothes.png" alt="도서" />
+          <span>도서</span>
         </button>
       </li>
     </ul>
 
     <!-- 상품 목록 -->
-    <div class="productGrid max-container">
-      <% if (products && products.length > 0) { %> <%
-      products.forEach((product)=> { %>
-
-      <!--상품 카드-->
-
-      <div class="productCard" data-category-id="<%= product.product_key %>">
-        <a
-          href="/buyform/<%= product.product_key %>"
-          target="buyform"
-          onclick="window.open(this.href, 'buyform', 'width=800,height=600'); return false;"
-        >
-          <img
-            src="/public/img/<%= product.image %>"
-            alt="<%= product.name %>"
-          />
-          <div class="productDetails">
-            <div class="productName"><%= product.name %></div>
-            <div class="productPrice"><%= product.price %> 원</div>
-          </div>
-        </a>
-        <!-- 임시 찜 버튼(wishlist) -->
-        <button class="addWishBtn">임시 찜 버튼</button>
-      </div>
-
-      <% }) %> <% } else { %>
-      <p>등록된 상품이 없습니다.</p>
-      <% } %>
-    </div>
+    <div class="productGrid max-container"></div>
   </main>
 </body>
 
@@ -187,38 +159,69 @@
     const productGrid = document.querySelector('.productGrid');
     const filterButtons = document.querySelectorAll('.filterBtn');
 
-    // (todo) 상품 목록 업데이트 함수
+    // 상품 목록 업데이트 함수 (SPA)
     const updateProductGrid = (products) => {
-      productGrid.innerHTML = ''; // 기존 목록 초기화
+      productGrid.innerHTML = '';
+      if (Array.isArray(products) && products.length > 0) {
+        products.forEach((product) => {
+          const productCard = `
+            <div class="productCard">
+              <img src="/public/img/${product.image}" alt="${product.name}" />
+              <div class="productDetails">
+                <div>${product.name}</div>
+                <div>${product.price}원</div>
+              </div>
+            </div>`;
+          productGrid.innerHTML += productCard;
+        });
+      } else {
+        productGrid.innerHTML = '<p>등록된 상품이 없습니다.</p>';
+      }
     };
 
-    // (todo) 카테고리 필터링 API 호출
-    // const getItemsByCategory = async (categoryId) => {
-    //   try {
-    //     const res = await axios.get(`/products/${categoryId}`);
-    //     console.log(`카테고리 ${categoryId} 데이터:`, res.data);
-    //     updateProductGrid(res.data); // 받아온 데이터로 업데이트
-    //   } catch (err) {
-    //     console.error(`카테고리 ${categoryId} 데이터 호출 오류:`, err);
-    //   }
-    // };
+    // 전체 상품 가져오기
+    const getAllProducts = async () => {
+      try {
+        const res = await axios.get('/products/all');
+        updateProductGrid(res.data);
+      } catch (err) {
+        console.error('전체 상품 데이터 오류:', err);
+      }
+    };
 
-    // 필터 버튼 클릭 이벤트
+    // 카테고리별 상품 가져오기
+    const getItemsByCategory = async (categoryId) => {
+      try {
+        const res = await axios.get(`/products/${categoryId}`);
+        console.log('뷰 카테고리 상품 데이터:', res.data);
+        updateProductGrid(res.data);
+      } catch (err) {
+        console.error('카테고리 상품 데이터 오류:', err);
+      }
+    };
+
+    // 필터 버튼 이벤트 리스너
     filterButtons.forEach((button) => {
       button.addEventListener('click', () => {
-        // 모든 버튼의 활성화 상태 초기화
+        // 모든 버튼 활성화 상태 초기화
         filterButtons.forEach((btn) => btn.classList.remove('active'));
         button.classList.add('active');
 
         const categoryId = button.dataset.category;
 
         if (categoryId === 'all') {
-          location.reload(); // 페이지 새로고침
+          //URL 변경 API : history.pushState(state, title, url)
+          history.pushState(null, '', '/products/all');
+          getAllProducts();
         } else {
-          getItemsByCategory(categoryId); // API 호출로 데이터 업데이트
+          history.pushState(null, '', `/products/${categoryId}`);
+          getItemsByCategory(categoryId);
         }
       });
     });
+
+    // 초기화: 전체 상품 가져오기
+    getAllProducts();
   });
 
   // (todo) 찜 목록
