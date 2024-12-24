@@ -1,6 +1,6 @@
 const Comment = (sequelize, DataTypes) => {
   const model = sequelize.define(
-    'comment',
+    'Comment',
     {
       comment_id: {
         type: DataTypes.INTEGER,

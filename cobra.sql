@@ -1,4 +1,4 @@
--- Active: 1734662630414@@175.121.178.197@3306@cobra09
+-- Active: 1732688614523@@127.0.0.1@3306@cobra09
 
 /*
 - notion의 DB정리 페이지 참고
@@ -222,10 +222,11 @@ SELECT * FROM user;
 SELECT * FROM product;
 
 SELECT * FROM order_item;
->>>>>>> develop
 
 SELECT * FROM user;
 
 SELECT * FROM product;
 
 SELECT * FROM order_item;
+
+SELECT * FROM comment;

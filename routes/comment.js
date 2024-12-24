@@ -4,7 +4,7 @@ const commentController = require('../controller/Ccomment');
 const authController = require('../controller/Cauth');
 
 router.get('/', commentController.getCommentsByProduct);
-router.post('/', authController.isSessionValid, commentController.writeComment);
+router.post('/', commentController.writeComment);
 router.delete(
   '/',
   authController.isSessionValid,
