@@ -87,7 +87,6 @@ exports.modifyComment = (req, res) => {
 // 물품 전체 댓글 조회
 exports.getCommentsByProduct = (req, res) => {
   const { product_id } = req.body;
-  const user_id = req.session.user.user_pk;
 
   db.Comment.findAll({
     where: {

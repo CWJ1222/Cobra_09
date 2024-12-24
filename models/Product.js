@@ -2,7 +2,7 @@ const Product = (sequelize, DataTypes) => {
   const product = sequelize.define(
     'product',
     {
-      product_id: {
+      product_key: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,

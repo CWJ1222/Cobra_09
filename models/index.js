@@ -76,11 +76,11 @@ CommentModel.belongsTo(UserModel, {
 
 // 1 : N 관계
 ProductModel.hasMany(CommentModel, {
-  foreignKey: 'product_id',
+  foreignKey: 'product_key',
   onDelete: 'CASCADE',
 });
 CommentModel.belongsTo(ProductModel, {
-  foreignKey: 'product_id',
+  foreignKey: 'product_key',
   onDelete: 'CASCADE',
 });
 
