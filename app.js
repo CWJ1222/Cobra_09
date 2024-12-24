@@ -69,7 +69,7 @@ app.get('*', (req, res) => {
 });
 
 sequelize
-  .sync({ force: true })
+  .sync({ force: false })
   .then(() => {
     console.log('db connection success!');
     app.listen(PORT, () => {

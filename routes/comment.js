@@ -5,10 +5,7 @@ const authController = require('../controller/Cauth');
 
 router.get('/', commentController.getCommentsByProduct);
 router.post('/', commentController.writeComment);
-router.delete(
-  '/',
-  authController.isSessionValid,
-  commentController.removeComment
-);
+router.delete('/', commentController.removeComment);
+router.patch('/', commentController.modifyComment);
 
 module.exports = router;

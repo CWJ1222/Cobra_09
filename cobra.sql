@@ -130,11 +130,11 @@ VALUES (
 -- product 테이블에 데이터 삽입
 
 --이미지 경로 문제때문에 실제 파일명으로 입력받아야함
-INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id,net_price)
 VALUES
-('Smartphone', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
-('T-Shirt', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
-('Novel', '2024-12-20', 10, 50, 'novel.jpg', 3, 1);
+('Smartphone', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1,500),
+('T-Shirt', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2,300),
+('Novel', '2024-12-20', 10, 50, 'novel.jpg', 3, 1,200);
 
 INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)
 VALUES
