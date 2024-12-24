@@ -18,6 +18,7 @@ const ProductModel = require('./Product')(sequelize, Sequelize);
 const UserModel = require('./User')(sequelize, Sequelize);
 const OrderModel = require('./Order')(sequelize, Sequelize);
 const WishlistsModel = require('./Wishlists')(sequelize, Sequelize);
+const CommentModel = require('./Comment')(sequelize, Sequelize);
 
 // 1 : N 관계
 CategoryModel.hasMany(ProductModel, {
@@ -63,11 +64,32 @@ ProductModel.belongsToMany(UserModel, {
   otherKey: 'user_id',
 });
 
+// 1 : N 관계
+UserModel.hasMany(CommentModel, {
+  foreignKey: 'user_id',
+  onDelete: 'CASCADE',
+});
+CommentModel.belongsTo(UserModel, {
+  foreignKey: 'user_id',
+  onDelete: 'CASCADE',
+});
+
+// 1 : N 관계
+ProductModel.hasMany(CommentModel, {
+  foreignKey: 'product_key',
+  onDelete: 'CASCADE',
+});
+CommentModel.belongsTo(ProductModel, {
+  foreignKey: 'product_key',
+  onDelete: 'CASCADE',
+});
+
 db.Category = CategoryModel;
 db.Product = ProductModel;
 db.User = UserModel;
 db.Order = OrderModel;
 db.Wishlists = WishlistsModel;
+db.Comment = CommentModel;
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
