@@ -1,3 +1,4 @@
+const { where } = require('sequelize');
 const db = require('../models');
 
 // 댓글 생성
@@ -37,47 +38,54 @@ exports.writeComment = async (req, res) => {
     }
 
     // comment_id에 해당하는 comment_group값 찾기 (대댓글 일때)
-    async function getMaxCommentOrder() {
-      // const commentGroupValue = await getColByCommentId();
-      // console.log('commentGroupValue는', commentGroupValue);
-
+    async function orderArrange() {
+      // comment_group 값을 찾기
       const commentGroupValue = await db.Comment.findOne({
         where: {
           comment_id: comment_id,
         },
-        attributes: ['comment_group'],
+        attributes: ['comment_group', 'comment_order'],
       });
 
-      // comment_group 기준으로 comment_order 최댓값 찾기
-      const maxCommentOrder = await db.Comment.findOne({
-        where: {
-          comment_group: commentGroupValue.comment_group,
+      console.log('commentGroupValue', commentGroupValue.comment_order);
+      console.log('updateCommentOrder');
+      // 기준 댓글 order 뒤로 1증가
+      const updateCommentOrder = await db.Comment.update(
+        {
+          comment_order: db.Sequelize.literal('comment_order + 1'),
         },
-        attributes: [
-          [
-            db.Sequelize.fn('MAX', db.Sequelize.col('comment_order')),
-            'max_comment_order',
-          ],
-        ],
-      });
-      console.log('maxCommentOrder', maxCommentOrder);
-      return maxCommentOrder;
+        {
+          where: {
+            comment_group: commentGroupValue.comment_group,
+            comment_order: {
+              [db.Sequelize.Op.gt]: commentGroupValue.comment_order,
+            },
+          },
+        }
+      );
+      console.log(
+        '댓글달려고하는 댓글의 order 순서',
+        commentGroupValue.comment_order
+      );
+      return commentGroupValue.comment_order + 1;
+      // const maxCommentOrder = await db.Comment.findOne({
+      //   where: {
+      //     comment_group: commentGroupValue.comment_group,
+      //   },
+      //   attributes: [
+      //     [
+      //       db.Sequelize.fn('MAX', db.Sequelize.col('comment_order')),
+      //       'max_comment_order',
+      //     ],
+      //   ],
+      // });
+      // console.log('maxCommentOrder', maxCommentOrder);
+      // return maxCommentOrder;
     }
 
     const baseComment =
       parent_id >= 0 && comment_id ? await getColByCommentId() : null;
     console.log('baseComment는', baseComment?.dataValues);
-    // console.log(
-    //   'getMaxCommentGroup는      ',
-    //   parent_id === 0
-    //     ? (await getMaxCommentGroup()) + 1
-    //     : baseComment.comment_group
-    // );
-    // console.log(
-    //   'getMaxCommentOrder는       ',
-    //   comment_id ? (await getMaxCommentOrder()) + 1 : 1
-    // );
-    // 댓글 생성
     const createResult = await db.Comment.create({
       content,
       product_key,
@@ -86,11 +94,7 @@ exports.writeComment = async (req, res) => {
         parent_id >= 0 && comment_id
           ? baseComment.comment_group
           : (await getMaxCommentGroup()) + 1,
-      comment_order:
-        parent_id >= 0 && comment_id
-          ? (await getMaxCommentOrder()).dataValues.max_comment_order + 1
-          : 1,
-      // 내가 대댓글달려는 댓글의 depth + 1을 한다
+      comment_order: parent_id >= 0 && comment_id ? await orderArrange() : 1,
       comment_depth:
         parent_id >= 0 && comment_id ? baseComment.comment_depth + 1 : 0,
       parent_id: parent_id >= 0 && comment_id ? comment_id : 0,
