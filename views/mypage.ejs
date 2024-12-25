@@ -9,10 +9,10 @@
   </head>
   <body>
     <h1>mypage</h1>
-    <form name="userProfile " class="section mypage">
+    <form name="userProfile" class="section mypage">
       <section class="q">
-        회원정보
         <fieldset class="profileBox">
+          <legend>회원정보</legend>
           <legend>
             이메일
             <input type="text" name="email" value="<%=user.email%>" readonly />
@@ -21,8 +21,9 @@
             닉네임
             <input
               type="text"
-              name="nickName"
+              name="nickname"
               value="<%=user.nickname%>"
+              readonly
               required
             />
           </legend>
@@ -33,14 +34,16 @@
               id="password"
               name="password"
               placeholder="새 비밀번호를 입력하세요"
+              readonly
               required
             />
           </legend>
         </fieldset>
 
         <div class="btn">
-          <button type="button" onclick="editUserProfile();">Edit</button>
+          <button type="button" onclick="profileEdit();">수정하기</button>
         </div>
+
         <div class="logout-btn">
           <a href="/auth/logout"> 로그아웃 </a>
         </div>
@@ -50,38 +53,22 @@
     <section class="q section buy hide">
       이거 살래! 내역
       <div class="buyBox">
+        <% if (isSuccess) { product.forEach(product => { %>
         <div class="myBuy 1">
-          <a class="buyImg 1" href="구매 하는 상품 폼으로 이동">
+          <a class="buyImg 1" href="/host/list/<%=product.product_key%>">
             <img src="" alt="공구 참여 상품 1" />
-          </a>
-          <a class="buyProduct 1" href="구매하는 상품 폼으로 이동">
-            <li>상품명 / 구매 수량</li>
+            <li>상품명: <%=product.product.name%></li>
+            <li>수량:<%=product.product.max_quantity%></li>
             <li>상품 가격</li>
             <li>Dead-Line</li>
           </a>
         </div>
-        <div class="myBuy 2">
-          <a class="buyImg 2" href="구매 하는 상품 폼으로 이동">
-            <img src="" alt="공구 참여 상품 2" />
-          </a>
-          <a class="buyProduct 2" href="구매하는 상품 폼으로 이동">
-            <li>상품명 / 구매 수량</li>
-            <li>상품 가격</li>
-            <li>Dead-Line</li>
-          </a>
-        </div>
-        <div class="myBuy 3">
-          <a class="buyImg 3" href="구매 하는 상품 폼으로 이동">
-            <img src="" alt="공구 참여 상품 3" />
-          </a>
-          <a class="buyProduct 3" href="구매하는 상품 폼으로 이동">
-            <li>상품명 / 구매 수량</li>
-            <li>상품 가격</li>
-            <li>Dead-Line</li>
-          </a>
-        </div>
+        <hr />
       </div>
-      <a href="/2024-12-21/views/mybuypage.ejs">더보기</a>
+      <% }) } else { %>
+      <p><%= message %></p>
+      <% } %>
+      <a href="/join">더보기</a>
     </section>
     <section class="q section sell hide">
       같이 살래? 내역
@@ -120,13 +107,15 @@
       <a href="/2024-12-21/views/mysellpage.ejs">더보기</a>
     </section>
 
-    <button onclick="changeSection(this)" class="sell-btn">
-      판매페이지 확인
+    <button onclick="changeMySection(this)" class="my-btn">마이페이지</button>
+
+    <button onclick="changeBuySection(this)" class="buy-btn">
+      구매 페이지
     </button>
-    <button onclick="changeSection(this)" class="buy-btn">
-      구매페이지 확인
+    <button onclick="changeSellSection(this)" class="sell-btn">
+      판매 페이지
     </button>
-    <button onclick="changeSection(this)" class="my-btn">마이페이지</button>
+
     <div class="profile-delete">
       <button type="button" onclick="confirmUserDelete()">회원 탈퇴</button>
     </div>
@@ -137,79 +126,28 @@
     </div>
 
     <script>
-      //회원 정보 수정
-      // function profileEdit() {
-      //   const form = document.forms['userProfile'];
-      //   const btnBox = document.querySelector('.btn');
-      //   const editName = form.nickName;
-      //   const editPassword = form.password;
+      //회원 정보 render & 버튼 수정
+      function profileEdit() {
+        const form = document.forms['userProfile'];
+        const btnBox = document.querySelector('.btn');
+        console.log(form);
+        const nickname = form.nickname;
+        const password = form.password;
 
-      //   editName.removeAttribute('readonly');
-      //   editName.setAttribute('placeholder', form.nickName.value);
+        nickname.removeAttribute('readonly');
+        nickname.setAttribute('placeholder', form.nickname.value);
+        nickname.value = '';
 
-      //   editName.value = '';
+        password.removeAttribute('readonly');
 
-      //   editPassword.removeAttribute('readonly');
-      //   // editPassword.setAttribute('placeholder', form.password.value);
-      //   editPassword.value = '';
+        const editBtn = `<button type="button" onclick="editUserProfile()">수정완료</button>`;
+        btnBox.innerHTML = editBtn;
+      }
 
-      //   const editBtn = `
-      //      <button type="button" onclick="editDo()">수정완료</button>
-      //       <button type="button" onclick="editCancel()">리셋</button>`;
-      //   btnBox.innerHTML = editBtn;
-      // }
-
-      // //회원 정보 수정완료
-      // async function editDo() {
-      //   const form = document.forms['userProfile'];
-
-      //   try {
-      //     const response = await axios({
-      //       method: 'put',
-      //       url: '/user',
-      //       data: {
-      //         nickName: form.nickName.value,
-      //         password: form.password.value,
-      //       },
-      //     });
-      //     if (
-      //       !form.nickName.checkValidity() ||
-      //       !form.password.checkValidity()
-      //     ) {
-      //       alert('빈칸을 입력해주세요');
-      //       return;
-      //     }
-      //   } catch (err) {
-      //     console.error(err);
-      //   }
-
-      //   const btnBox = document.querySelector('.btn');
-      //   const editName = form.nickName;
-      //   const editPassword = form.password;
-      //   const editBtnsBox = form.editBtns;
-      //   // console.log(editName.value);
-
-      //   editName.setAttribute('readonly', '');
-      //   editName.removeAttribute('placeholder');
-
-      //   editPassword.setAttribute('readonly', '');
-      //   // editPassword.removeAttribute('placeholder');
-
-      //   const editBtn = `
-      //     <button type="button" onclick="profileEdit();">Edit</button>
-      //   `;
-      //   btnBox.innerHTML = editBtn;
-      // }
-
-      //정보 수정칸 리셋
-      // function editCancel() {
-      //   const form = document.forms['userProfile'];
-      //   form.reset();
-      // }
-
+      // 회원 정보 수정
       async function editUserProfile() {
         const nickname = document
-          .querySelector('input[name="nickName"]')
+          .querySelector('input[name="nickname"]')
           .value.trim();
         const password = document
           .querySelector('input[name="password"]')
@@ -235,23 +173,7 @@
         }
       }
 
-      //회원 탈퇴
-      // async function userDelete() {
-      //   const form = document.forms['userProfile'];
-      //   const email = form.email.value;
-      //   try {
-      //     const response = await axios({
-      //       method: 'delete',
-      //       url: '/delete',
-      //     });
-      //     alert(' 탈퇴 성공');
-
-      //     document.location.href = '/';
-      //   } catch (err) {
-      //     console.error(err);
-      //   }
-      // }
-
+      // 회원 탈퇴
       async function confirmUserDelete() {
         if (confirm('정말 탈퇴하시겠습니까?')) {
           try {
@@ -270,7 +192,8 @@
       }
 
       // 구매, 판매 내역 조회 칸 보이기
-      function changeSection(btn) {
+      // 판매 내역 버튼 누르면 my, buy hide
+      function changeSellSection(btn) {
         const mypageSection = document.querySelector('.mypage');
         const sellSection = document.querySelector('.sell');
         const buySection = document.querySelector('.buy');
@@ -281,13 +204,33 @@
           sellSection.classList.remove('hide');
           mypageSection.classList.add('hide');
           buySection.classList.add('hide');
-        } else if (btn.classList.contains('buy-btn')) {
+        }
+      }
+      // 구매 내역 버튼 누르면 my, sell hide
+      function changeBuySection(btn) {
+        const mypageSection = document.querySelector('.mypage');
+        const sellSection = document.querySelector('.sell');
+        const buySection = document.querySelector('.buy');
+        console.log(mypageSection);
+        console.log(sellSection);
+        console.log(buySection);
+        if (btn.classList.contains('buy-btn')) {
+          buySection.classList.remove('hide');
           sellSection.classList.add('hide');
           mypageSection.classList.add('hide');
-          buySection.classList.remove('hide');
-        } else if (btn.classList.contains('my-btn')) {
-          sellSection.classList.add('hide');
+        }
+      }
+      // 마이페이지 버튼 누르면 sell, buy hide
+      function changeMySection(btn) {
+        const mypageSection = document.querySelector('.mypage');
+        const sellSection = document.querySelector('.sell');
+        const buySection = document.querySelector('.buy');
+        console.log(mypageSection);
+        console.log(sellSection);
+        console.log(buySection);
+        if (btn.classList.contains('my-btn')) {
           mypageSection.classList.remove('hide');
+          sellSection.classList.add('hide');
           buySection.classList.add('hide');
         }
       }

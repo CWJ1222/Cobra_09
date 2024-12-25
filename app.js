@@ -33,22 +33,14 @@ app.use(
   })
 );
 
-// 유효하지 않은 세션 쿠키 삭제
-app.use('*', (req, res, next) => {
-  if (!req.session.user) {
-    res.clearCookie('connect.sid');
-  }
-  next();
-});
-
-// 토큰 만료 검증
-app.use(authController.checkExpireKakaoToken);
-
 // 세션 체크
 app.use('*', (req, res, next) => {
   console.log('req.session', req.session.user);
   next();
 });
+
+// 토큰 만료 검증
+app.use(authController.checkExpireKakaoToken);
 
 // router 연결
 const purchaseRouter = require('./routes/purchase');
@@ -56,13 +48,20 @@ const indexRouter = require('./routes');
 const authRouter = require('./routes/auth');
 const productRouter = require('./routes/product');
 const memberRouter = require('./routes/member');
+const commentRouter = require('./routes/comment');
 const hostRouter = require('./routes/host');
+
+app.use('*', (req, res, next) => {
+  console.log('req.session', req.session);
+  next();
+});
 
 app.use('/', purchaseRouter);
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/products', productRouter);
 app.use('/member', memberRouter);
+app.use('/comments', commentRouter);
 app.use('/host', hostRouter);
 
 app.get('*', (req, res) => {

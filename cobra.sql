@@ -111,37 +111,40 @@ INSERT INTO
         email,
         password,
         nickname,
-        salt
+        salt,
+        user_type
     )
 VALUES (
-        'soo@naver.com',
-        "1234",
+        'test@naver.com',
+        "1fe2eeeb2bc899ca1ec855549557d858a5371f51509db90346f63dd16e109bc2ddb370ac9f96f52cdc9d100bd126317ad793df70b3e1347226cb51918af61d40",
         "soo",
-        "1234"
+        "43c03ab8122ba157830a2f968b98d786"
+        ,"1"
     ),
     (
-        'jin@naver.com',
-        '5678',
+        'soo@naver.com',
+        '1fe2eeeb2bc899ca1ec855549557d858a5371f51509db90346f63dd16e109bc2ddb370ac9f96f52cdc9d100bd126317ad793df70b3e1347226cb51918af61d40',
         "jin",
-        "5678"
+        "43c03ab8122ba157830a2f968b98d786",
+        "1"
     );
 
 -- product 테이블에 데이터 삽입
 
 --이미지 경로 문제때문에 실제 파일명으로 입력받아야함
-INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id,net_price)
 VALUES
-('Smartphone', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
-('T-Shirt', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
-('Novel', '2024-12-20', 10, 50, 'novel.jpg', 3, 1);
+('Smartphone', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1,500),
+('T-Shirt', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2,300),
+('Novel', '2024-12-20', 10, 50, 'novel.jpg', 3, 1,200);
 
-INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)
 VALUES
 ('Smartphone11', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
 ('T-Shirt11', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
 ('Novel11', '2024-12-20', 10, 50, 'novel.jpg', 3, 1);
 
-INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)
 VALUES
 ('Smartphone22', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
 ('T-Shirt22', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
@@ -222,22 +225,10 @@ SELECT * FROM product;
 
 SELECT * FROM order_item;
 
-SELECT * from wishlists;
+SELECT * FROM user;
 
+SELECT * FROM product;
 
--- category : category_name 바꾸기
-UPDATE category
-SET category_name = 'Foods'
-WHERE category_id = 1;
+SELECT * FROM order_item;
 
-UPDATE category
-SET category_name = 'Electronics'
-WHERE category_id = 2;
-
-UPDATE category
-SET category_name = 'Clothes'
-WHERE category_id = 3;
-
--- Product 테이블에 정가 컬럼 추가
-ALTER TABLE product
-ADD COLUMN net_price INT NOT NULL DEFAULT 0;
+SELECT * FROM comment;
