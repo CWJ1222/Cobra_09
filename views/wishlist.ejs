@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>찜한 상품</title>
+  </head>
+  <body>
+    <h1>찜한 상품</h1>
+
+    <% if (products.length > 0) { %>
+    <ul>
+      <% products.forEach((product) => { %>
+      <li>
+        <img src="<%= product.image %>" alt="<%= product.name %>" />
+        <h2><%= product.name %></h2>
+        <p>가격: <%= product.price %>원</p>
+        <p>마감일: <%= product.deadline %></p>
+      </li>
+      <% }); %>
+    </ul>
+    <% } else { %>
+    <p><%= message %></p>
+    <% } %>
+  </body>
+</html>

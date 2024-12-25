@@ -1,4 +1,4 @@
--- Active: 1734662630414@@175.121.178.197@3306@cobra09
+-- Active: 1734662483784@@175.121.178.197@3306@cobra09
 
 /*
 - notion의 DB정리 페이지 참고
@@ -22,6 +22,8 @@ FLUSH PRIVILEGES;
 SELECT User, Host FROM mysql.user;
 
 ALTER TABLE user ADD COLUMN salt VARCHAR(255) NOT NULL;
+
+ALTER TABLE product MODIFY COLUMN deadline DATETIME NOT NULL;
 
 
 -- Category 테이블 생성
