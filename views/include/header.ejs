@@ -36,28 +36,12 @@
         <li><a href="/" class="header__menu__item <%=currentPage === 'home' ? 'active': ''%>">홈</a</li>
           <!-- FE : BE 테스트 페이지(purchaseTest)에서 purchase로 변경 -->
         <li><a href="/products" class="header__menu__item <%=currentPage ==='product'? 'active' : ''%>">구매</a></li>
-        <li><a href="/host" class="header__menu__item <%=currentPage ==='sell'? 'active':'' %>">판매</a></li>
+        <li><a href="/host" class="header__menu__item <%=currentPage ==='host'? 'active':'' %>">판매</a></li>
       </ul>
     </ul>
   </nav>
 </header>
 
-<!-- <script>
-  document.addEventListener("DOMContentLoaded", ()=>{
-    const searchIcon = document.getElementById('search-icon')
-    const searchInput = document.getElementById('search-input')
-
-    searchIcon.addEventListener('click', ()=>{
-      console.log('click')
-      searchInput.classList.toggle('show')
-    })
-
-    if(searchInput.classList.contains('show')){
-      searchInput.focus()
-    }
-  })
-</script> -->
-<!-- 판매탭 클릭 시 session 있는지 받아오기 -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const sellMenu = document.querySelector('a[href="/host"]');
@@ -72,8 +56,8 @@
         });
 
         if (response.status === 401) {
-          const data = await response.json();
-          alert(data.message); // "로그인 후 이용하세요." 알림 표시
+       // 로그인 화면으로 리다이렉트
+       window.location.href = "/auth/login";
         } else {
           // 세션이 유효한 경우 판매 페이지로 이동
           window.location.href = "/host";

@@ -1,72 +1,209 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <!-- axios -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"
-      integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <style>
-      form {
-        display: flex;
-        flex-direction: column;
-      }
-    </style>
-  </head>
-  <body>
-    <form name="form-product">
-      <label>물품명<input type="text" name="name" /></label>
-      <label>마감기한<input type="date" name="deadline" /></label>
-      <label>가격<input type="number" name="price" /></label>
-      <label>최대 판매 수량<input type="number" name="max_quantity" /></label>
-      <label>물품 사진<input type="file" name="image" /></label>
-      <select name="category_id">
-        <option value="1">식품</option>
-        <option value="2">전자기기</option>
-        <option value="3">도서</option>
-        <option value="4">의류</option>
-      </select>
-      <button type="button" onclick="postProductInfo()">등록</button>
-    </form>
-    <script>
-      function postProductInfo() {
-        const form = document.forms['form-product'];
-        const formData = new FormData();
-        console.log('asdasdas', form.max_quantity.value);
-        formData.append('name', form.name.value);
-        formData.append('deadline', form.deadline.value);
-        formData.append('price', form.price.value);
-        formData.append('max_quantity', form.max_quantity.value);
-        formData.append('image', form.image.files[0]);
-        formData.append('category_id', form.category_id.value);
-        console.log('form.image.files[0]', form.image.files[0]);
+<head>
+  <%- include('include/head') %>
+  <title><%= title %></title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: white;
+      margin: 0;
+      padding: 0;
+    }
+    .max-container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #e6daf5;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .max-container h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .form-group input[type='file'] {
+      padding: 3px;
+    }
+    .regis {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: #7309f6;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .regis:hover {
+      background: #460693;
+    }
+  </style>
+</head>
+<body>
+  <%- include('include/header') %>
+  <br />
+  <main class="max-container">
+    <form name="form-product" enctype="multipart/form-data">
+      <h1>판매 신청서</h1>
+      <p>상품 정보를 입력하고 등록하세요!</p>
+      <hr />
+      <hr />
+      <div class="form-group">
+        <label>물품명</label>
+        <input type="text" name="name" required />
+      </div>
 
-        axios({
-          url: '/host/register',
-          method: 'post',
-          data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-          .then((res) => {
-            if (res.data.success) {
-              // 성공 시 리다이렉트
-              window.location.href = res.data.redirectUrl;
-            } else {
-              alert('등록 실패: ' + res.data.message);
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            alert('서버 오류: 등록에 실패했습니다.');
-          });
+      <div class="form-group">
+        <label>실제 가격</label>
+        <input type="number" name="net_price" required />
+      </div>
+      <div class="form-group">
+        <label>판매가격</label>
+        <input type="number" name="price" required />
+      </div>
+      <div class="form-group">
+        <label>최대 판매 수량</label>
+        <input type="number" name="max_quantity" required />
+      </div>
+      <div class="form-group">
+        <label>물품 사진</label>
+        <input type="file" name="image" accept="image/*" required />
+      </div>
+      <div class="form-group">
+        <label>마감기한</label>
+        <input type="datetime-local" name="deadline" id="deadline" required />
+      </div>
+      <div class="form-group">
+        <label>카테고리</label>
+        <select name="category_id" required>
+          <% if (categories && categories.length > 0) { %> <%
+          categories.forEach(category => { %>
+          <option value="<%= category.category_id %>">
+            <%= category.category_name %>
+          </option>
+          <% }) %> <% } else { %>
+          <option value="">카테고리가 없습니다</option>
+          <% } %>
+        </select>
+      </div>
+      <button type="button" onclick="postProductInfo()" class="regis">
+        등록
+      </button>
+    </form>
+  </main>
+  <script>
+    function postProductInfo() {
+      const form = document.forms['form-product'];
+      const formData = new FormData();
+
+      const deadlineInput = document.getElementById('deadline');
+
+      // 현재 날짜와 시간을 ISO 형식으로 가져오기
+      const now = new Date();
+      const selectedDeadline = new Date(deadlineInput.value);
+
+      // 마감기한 유효성 검사
+      if (selectedDeadline <= now) {
+        alert('마감기한은 현재 시점 이후로 설정해야 합니다.');
+        return;
       }
-    </script>
-  </body>
-</html>
+
+      formData.append('name', form.name.value.trim());
+      formData.append('deadline', form.deadline.value);
+      formData.append('price', form.price.value.trim());
+      formData.append('max_quantity', form.max_quantity.value.trim());
+      formData.append('image', form.image.files[0]);
+      formData.append('net_price', form.net_price.value.trim());
+      formData.append('category_id', form.category_id.value);
+
+      if (!form.image.files[0]) {
+        alert('이미지를 업로드해주세요!');
+        return;
+      }
+
+      axios({
+        url: '/host/register',
+        method: 'post',
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then((res) => {
+          if (res.data.success) {
+            alert('등록 성공!');
+            window.location.href = res.data.redirectUrl;
+          } else {
+            alert('등록 실패: ' + res.data.message);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          alert('서버 오류: 등록에 실패했습니다.');
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const deadlineInput = document.getElementById('deadline');
+
+      // 현재 날짜와 시간을 ISO 형식으로 가져오기
+      const now = new Date();
+      const formattedNow = new Date(
+        now.getTime() - now.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .slice(0, 16); // 'YYYY-MM-DDTHH:mm' 형식으로 변환
+
+      // min 속성 설정
+      deadlineInput.min = formattedNow;
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const netPriceInput = document.querySelector('input[name="net_price"]'); // 실제 가격 필드
+      const priceInput = document.querySelector('input[name="price"]'); // 판매 가격 필드
+
+      // 실제가격 입력 시 판매가격의 최대값 업데이트
+      netPriceInput.addEventListener('input', () => {
+        const netPrice = parseFloat(netPriceInput.value);
+
+        if (!isNaN(netPrice) && netPrice > 0) {
+          priceInput.max = netPrice; // 판매가격 최대값 설정
+        } else {
+          priceInput.max = ''; // 제한 제거
+        }
+
+        // 판매가격이 최대값보다 큰 경우 초기화
+        if (parseFloat(priceInput.value) > netPrice) {
+          priceInput.value = ''; // 값을 초기화
+        }
+      });
+
+      // 판매가격 입력 시 제한
+      priceInput.addEventListener('input', () => {
+        const netPrice = parseFloat(netPriceInput.value);
+        const price = parseFloat(priceInput.value);
+
+        if (!isNaN(netPrice) && price > netPrice) {
+          alert('판매가격은 실제가격 이하로 설정해야 합니다.');
+          priceInput.value = netPrice; // 최대값으로 설정
+        }
+      });
+    });
+  </script>
+</body>

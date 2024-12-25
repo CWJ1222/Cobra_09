@@ -11,12 +11,6 @@ exports.purchase = (req, res) => {
   res.render('purchase', { title: '구매 페이지', currentPage: 'purchase' });
 };
 
-// 판매 페이지 -> 수정 필요
-// POST '/host/register' : 공동구매 진행하고 싶은 물품 등록
-exports.sell = (req, res) => {
-  res.render('sell', { title: '판매 페이지', currentPage: 'sell' });
-};
-
 // 세션이 있는지를 검증
 exports.isSessionValid = (req, res, next) => {
   if (req.session.user) {
@@ -335,41 +329,80 @@ exports.postWishlists = async (req, res) => {
 };
 
 // GET /wishlist/my : 마이페이지에서 찜한 상품 가져오기
+// exports.getWishlists = async (req, res) => {
+//   try {
+//     // user_id 가져오기
+//     // const target = req.session.user.user_pk;
+//     // 임시 user_id
+//     const target = 2;
+//     // user_id에 해당하는 모든 찜한 상품 가져오기
+//     const wishlists = await Wishlists.findAll({
+//       where: { user_id: target },
+//       attributes: ['product_key'],
+//     });
+//     // 만약에 찜한 상품이 없다면
+//     if (wishlists.length === 0) {
+//       return res.status(404).send({
+//         isSuccess: true,
+//         message: '찜한 상품이 없습니다.',
+//         data: [],
+//       });
+//     }
+//     // 찜한 상품이 있다면
+//     const productkeys = wishlists.map((wishlist) => wishlist.product_key);
+
+//     // product 테이블에서 해당하는 상품 조회
+//     const products = await Product.findAll({
+//       where: {
+//         product_key: productkeys,
+//       },
+//     });
+//     return res.status(200).send({
+//       isSuccess: true,
+//       message: '찜한 상품이 있습니다.',
+//       data: products,
+//     });
+//   } catch (error) {
+//     console.log('err', error);
+//     res.status(500)({ isSuccess: false, massage: '서버 오류가 발생했습니다.' });
+//   }
+// };
 exports.getWishlists = async (req, res) => {
   try {
-    // user_id 가져오기
-    // const target = req.session.user.user_pk;
-    // 임시 user_id
-    const target = 2;
-    // user_id에 해당하는 모든 찜한 상품 가져오기
+    // 세션에서 사용자 ID 가져오기
+    const userId = req.session.user ? req.session.user.user_pk : null;
+
+    if (!userId) {
+      // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
+      return res.redirect('/auth/login');
+    }
+
+    // 찜한 상품 가져오기
     const wishlists = await Wishlists.findAll({
-      where: { user_id: target },
+      where: { user_id: userId },
       attributes: ['product_key'],
     });
-    // 만약에 찜한 상품이 없다면
+
     if (wishlists.length === 0) {
-      return res.status(404).send({
+      return res.render('wishlist', {
         isSuccess: true,
         message: '찜한 상품이 없습니다.',
-        data: [],
+        products: [],
       });
     }
-    // 찜한 상품이 있다면
-    const productkeys = wishlists.map((wishlist) => wishlist.product_key);
 
-    // product 테이블에서 해당하는 상품 조회
+    const productKeys = wishlists.map((wishlist) => wishlist.product_key);
     const products = await Product.findAll({
-      where: {
-        product_key: productkeys,
-      },
+      where: { product_key: productKeys },
     });
-    return res.status(200).send({
+
+    res.render('wishlist', {
       isSuccess: true,
-      message: '찜한 상품이 있습니다.',
-      data: products,
+      message: '찜한 상품 목록입니다.',
+      products,
     });
   } catch (error) {
-    console.log('err', error);
-    res.status(500)({ isSuccess: false, massage: '서버 오류가 발생했습니다.' });
+    console.error('찜한 상품 렌더링 오류:', error);
+    res.status(500).send('서버 오류');
   }
 };
