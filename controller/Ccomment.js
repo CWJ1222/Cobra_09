@@ -1,28 +1,110 @@
 const db = require('../models');
 
 // 댓글 생성
-exports.writeComment = (req, res) => {
-  const { content, product_key } = req.body;
-  const user_id = req.session.user.user_pk;
+exports.writeComment = async (req, res) => {
+  const { content, product_key, comment_id, parent_id } = req.body;
+  console.log(
+    '요청 바디 내용은',
+    req.body.comment_id,
+    req.body.parent_id,
+    req.body.content
+  );
+  // const user_id = req.session.user.user_pk;
+  const user_id = 1;
 
-  db.Comment.create({
-    content,
-    product_key,
-    user_id,
-  })
-    .then((result) => {
-      // 응답 comments는 객체형태
-      console.log('result.dataValues,', result);
-      res.send({
-        isSuccess: true,
-        message: '댓글 등록 성공',
-        comments: result.dataValues,
+  try {
+    // comment_group 최댓값 찾기 (대댓글이 아닐때)
+    async function getMaxCommentGroup() {
+      const maxCommentResult = await db.Comment.findOne({
+        attributes: [
+          [
+            db.Sequelize.fn('MAX', db.Sequelize.col('comment_group')),
+            'max_comment_group',
+          ],
+        ],
       });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send({ isSuccess: false, message: '댓글 등록 실패' });
+      return maxCommentResult.dataValues.max_comment_group;
+    }
+
+    // comment_id에 해당하는 comment 찾기
+    async function getColByCommentId() {
+      const commentColumn = db.Comment.findOne({
+        where: {
+          comment_id: comment_id,
+        },
+      });
+      return commentColumn;
+    }
+
+    // comment_id에 해당하는 comment_group값 찾기 (대댓글 일때)
+    async function getMaxCommentOrder() {
+      // const commentGroupValue = await getColByCommentId();
+      // console.log('commentGroupValue는', commentGroupValue);
+
+      const commentGroupValue = await db.Comment.findOne({
+        where: {
+          comment_id: comment_id,
+        },
+        attributes: ['comment_group'],
+      });
+
+      // comment_group 기준으로 comment_order 최댓값 찾기
+      const maxCommentOrder = await db.Comment.findOne({
+        where: {
+          comment_group: commentGroupValue.comment_group,
+        },
+        attributes: [
+          [
+            db.Sequelize.fn('MAX', db.Sequelize.col('comment_order')),
+            'max_comment_order',
+          ],
+        ],
+      });
+      console.log('maxCommentOrder', maxCommentOrder);
+      return maxCommentOrder;
+    }
+
+    const baseComment =
+      parent_id >= 0 && comment_id ? await getColByCommentId() : null;
+    console.log('baseComment는', baseComment?.dataValues);
+    // console.log(
+    //   'getMaxCommentGroup는      ',
+    //   parent_id === 0
+    //     ? (await getMaxCommentGroup()) + 1
+    //     : baseComment.comment_group
+    // );
+    // console.log(
+    //   'getMaxCommentOrder는       ',
+    //   comment_id ? (await getMaxCommentOrder()) + 1 : 1
+    // );
+    // 댓글 생성
+    const createResult = await db.Comment.create({
+      content,
+      product_key,
+      user_id,
+      comment_group:
+        parent_id >= 0 && comment_id
+          ? baseComment.comment_group
+          : (await getMaxCommentGroup()) + 1,
+      comment_order:
+        parent_id >= 0 && comment_id
+          ? (await getMaxCommentOrder()).dataValues.max_comment_order + 1
+          : 1,
+      // 내가 대댓글달려는 댓글의 depth + 1을 한다
+      comment_depth:
+        parent_id >= 0 && comment_id ? baseComment.comment_depth + 1 : 0,
+      parent_id: parent_id >= 0 && comment_id ? comment_id : 0,
     });
+    console.log('result.dataValues,', createResult);
+    res.send({
+      isSuccess: true,
+      message: '댓글 등록 성공',
+      comments: createResult.dataValues,
+    });
+  } catch (err) {
+    console.log(err);
+    res.send({ isSuccess: false, message: '댓글 등록 실패' });
+  }
 };
 
 // 댓글 삭제
@@ -87,12 +169,26 @@ exports.modifyComment = (req, res) => {
 // 물품 전체 댓글 조회
 exports.getCommentsByProduct = (req, res) => {
   const product_key = req.params.id;
-
+  console.log(req.params);
   db.Comment.findAll({
     where: {
       product_key: product_key,
     },
-    attributes: ['comment_id', 'content', 'createdAt', 'updatedAt'],
+    attributes: [
+      'comment_id',
+      'content',
+      'comment_group',
+      'comment_order',
+      'comment_depth',
+      'parent_id',
+      'createdAt',
+      'updatedAt',
+    ],
+    order: [
+      ['comment_group', 'ASC'],
+      ['comment_order', 'ASC'],
+      ['comment_depth', 'ASC'],
+    ],
     include: [
       { model: db.User, attributes: ['nickname', 'user_id'] },
       { model: db.Product, attributes: ['product_key'] },
@@ -100,6 +196,7 @@ exports.getCommentsByProduct = (req, res) => {
   })
     .then((result) => {
       // 응답 comments는 배열형태
+
       if (result.length) {
         res.send({
           isSuccess: true,
@@ -120,4 +217,8 @@ exports.getCommentsByProduct = (req, res) => {
         message: '서버 에러(해당 물품의 전체 댓글 조회)',
       });
     });
+};
+
+exports.renderCommentPage = (req, res) => {
+  res.render('commentTest');
 };
