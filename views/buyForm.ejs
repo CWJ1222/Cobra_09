@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <!-- axios -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"
+      integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <style>
+      li {
+        list-style: none;
+      }
+
+      .inputCommentContent {
+        width: 500px;
+        height: 50px;
+      }
+    </style>
   </head>
   <body>
     <h1><%= product.name %> 구매하기</h1>
@@ -53,6 +70,12 @@
 
       <button type="submit">구매하기</button>
     </form>
+    <label>
+      <textarea class="inputCommentContent"></textarea
+      ><button onclick="addComment()">댓글 등록</button></label
+    >
+    <div></div>
+    <div class="commentContainer"></div>
     <script>
       // 주소검색기능
       function openSearch() {
@@ -67,6 +90,116 @@
           return;
         }
       }
+
+      const path = window.location.pathname;
+      const product_id = path.split('/')[2];
+
+      // 대댓글 달기
+      function replyComment(commentInfo) {
+        const replyContent = document.querySelector(
+          `.reply-input${commentInfo.comment_id}`
+        ).value;
+        axios({
+          url: '/comments',
+          method: 'post',
+          data: {
+            content: replyContent,
+            product_key: 1,
+            comment_id: commentInfo.comment_id,
+            parent_id: commentInfo.parent_id,
+          },
+        })
+          .then((result) => {
+            console.log('답글 달기 성공', result);
+            getComments();
+          })
+          .catch((err) => {
+            alert('답글 달기 실패');
+          });
+      }
+
+      // 전체 댓글 가져오기
+      function getComments() {
+        axios({
+          url: `/comments/${product_id}`,
+          method: 'get',
+        })
+          .then((result) => {
+            console.log('서버응답 result', result);
+            const commentContainer =
+              document.querySelector('.commentContainer');
+            commentContainer.innerText = '';
+            if (result.data.comments) {
+              for (let i = 0; i < result.data.comments.length; i++) {
+                const newComment = document.createElement('li');
+                const writer = document.createElement('div');
+                const content = document.createElement('div');
+                const createdAt = document.createElement('div');
+                const commentId = document.createElement('div');
+                const parentId = document.createElement('div');
+                const replyInput = document.createElement('input');
+                const replyBtn = document.createElement('button');
+
+                newComment.classList.add('commentBox');
+                replyInput.classList.add(
+                  `replyInput${result.data.comments[i].comment_id}`
+                );
+
+                writer.innerText = result.data.comments[i].user.nickname;
+                content.innerText = result.data.comments[i].content;
+                createdAt.innerText = result.data.comments[i].createdAt;
+                commentId.innerText = result.data.comments[i].comment_id;
+                parentId.innerText = result.data.comments[i].parent_id;
+
+                replyBtn.innerText = `답글`;
+                replyBtn.onclick = () => {
+                  replyComment({
+                    comment_id: result.data.comments[i].comment_id,
+                    parent_id: result.data.comments[i].parent_id,
+                  });
+                };
+
+                newComment.append(
+                  writer,
+                  content,
+                  createdAt,
+                  commentId,
+                  parentId,
+                  replyInput,
+                  replyBtn
+                );
+                newComment.style.marginLeft = `${
+                  100 * result.data.comments[i].comment_depth
+                }px`;
+                newComment.style.backgroundColor = 'skyblue';
+                commentContainer.append(newComment);
+              }
+            } else {
+              commentContainer.innerText = '등록된 댓글이 없습니다.';
+            }
+          })
+          .catch((err) => {
+            alert('답글 달기 실패');
+          });
+      }
+
+      function addComment() {
+        const content = document.querySelector('.inputCommentContent').value;
+        axios({
+          url: '/comments',
+          method: 'post',
+          data: { content: content, product_key: product_id },
+        })
+          .then((result) => {
+            console.log('댓글 달기 성공', result);
+            getComments();
+          })
+          .catch((err) => {
+            alert('댓글 달기 실패');
+          });
+      }
+
+      getComments();
     </script>
   </body>
 </html>

@@ -50,7 +50,6 @@
     <div class="comment-container"></div>
     <script>
       function replyComment(commentInfo) {
-        console.log('대댓글 달기할때 부모 댓글 id', commentInfo);
         const replyContent = document.querySelector(
           `.reply-input${commentInfo.comment_id}`
         ).value;
@@ -63,7 +62,12 @@
             comment_id: commentInfo.comment_id,
             parent_id: commentInfo.parent_id,
           },
-        });
+        })
+          .then((result) => {
+            console.log('대댓글달기 응답', result);
+            getComments();
+          })
+          .catch();
       }
 
       function getComments() {

@@ -10,8 +10,7 @@ exports.writeComment = async (req, res) => {
     req.body.parent_id,
     req.body.content
   );
-  // const user_id = req.session.user.user_pk;
-  const user_id = 1;
+  const user_id = req.session.user.user_pk;
 
   try {
     // comment_group 최댓값 찾기 (대댓글이 아닐때)
@@ -39,6 +38,14 @@ exports.writeComment = async (req, res) => {
 
     // comment_id에 해당하는 comment_group값 찾기 (대댓글 일때)
     async function orderArrange() {
+      const commentIdCol = await db.Comment.findOne({
+        where: {
+          comment_id: comment_id,
+        },
+        attributes: ['comment_group', 'comment_order'],
+      });
+      console.log('댓글달려고 하는 기준 댓글정보', commentIdCol);
+
       const sameParentCol = await db.Comment.findOne({
         where: {
           parent_id: comment_id,
@@ -48,63 +55,49 @@ exports.writeComment = async (req, res) => {
             db.Sequelize.fn('MAX', db.Sequelize.col('comment_order')),
             'max_comment_order',
           ],
-          'comment_group',
         ],
         group: ['comment_group'],
       });
-      console.log('동일 부모 댓글내 최대 순서1', sameParentCol);
+      // 선택한 댓글의 코멘트 id를 가지고 있는 대댓글이 있으면
+      // 해당 댓글 코멘트id를 parent_id로 가지는 댓글들을 가져와서 그중에서 마지막  order값에 +1한 값을 가진다. (아직 생성안함 넣을 order값만 가지고있음)
+      //
+      // 해당 코멘트 id의 그룹을 가지고 있으면서 마지막 order값보다 큰 컬럼의 order값을 +1씩 증가한다.
+
+      // 대댓글이 없으면 해당 코멘트id의 order값에 +1한 값을 가진다. (아직 생성안함 넣을 order값만 가지고있음)
+      // 해당 코멘트 id의 그룹을 가지고 있으면서 코멘트id의 order보다 큰 컬럼의 order를 +1 증가한다.
+
+      // 대댓글이 이미 존재하는지 여부 확인
       const maxGroupOrder = sameParentCol
         ? sameParentCol.dataValues.max_comment_order
         : 0;
-      console.log('최종 맥스 그룹 오더순서는3 ', maxGroupOrder);
-      if (maxGroupOrder) {
-        const updateCommentOrder = await db.Comment.update(
-          {
-            comment_order: db.Sequelize.literal('comment_order + 1'),
-          },
-          {
-            where: {
-              comment_group: sameParentCol.dataValues.comment_group,
-              comment_order: {
-                [db.Sequelize.Op.gt]:
-                  sameParentCol.dataValues.max_comment_order + 1,
-              },
+      console.log('대대글이 존재하는지 여부는 ', maxGroupOrder);
+
+      // 해당 comment_group의 전체 order를 재변경 +1
+      const updateCommentOrder = await db.Comment.update(
+        {
+          comment_order: db.Sequelize.literal('comment_order + 1'),
+        },
+        {
+          where: {
+            comment_group: commentIdCol.comment_group,
+            comment_order: {
+              [db.Sequelize.Op.gt]: maxGroupOrder
+                ? sameParentCol.dataValues.max_comment_order
+                : commentIdCol.comment_order,
             },
-          }
-        );
-      }
+          },
+        }
+      );
 
-      return maxGroupOrder + 1;
-      // comment_group 값을 찾기
-      // const commentGroupValue = await db.Comment.findOne({
-      //   where: {
-      //     comment_id: comment_id,
-      //   },
-      //   attributes: ['comment_group', 'comment_order'],
-      // });
-      // console.log('commentGroupValue', commentGroupValue);
-
-      // 기준 댓글 order 뒤로 1증가
-      // const updateCommentOrder = await db.Comment.update(
-      //   {
-      //     comment_order: db.Sequelize.literal('comment_order + 1'),
-      //   },
-      //   {
-      //     where: {
-      //       comment_group: commentGroupValue.comment_group,
-      //       comment_order: {
-      //         [db.Sequelize.Op.gt]: commentGroupValue.comment_order,
-      //       },
-      //     },
-      //   }
-      // );
-
-      // return commentGroupValue.comment_order + 1;
+      return maxGroupOrder
+        ? sameParentCol.dataValues.max_comment_order + 1
+        : commentIdCol.comment_order + 1;
     }
 
     const baseComment =
       parent_id >= 0 && comment_id ? await getColByCommentId() : null;
     console.log('baseComment는', baseComment?.dataValues);
+
     const createResult = await db.Comment.create({
       content,
       product_key,
@@ -219,7 +212,6 @@ exports.getCommentsByProduct = (req, res) => {
   })
     .then((result) => {
       // 응답 comments는 배열형태
-
       if (result.length) {
         res.send({
           isSuccess: true,

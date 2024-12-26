@@ -52,6 +52,7 @@ exports.renderLoginPage = (req, res) => {
 
   res.render('login', {
     currentPage: 'login',
+    isLogin: req.session.user ? true : false,
     redirectUrl, // 로그인 성공 후 이동할 URL 전달
   });
 };
