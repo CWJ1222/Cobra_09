@@ -44,6 +44,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+    // 판매 메뉴 클릭 이벤트
     const sellMenu = document.querySelector('a[href="/host"]');
 
     sellMenu.addEventListener("click", async (event) => {
@@ -65,6 +66,21 @@
       } catch (err) {
         console.error("오류 발생:", err);
         alert("문제가 발생했습니다. 다시 시도해주세요.");
+      }
+    });
+
+    // 검색창 토글 이벤트
+    // 헤더 검색창 토글 이벤트
+    const searchIcon = document.getElementById('search-icon');
+    const searchInput = document.getElementById('search-input');
+
+    searchIcon.addEventListener('click', () => {
+      console.log('Search icon clicked');
+      searchInput.classList.toggle('show');
+
+      // 검색창이 열리면 포커스
+      if (searchInput.classList.contains('show')) {
+        searchInput.focus();
       }
     });
   });
