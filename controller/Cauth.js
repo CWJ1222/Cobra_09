@@ -49,9 +49,10 @@ exports.isSessionInvalid = (req, res, next) => {
 // 로그인 페이지 렌더링
 exports.renderLoginPage = (req, res) => {
   const redirectUrl = req.session.redirectUrl || '/'; // 세션에 저장된 URL 사용
-
+  // console.log('컨트롤러 user 확인', user);
   res.render('login', {
-    currentPage: 'login',
+    currentPage: '',
+    user: req.session.user, //세션에 사용자 정보 추가
     redirectUrl, // 로그인 성공 후 이동할 URL 전달
   });
 };
@@ -73,12 +74,13 @@ exports.loginUser = async (req, res) => {
     console.log('resultUser', resultUser);
     // 401 unauthorized
     if (!resultUser) {
-      res.status(401).send({
+      res.status(200).send({
         isSuccess: false,
         message: '회원이 아닙니다.',
       });
       return;
     }
+
     const isEqual = verifyPassword(
       inputUserPw,
       resultUser.salt,
@@ -90,22 +92,24 @@ exports.loginUser = async (req, res) => {
         user_pk: resultUser.user_id,
         isLogin: true, // 로그인 여부 추가
       };
+      console.log('일반 로그인 후 세션:', req.session.user);
+
       // 201 created
-      res.status(201).send({
+      res.status(200).send({
         isLogin: true,
         nickname: resultUser.nickname,
         redirectUrl, // 로그인 성공 후 리다이렉트할 URL
         message: '로그인 성공 했습니다.',
       });
     } else {
-      res.status(401).send({
+      res.status(200).send({
         isSuccess: false,
         message: '비밀번호가 일치 하지 않습니다.',
       });
     }
   } catch (err) {
     // 500 internal server error
-    res.status(500).send({
+    res.status(200).send({
       isSuccess: false,
       message: '서버 에러',
     });

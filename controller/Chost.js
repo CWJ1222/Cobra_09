@@ -9,6 +9,7 @@ exports.renderHostPage = async (req, res) => {
       title: '판매 페이지',
       categories, // 카테고리 데이터를 ejs로 전달
       currentPage: 'hostTest',
+      user: req.session.user,
     });
   } catch (err) {
     console.error(err);

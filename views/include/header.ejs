@@ -8,16 +8,15 @@
     <!-- 로그인/회원가입 -->
     <div class="header__auth">
       <!-- 로그인 여부에 따른 버튼 표시-->
-
       <% if(user){ %>
-        <a href="/auth/login">
-          <button class="login-button">로그인/회원가입</button>
-        </a> 
-      <% }else{ %>
         <a href="/user/mypage">
           <button class="mypage">마이페이지</button>
         </a>
-      <% } %>
+      <% } else { %>
+        <a href="/auth/login">
+          <button class="login-button">로그인/회원가입</button>
+        </a> 
+     <%  } %>
     
     </div>
     <!-- 검색 영역 -->
