@@ -119,6 +119,7 @@ exports.getMyJoins = async (req, res) => {
         },
       ],
     });
+
     // console.log('봐주세요', orders[0]);
     res.status(200).render('mybuypage', { isSuccess: true, orders });
   } catch (err) {
@@ -210,12 +211,22 @@ exports.renderMypage = async (req, res) => {
     });
     console.log('user', user);
 
+    const products = await Product.findAll({
+      where: { user_id: target },
+      attributes: ['name', 'deadline', 'max_quantity'],
+    });
+
     if (!user) {
       return res.status(404).send('사용자를 찾을 수 없습니다.');
     }
 
-    // mypage.ejs로 사용자 정보 전달
-    res.render('mypage', { isSuccess: true, user, product: user.Order_items });
+    res.render('mypage', {
+      isSuccess: true,
+      user,
+      product: user.Order_items,
+      // 내가 등록한 물품도 전달
+      order: products,
+    });
     // res.render('mypage', { user, product: user.Order_items });
   } catch (error) {
     console.error('마이페이지 렌더링 오류:', error);
