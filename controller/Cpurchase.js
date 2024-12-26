@@ -1,5 +1,6 @@
 const { Product } = require('../models'); // Product 모델 불러오기
 const { Order } = require('../models');
+const { getCommentsByProduct } = require('./Ccomment');
 
 // 구매 페이지 렌더링 (GET)
 exports.purchasePage = async (req, res) => {
@@ -42,8 +43,16 @@ exports.buyForm = async (req, res) => {
       req.session.redirectUrl = `/buyform/${req.params.product_key}`;
       return res.redirect('/auth/login'); // 쿼리스트링 제거
     }
-
-    res.render('buyForm', { product, userId, user: req.session.user });
+    const product_key = req.params.product_key;
+    console.log('product_key', product_key);
+    const comments = await getCommentsByProduct(product_key);
+    console.log('commentsByProduct는   ', comments);
+    res.render('buyForm', {
+      product,
+      userId,
+      user: req.session.user,
+      comments,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send('서버 오류');
