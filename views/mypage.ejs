@@ -1,135 +1,168 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mypage</title>
+    <%-include('include/head')%>
+    <title>title</title>
     <link rel="stylesheet" href="/public/css/mypage.css" />
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
   <body>
-    <h1>mypage</h1>
-    <form name="userProfile" class="section mypage">
-      <section class="q">
-        <fieldset class="profileBox">
-          <legend>회원정보</legend>
-          <legend>
-            이메일
-            <input type="text" name="email" value="<%=user.email%>" readonly />
-          </legend>
-          <legend>
-            닉네임
-            <input
-              type="text"
-              name="nickname"
-              value="<%=user.nickname%>"
-              readonly
-              required
-            />
-          </legend>
-          <legend>
-            새 비밀번호
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="새 비밀번호를 입력하세요"
-              readonly
-              required
-            />
-          </legend>
-        </fieldset>
-
-        <div class="btn">
-          <button type="button" onclick="profileEdit();">수정하기</button>
+    <%- include('include/header') %>
+    <!-- <h1>mypage</h1> -->
+    <div class="section">
+      <div class="all-btn">
+        <div class="change-btn">
+          <!-- 찜한 상품 -->
+          <div class="wishlist-btn">
+            <a href="/wishlist/my">
+              <i class="fa-regular fa-heart fa-2x"></i>
+            </a>
+          </div>
+          <button onclick="changeMySection(this)" class="my-btn">
+            <i id="img" class="fa-regular fa-user fa-3x"></i>
+          </button>
+          <button onclick="changeBuySection(this)" class="buy-btn">
+            <i class="fa-solid fa-cart-shopping fa-3x"></i>
+          </button>
+          <button onclick="changeSellSection(this)" class="sell-btn">
+            <i class="fas fa-store fa-3x"></i>
+          </button>
         </div>
+      </div>
+      <form name="userProfile">
+        <section class="q profile mypage">
+          <!-- insection = img + profileBox -->
+          <div id="inSection">
+            <div class="profileImg">
+              <i id="img" class="fa-regular fa-user fa-7x"></i>
+              <div id="name"><strong><%=user.nickname%></strong>님</div>
+            </div>
+            <!-- profileBox = input + editbtn -->
+            <fieldset class="profileBox">
+              <legend>회원정보</legend>
+              <legend class="le">
+                이메일
+                <input
+                  type="text"
+                  name="email"
+                  value="<%=user.email%>"
+                  readonly
+                />
+              </legend>
+              <legend class="le">
+                닉네임
+                <input
+                  type="text"
+                  name="nickname"
+                  value="<%=user.nickname%>"
+                  readonly
+                  required
+                />
+              </legend>
+              <legend class="le">
+                새 비밀번호
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="새 비밀번호를 입력하세요"
+                  readonly
+                  required
+                />
+              </legend>
+              <div id="editbtn">
+                <button type="button" onclick="profileEdit();">수정하기</button>
+              </div>
+            </fieldset>
+          </div>
+          <div id="logout-btn">
+            <a href="/auth/logout"> 로그아웃 </a>
+          </div>
+        </section>
+      </form>
 
-        <div class="logout-btn">
-          <a href="/auth/logout"> 로그아웃 </a>
+      <!-- 내가 구매한 내역 -->
+      <section class="q buy hide">
+        <div id="mybuy">내 구매 내역</div>
+        <!-- 배열 3개까지 출력-->
+        <% if (isSuccess) { %>
+        <div class="buyBox">
+          <% product.slice(0, 3).forEach(product => { %>
+          <div class="myBuy">
+            <a class="buyProduct" href="/host/list/<%= product.product_key %>">
+              <div id="buypr">
+                <img
+                  src="/public/img/logo-title.png"
+                  alt="<%= product.product.name %>"
+                />
+              </div>
+              <ul>
+                <li><strong>상품명:</strong> <%= product.product.name %></li>
+                <li><strong>수량:</strong> <%= product.quantity %></li>
+                <li>
+                  <strong>상품 가격:</strong> <%= product.product.price %>
+                </li>
+                <li>
+                  <strong>Dead-Line:</strong> <%= product.product.deadline %>
+                </li>
+              </ul>
+            </a>
+          </div>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <p><%= message %></p>
+        <% } %>
+        <div class="plus">
+          <a href="/join">더보기</a>
         </div>
       </section>
-    </form>
 
-    <section class="q section buy hide">
-      이거 살래! 내역
-      <div class="buyBox">
-        <% if (isSuccess) { product.forEach(product => { %>
-        <div class="myBuy 1">
-          <a class="buyImg 1" href="/host/list/<%=product.product_key%>">
-            <img src="" alt="공구 참여 상품 1" />
-            <li>상품명: <%=product.product.name%></li>
-            <li>수량:<%=product.product.max_quantity%></li>
-            <li>상품 가격</li>
-            <li>Dead-Line</li>
-          </a>
+      <!-- 내가 주선한 내역 -->
+      <section class="q sell hide">
+        <div id="mysell">내 주선 내역</div>
+        <!-- 배열 3개까지 출력-->
+        <% if (isSuccess) { %>
+        <div class="sellBox">
+          <% product.slice(0, 3).forEach(product => { %>
+          <div class="mySell">
+            <a class="sellProduct" href="/host/lists/<%= order.product_key %>">
+              <div id="sellpr">
+                <img
+                  src="/public/img/logo-title.png"
+                  alt="<%= product.product.name %>"
+                />
+              </div>
+              <ul>
+                <li>상품명: <%=order[0].name%></li>
+                <!-- 내가 구매한 수량, order_item에서 가져옴 -->
+                <li>수량:<%=order[0].max_quantity%></li>
+                <li>상품 가격: <%=order[0].price%></li>
+                <li>Dead-Line: <%=order[0].deadline%></li>
+              </ul>
+            </a>
+          </div>
+          <% }) %>
         </div>
-        <hr />
+        <% } else { %>
+        <p><%= message %></p>
+        <% } %>
+        <div class="plus">
+          <a href="/2024-12-21/views/mysellpage.ejs">더보기</a>
+        </div>
+      </section>
+
+      <div class="delete-btn">
+        <button type="button" onclick="confirmUserDelete()">
+          <i class="fa-solid fa-skull-crossbones fa-2x"></i>
+        </button>
       </div>
-      <% }) } else { %>
-      <p><%= message %></p>
-      <% } %>
-      <a href="/join">더보기</a>
-    </section>
-    <section class="q section sell hide">
-      같이 살래? 내역
-      <div class="sellBox">
-        <div class="mySell 1">
-          <a class="sellImg 1" href="구매 하는 상품 폼으로 이동">
-            <img src="" alt="공구 올린 상품 1" />
-          </a>
-          <a class="sellProduct 1" href="구매하는 상품 폼으로 이동">
-            <li>상품명 / 구매 수량</li>
-            <li>상품 가격</li>
-            <li>Dead-Line</li>
-          </a>
-        </div>
-        <div class="mySell 2">
-          <a class="sellImg 2" href="구매 하는 상품 폼으로 이동">
-            <img src="" alt="공구 올린 상품 1" />
-          </a>
-          <a class="buyProduct 2" href="구매하는 상품 폼으로 이동">
-            <li>상품명 / 구매 수량</li>
-            <li>상품 가격</li>
-            <li>Dead-Line</li>
-          </a>
-        </div>
-        <div class="mySell 3">
-          <a class="sellImg 3" href="구매 하는 상품 폼으로 이동">
-            <img src="" alt="공구 올린 상품 1" />
-          </a>
-          <a class="sellProduct 3" href="구매하는 상품 폼으로 이동">
-            <li>상품명 / 구매 수량</li>
-            <li>상품 가격</li>
-            <li>Dead-Line</li>
-          </a>
-        </div>
-      </div>
-      <a href="/2024-12-21/views/mysellpage.ejs">더보기</a>
-    </section>
-
-    <button onclick="changeMySection(this)" class="my-btn">마이페이지</button>
-
-    <button onclick="changeBuySection(this)" class="buy-btn">
-      구매 페이지
-    </button>
-    <button onclick="changeSellSection(this)" class="sell-btn">
-      판매 페이지
-    </button>
-
-    <div class="profile-delete">
-      <button type="button" onclick="confirmUserDelete()">회원 탈퇴</button>
-    </div>
-
-    <!-- 찜한 상품 -->
-    <div class="wishlist-btn">
-      <a href="/wishlist/my">찜한 상품</a>
     </div>
 
     <script>
       //회원 정보 render & 버튼 수정
       function profileEdit() {
         const form = document.forms['userProfile'];
-        const btnBox = document.querySelector('.btn');
+        const btnBox = document.querySelector('#editbtn');
         console.log(form);
         const nickname = form.nickname;
         const password = form.password;
@@ -153,8 +186,8 @@
           .querySelector('input[name="password"]')
           .value.trim();
 
-        if (!nickname && !password) {
-          alert('닉네임 또는 비밀번호 중 하나를 입력해주세요.');
+        if (!nickname || !password) {
+          alert('닉네임과 비밀번호 둘 다 입력해주세요.');
           return;
         }
 

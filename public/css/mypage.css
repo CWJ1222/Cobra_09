@@ -1,42 +1,215 @@
-form {
-  min-width: 700px;
-  min-height: 200px;
+@import url('./common.css');
+.section {
+  min-width: 900px;
+  width: 100%;
+  height: 100%;
   /* background-color: yellow; */
 }
+
+/* profile, buy, sell section */
 .q {
-  border: 5px solid green;
+  border: 3px solid var(--color-primary);
   border-radius: 25px;
-  width: 700px;
-  height: 350px;
-  padding-left: 50px;
-  margin-right: 50px;
+  width: 70%;
+  margin-left: 15%;
+  margin-top: 3%;
+  /* background-color: pink; */
+  text-align: center;
+}
+
+#inSection {
+  display: flex;
+  width: 100%;
+  height: 90%;
   /* background-color: pink; */
 }
 
-.section.hide {
+/* div */
+.profileImg {
+  /* background-color: skyblue; */
+  width: 35%;
+  min-width: 180px;
+  padding-top: 12%;
+  margin-left: 3%;
+}
+
+/* div user name */
+#name {
+  width: 100%;
+  height: 15%;
+  padding-top: 10%;
+  text-align: center;
+  /* background-color: var(--color-primary); */
+}
+
+/* fieldest */
+.profileBox {
+  width: 50%;
+  height: 60%;
+  min-width: 300px;
+  margin-left: 3%;
+  margin-right: 3%;
+  margin-top: 8%;
+  border: 1px solid var(--color-primary);
+  border-radius: 25px;
+}
+
+/* input */
+.le {
+  height: 25%;
+  font-size: medium;
+  font-weight: bold;
+  padding-top: 5%;
+}
+
+/*----- btn----- */
+/* edit btn */
+#editbtn {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+  height: 20%;
+  padding-top: 5%;
+}
+/* logout btn */
+#logout-btn {
+  /* background-color: skyblue; */
+  width: 95%;
+  height: 10%;
+  text-align: end;
+  margin-top: 3%;
+  margin-bottom: 2%;
+}
+/* change all btn */
+.all-btn {
+  min-width: 40%;
+}
+/* info change btn */
+.change-btn {
+  display: flex;
+  justify-content: space-evenly;
+  min-width: 700px;
+}
+/* delete btn */
+.delete-btn {
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
+  min-width: 45%;
+}
+
+/* change section */
+.buySellSection {
+  min-width: 700px;
+  min-height: 50%;
+  /* padding: 64px; */
+}
+
+.q.hide {
   display: none;
 }
 
-li {
-  list-style-type: none;
-}
-
-.mybuyProduct {
-  border: 1 solid black;
-  border-radius: 15px;
-  background-color: yellowgreen;
-}
-
+/* 구매한 내역 */
 .buyBox {
-  display: flex;
-  justify-content: space-evenly;
+  width: 100%;
+  height: 50%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3개의 열로 나누기 */
+  gap: 6%; /* 그리드 아이템 간 간격 */
+  margin-top: 20px;
+  padding-left: 3%;
+  padding-right: 3%;
+}
+
+.myBuy {
+  background-color: var(--color-primary-light);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.buyProduct {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+#buypr img {
+  width: 90%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.plus {
+  margin-top: 3%;
+  margin-bottom: 2%;
+}
+
+div#mybuy {
+  margin-top: 2%;
+}
+
+ul li {
+  margin: 10px 0;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+ul li strong {
+  font-weight: normal;
 }
 .sellBox {
   display: flex;
   justify-content: space-evenly;
 }
 
-.profileBox {
-  width: 500px;
-  height: 250px;
+/* 주선한 내역 */
+div#mysell {
+  margin-top: 2%;
+}
+.sellBox {
+  width: 100%;
+  height: 50%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3개의 열로 나누기 */
+  gap: 6%; /* 그리드 아이템 간 간격 */
+  margin-top: 20px;
+  padding-left: 3%;
+  padding-right: 3%;
+}
+
+.mySell {
+  background-color: var(--color-primary-light);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.sellProduct {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+#sellpr img {
+  width: 90%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.plus {
+  margin-top: 3%;
+  margin-bottom: 2%;
+}
+
+ul li {
+  margin: 10px 0;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+ul li strong {
+  font-weight: normal;
 }
