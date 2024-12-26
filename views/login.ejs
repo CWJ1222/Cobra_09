@@ -216,10 +216,6 @@
         </div>
       </div>
 
-        <!-- 백엔드 테스트를 위한 로그아웃 버튼 -->
-          <a href="/auth/logout">로그아웃</a>
-          <br>
-          <br>
       </form>
     </main>
 
@@ -305,13 +301,5 @@
         toggleBtn.classList.remove('show')
       }
     })
-
-
-    // 백엔드 테스트를 위한 로그아웃 (todo) 추후 마이페이지로 기능 이동
-    function handleLogout() {
-      axios({ method: 'delete', url: '/auth' }).then((res) =>
-        console.log(res.data)
-      );
-    }
   </script>
 </html>
