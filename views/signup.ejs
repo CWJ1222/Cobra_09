@@ -12,7 +12,8 @@
         justify-content: center;
         flex-direction: column;
         align-items: center;
-        padding: 50px 0;
+        padding: 40px 0;
+        min-height: 100vh; /* 화면 중앙 위치 설정 */
       }
       .form-container {
         padding: 1rem;
@@ -32,12 +33,16 @@
       }
 
       #signupForm input {
-        margin-bottom: 1rem;
+        margin-bottom: 10px;
         width: 300px;
         height: 42px;
         padding: 12px;
         border: 1px solid var(--color-secondary);
         border-radius: 9px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
       /* 비밀번호 보기 숨기기 */
@@ -47,8 +52,6 @@
       }
       .toggleBtn {
         position: absolute;
-        /* top: 30%;
-        right: 40px; */
         cursor: pointer;
         color: var(--color-secondary);
       }
@@ -74,17 +77,33 @@
       /* 에러 메시지 */
       #error {
         display: none;
-        width: 350px;
+        width: 320px;
         background-color: #fafafa;
         padding: 20px;
         text-align: start;
         font-size: 14px;
         color: var(--color-error);
+        margin-bottom: 20px;
+        margin-left: 5px;
       }
       #error::before {
         content: '\f06a'; /* 느낌표 */
         font-family: fontAwesome;
         margin-right: 5px;
+      }
+
+      /* 가입하기 버튼 */
+      #signup-button {
+        width: 320px;
+        background-color: var(--color-primary);
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        transition: all 0.3x ease;
+        margin-left: 5px;
+      }
+      #signup-button:hover {
+        background-color: var(--color-primary-dark);
       }
     </style>
   </head>
@@ -123,8 +142,6 @@
               />
               <span class="toggleBtn pwToggle"></span>
             </div>
-
-            <div class="error-message" id="password-error"></div>
           </div>
 
           <!-- 비밀번호 확인 -->
