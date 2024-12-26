@@ -221,7 +221,7 @@ exports.getMyAllJoins = async (req, res) => {
 exports.renderMypage = async (req, res) => {
   try {
     // // 세션에서 사용자 ID 가져오기
-    const userId = req.session.user?.user_pk;
+    const userId = req.session.user.user_pk;
 
     if (!userId) {
       // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
@@ -237,7 +237,7 @@ exports.renderMypage = async (req, res) => {
       include: [
         {
           model: Order,
-          attributes: ['product_key'],
+          attributes: ['product_key', 'quantity'],
           include: [
             {
               model: Product,
@@ -248,12 +248,23 @@ exports.renderMypage = async (req, res) => {
     });
     console.log('user', user);
 
+    const products = await Product.findAll({
+      where: { user_id: target },
+      attributes: ['name', 'deadline', 'max_quantity'],
+    });
+
     if (!user) {
       return res.status(404).send('사용자를 찾을 수 없습니다.');
     }
+    //console.log('producttttttttttttttttttt', products[1].dataValues.name);
 
-    // mypage.ejs로 사용자 정보 전달
-    res.render('mypage', { isSuccess: true, user, product: user.Order_items });
+    res.render('mypage', {
+      isSuccess: true,
+      user,
+      product: user.Order_items,
+      // 내가 등록한 물품도 전달
+      order: products,
+    });
     // res.render('mypage', { user, product: user.Order_items });
   } catch (error) {
     console.error('마이페이지 렌더링 오류:', error);
