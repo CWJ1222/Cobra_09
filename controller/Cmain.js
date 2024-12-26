@@ -1,13 +1,44 @@
-const { Op } = require('sequelize');
+// const { Op } = require('sequelize');
+const { Op, sequelize } = require('../models'); // sequelize 추가
 const { Category, Product, User, Order, Wishlists } = require('../models');
 
 // GET '/' : 메인 페이지 렌더링
-exports.main = (req, res) => {
-  res.render('index', {
-    title: '홈페이지',
-    user: req.session.user,
-    currentPage: 'home',
-  });
+// exports.main = (req, res) => {
+//   res.render('index', { title: '홈페이지', currentPage: 'home' });
+// };
+// 메인 페이지에서 찜 많은 상품 순으로 나열
+exports.main = async (req, res) => {
+  try {
+    // Wishlists와 Products를 조인하고, wishlist_id 기준으로 정렬
+    const products = await Wishlists.findAll({
+      attributes: [
+        'product_key',
+        [sequelize.fn('COUNT', sequelize.col('wishlist_id')), 'wishlistCount'], // wishlist_id 개수 계산
+      ],
+      include: [
+        {
+          model: Product, // Product 모델 포함
+          as: 'ProductWishlists', // 관계 정의에서 사용한 별칭
+          attributes: ['name', 'price', 'image', 'deadline'], // 필요한 필드만 선택
+        },
+      ],
+      group: ['product_key'], // product_key 기준 그룹화
+      order: [[sequelize.fn('COUNT', sequelize.col('wishlist_id')), 'DESC']], // wishlist_id 개수 기준 정렬
+      raw: true,
+      nest: true,
+    });
+    console.log(products);
+    // 메인 페이지 렌더링
+    res.render('index', {
+      title: '메인 페이지',
+      user: req.session.user,
+      products,
+      currentPage: 'home',
+    });
+  } catch (error) {
+    console.error('메인 페이지 오류:', error);
+    res.status(500).send('서버 오류가 발생했습니다.');
+  }
 };
 
 // 사용하고 있지 않음 API -> 수정 필요
@@ -190,7 +221,7 @@ exports.getMyAllJoins = async (req, res) => {
 exports.renderMypage = async (req, res) => {
   try {
     // // 세션에서 사용자 ID 가져오기
-    const userId = req.session.user.user_pk;
+    const userId = req.session.user?.user_pk;
 
     if (!userId) {
       // 로그인하지 않은 경우 로그인 페이지로 리다이렉트

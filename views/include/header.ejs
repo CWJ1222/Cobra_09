@@ -14,7 +14,7 @@
         <!-- 로그인 여부에 따른 버튼 표시-->
         <% if(user){ %>
         <a href="/user/mypage">
-          <button class="login-button">마이페이지</button>
+          <button>마이페이지</button>
         </a>
         <% } else { %>
         <a href="/auth/login">
@@ -58,7 +58,7 @@
         <li>
           <a
             href="/host"
-            class="header__menu__item <%=currentPage ==='host'? 'active':'' %>"
+            class="header__menu__item <%=currentPage ==='purchase'? 'active':'' %>"
             >판매</a
           >
         </li>

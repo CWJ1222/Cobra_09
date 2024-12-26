@@ -9,24 +9,22 @@
     <%- include('include/header') %>
     <!-- <h1>mypage</h1> -->
     <div class="section">
-      <div class="all-btn">
-        <div class="change-btn">
-          <!-- 찜한 상품 -->
-          <div class="wishlist-btn">
-            <a href="/wishlist/my">
-              <i class="fa-regular fa-heart fa-2x"></i>
-            </a>
-          </div>
-          <button onclick="changeMySection(this)" class="my-btn">
-            <i id="img" class="fa-regular fa-user fa-3x"></i>
-          </button>
-          <button onclick="changeBuySection(this)" class="buy-btn">
-            <i class="fa-solid fa-cart-shopping fa-3x"></i>
-          </button>
-          <button onclick="changeSellSection(this)" class="sell-btn">
-            <i class="fas fa-store fa-3x"></i>
-          </button>
+      <div class="change-btn">
+        <!-- 찜한 상품 -->
+        <div class="wishlist-btn">
+          <a href="/wishlist/my">
+            <i class="fa-regular fa-heart fa-2x"></i>
+          </a>
         </div>
+        <button onclick="changeMySection(this)" class="my-btn">
+          <i id="img" class="fa-regular fa-user fa-3x"></i>
+        </button>
+        <button onclick="changeBuySection(this)" class="buy-btn">
+          <i class="fa-solid fa-cart-shopping fa-3x"></i>
+        </button>
+        <button onclick="changeSellSection(this)" class="sell-btn">
+          <i class="fas fa-store fa-3x"></i>
+        </button>
       </div>
       <form name="userProfile">
         <section class="q profile mypage">
@@ -133,11 +131,11 @@
                 />
               </div>
               <ul>
-                <li>상품명: <%=order[0].name%></li>
+                <li><strong>상품명:</strong> <%=order[0].name%></li>
                 <!-- 내가 구매한 수량, order_item에서 가져옴 -->
-                <li>수량:<%=order[0].max_quantity%></li>
-                <li>상품 가격: <%=order[0].price%></li>
-                <li>Dead-Line: <%=order[0].deadline%></li>
+                <li><strong>수량:</strong><%=order[0].max_quantity%></li>
+                <li><strong>가격:</strong> <%=order[0].price%></li>
+                <li><strong>상품명:</strong> <%=order[0].deadline%></li>
               </ul>
             </a>
           </div>

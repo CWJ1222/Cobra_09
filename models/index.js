@@ -20,6 +20,16 @@ const OrderModel = require('./Order')(sequelize, Sequelize);
 const WishlistsModel = require('./Wishlists')(sequelize, Sequelize);
 const CommentModel = require('./Comment')(sequelize, Sequelize);
 
+// Wishlists와 Product 간 관계
+WishlistsModel.belongsTo(ProductModel, {
+  foreignKey: 'product_key',
+  as: 'ProductWishlists', // 고유 별칭 추가
+});
+ProductModel.hasMany(WishlistsModel, {
+  foreignKey: 'product_key',
+  as: 'WishlistsForProduct', // 고유 별칭 추가
+});
+
 // 1 : N 관계
 CategoryModel.hasMany(ProductModel, {
   foreignKey: 'category_id',
@@ -52,16 +62,29 @@ OrderModel.belongsTo(ProductModel, {
 });
 
 // N:M 관계
+// UserModel.belongsToMany(ProductModel, {
+//   through: WishlistsModel,
+//   foreignKey: 'user_id',
+//   otherKey: 'product_key',
+// });
+
+// ProductModel.belongsToMany(UserModel, {
+//   through: WishlistsModel,
+//   foreignKey: 'product_key',
+//   otherKey: 'user_id',
+// });
 UserModel.belongsToMany(ProductModel, {
   through: WishlistsModel,
   foreignKey: 'user_id',
   otherKey: 'product_key',
+  as: 'WishlistProducts', // 고유 별칭 추가
 });
 
 ProductModel.belongsToMany(UserModel, {
   through: WishlistsModel,
   foreignKey: 'product_key',
   otherKey: 'user_id',
+  as: 'WishlistUsers', // 고유 별칭 추가
 });
 
 // 1 : N 관계
