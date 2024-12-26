@@ -218,6 +218,13 @@ VALUES (
         '010-5678-1234'
     );
 
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, user_id, product_key, createdAt, updatedAt) VALUES ("1 댓글이다.",1,1,1,1,1,'2024-01-01 10:00:00','2024-01-01 10:00:00');
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, parent_id, user_id, product_key, createdAt, updatedAt) VALUES ("1 댓글에 대댓글이다.",1,2,2,2,1,'2024-01-01 10:00:00','2024-01-01 10:00:00')
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, parent_id, user_id, product_key, createdAt, updatedAt) VALUES ("2 댓글이다.",2,1,1,1,2,'2024-01-01 10:00:00','2024-01-01 10:00:00')
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, parent_id, user_id, product_key, createdAt, updatedAt) VALUES ("2 댓글의 대댓글이다.",2,2,2,2,2,'2024-01-01 10:00:00','2024-01-01 10:00:00')
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, parent_id, user_id, product_key, createdAt, updatedAt) VALUES ("3 댓글이다.",3,1,1,1,3,'2024-01-01 10:00:00','2024-01-01 10:00:00')
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, parent_id, user_id, product_key, createdAt, updatedAt) VALUES ("3 댓글의 대댓글이다.",3,2,2,2,3,'2024-01-01 10:00:00','2024-01-01 10:00:00')
+
 -- 테이블에 다 데이터 담겨있는지 확인
 SELECT * FROM category;
 
