@@ -15,6 +15,14 @@
     <style>
       li {
         list-style: none;
+        display: flex;
+        background-color: var(--color-white);
+        border-radius: 9px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        /* overflow: hidden; */
+        /* position: relative; */
+        /* text-align: center; */
+        padding: 5px;
       }
 
       .inputCommentContent {
@@ -71,7 +79,7 @@
       <button type="submit">구매하기</button>
     </form>
     <label>
-      <textarea class="inputCommentContent"></textarea
+      <textarea class="inputCommentContent" required></textarea
       ><button onclick="addComment()">댓글 등록</button></label
     >
     <div></div>
@@ -96,15 +104,16 @@
 
       // 대댓글 달기
       function replyComment(commentInfo) {
+        console.log('대댓글달기');
         const replyContent = document.querySelector(
-          `.reply-input${commentInfo.comment_id}`
+          `.replyInput${commentInfo.comment_id}`
         ).value;
         axios({
           url: '/comments',
           method: 'post',
           data: {
             content: replyContent,
-            product_key: 1,
+            product_key: product_id,
             comment_id: commentInfo.comment_id,
             parent_id: commentInfo.parent_id,
           },
@@ -125,7 +134,6 @@
           method: 'get',
         })
           .then((result) => {
-            console.log('서버응답 result', result);
             const commentContainer =
               document.querySelector('.commentContainer');
             commentContainer.innerText = '';
@@ -137,13 +145,8 @@
                 const createdAt = document.createElement('div');
                 const commentId = document.createElement('div');
                 const parentId = document.createElement('div');
-                const replyInput = document.createElement('input');
-                const replyBtn = document.createElement('button');
 
                 newComment.classList.add('commentBox');
-                replyInput.classList.add(
-                  `replyInput${result.data.comments[i].comment_id}`
-                );
 
                 writer.innerText = result.data.comments[i].user.nickname;
                 content.innerText = result.data.comments[i].content;
@@ -151,6 +154,13 @@
                 commentId.innerText = result.data.comments[i].comment_id;
                 parentId.innerText = result.data.comments[i].parent_id;
 
+                // 답글 달기 박스
+                const replyInput = document.createElement('input');
+                const replyBtn = document.createElement('button');
+
+                replyInput.classList.add(
+                  `replyInput${result.data.comments[i].comment_id}`
+                );
                 replyBtn.innerText = `답글`;
                 replyBtn.onclick = () => {
                   replyComment({
@@ -169,9 +179,9 @@
                   replyBtn
                 );
                 newComment.style.marginLeft = `${
-                  100 * result.data.comments[i].comment_depth
+                  60 * result.data.comments[i].comment_depth
                 }px`;
-                newComment.style.backgroundColor = 'skyblue';
+                // newComment.style.backgroundColor = 'skyblue';
                 commentContainer.append(newComment);
               }
             } else {
@@ -199,6 +209,7 @@
           });
       }
 
+      // 첫 렌더링시 전체 댓글 가져오기
       getComments();
     </script>
   </body>

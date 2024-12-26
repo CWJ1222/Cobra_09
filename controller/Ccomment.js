@@ -4,12 +4,6 @@ const db = require('../models');
 // 댓글 생성
 exports.writeComment = async (req, res) => {
   const { content, product_key, comment_id, parent_id } = req.body;
-  console.log(
-    '요청 바디 내용은',
-    req.body.comment_id,
-    req.body.parent_id,
-    req.body.content
-  );
   const user_id = req.session.user.user_pk;
 
   try {
@@ -42,9 +36,8 @@ exports.writeComment = async (req, res) => {
         where: {
           comment_id: comment_id,
         },
-        attributes: ['comment_group', 'comment_order'],
+        // attributes: ['comment_group', 'comment_order'],
       });
-      console.log('댓글달려고 하는 기준 댓글정보', commentIdCol);
 
       const sameParentCol = await db.Comment.findOne({
         where: {
@@ -58,13 +51,6 @@ exports.writeComment = async (req, res) => {
         ],
         group: ['comment_group'],
       });
-      // 선택한 댓글의 코멘트 id를 가지고 있는 대댓글이 있으면
-      // 해당 댓글 코멘트id를 parent_id로 가지는 댓글들을 가져와서 그중에서 마지막  order값에 +1한 값을 가진다. (아직 생성안함 넣을 order값만 가지고있음)
-      //
-      // 해당 코멘트 id의 그룹을 가지고 있으면서 마지막 order값보다 큰 컬럼의 order값을 +1씩 증가한다.
-
-      // 대댓글이 없으면 해당 코멘트id의 order값에 +1한 값을 가진다. (아직 생성안함 넣을 order값만 가지고있음)
-      // 해당 코멘트 id의 그룹을 가지고 있으면서 코멘트id의 order보다 큰 컬럼의 order를 +1 증가한다.
 
       // 대댓글이 이미 존재하는지 여부 확인
       const maxGroupOrder = sameParentCol
@@ -98,6 +84,7 @@ exports.writeComment = async (req, res) => {
       parent_id >= 0 && comment_id ? await getColByCommentId() : null;
     console.log('baseComment는', baseComment?.dataValues);
 
+    // 댓글 추가 부분
     const createResult = await db.Comment.create({
       content,
       product_key,
