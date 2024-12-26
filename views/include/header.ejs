@@ -7,19 +7,19 @@
   <div class="header__utils">
     <!-- 로그인/회원가입 -->
     <div class="header__auth">
-      <!-- (todo) 로그인 후 마이페이지 버튼으로 변경-->
-      <a href="/auth/login">
-        <button class="login-button">로그인/회원가입</button>
-      </a>
+      <!-- 로그인 여부에 따른 버튼 표시-->
+
+      <% if(user){ %>
+        <a href="/auth/login">
+          <button class="login-button">로그인/회원가입</button>
+        </a> 
+      <% }else{ %>
+        <a href="/user/mypage">
+          <button class="mypage">마이페이지</button>
+        </a>
+      <% } %>
+    
     </div>
-    <!-- /////////////////////////////////////////// -->
-    <div class="header__mypage">
-      <!-- (todo) 로그인 후 마이페이지 버튼으로 변경-->
-      <a href="/user/mypage">
-        <button class="mypage">마이페이지</button>
-      </a>
-    </div>
-<!-- //////////////////////////////////////////////////// -->
     <!-- 검색 영역 -->
     <div class="header__search">
       <input type="text" class="search-input" id="search-input" placeholder="검색어를 입력해주세요">
@@ -44,7 +44,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // 판매 메뉴 클릭 이벤트
+    // 1. 판매 메뉴 클릭 이벤트
     const sellMenu = document.querySelector('a[href="/host"]');
 
     sellMenu.addEventListener("click", async (event) => {
@@ -69,8 +69,7 @@
       }
     });
 
-    // 검색창 토글 이벤트
-    // 헤더 검색창 토글 이벤트
+    // 2. 검색창 토글 이벤트
     const searchIcon = document.getElementById('search-icon');
     const searchInput = document.getElementById('search-input');
 
@@ -78,7 +77,6 @@
       console.log('Search icon clicked');
       searchInput.classList.toggle('show');
 
-      // 검색창이 열리면 포커스
       if (searchInput.classList.contains('show')) {
         searchInput.focus();
       }
