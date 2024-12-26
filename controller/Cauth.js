@@ -72,11 +72,13 @@ exports.loginUser = async (req, res) => {
       },
     });
     console.log('resultUser', resultUser);
+
     // 404 not found
     if (!resultUser) {
       res.status(401).send({
         isSuccess: false,
-        message: '회원이 아닙니다.',
+        message:
+          '회원 정보를 찾을 수 없습니다. 이메일, 비밀번호를 확인 또는 회원가입을 진행해주세요.',
       });
       return;
     }
