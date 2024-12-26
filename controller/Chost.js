@@ -1,47 +1,35 @@
 const db = require('../models');
 
 // 판매 물품 등록 페이지 렌더링
-exports.renderHostPage = (req, res) => {
-  res.render('hostTest');
+exports.renderHostPage = async (req, res) => {
+  try {
+    // 데이터베이스에서 카테고리 가져오기
+    const categories = await db.Category.findAll();
+    res.render('hostTest', {
+      title: '판매 페이지',
+      categories, // 카테고리 데이터를 ejs로 전달
+      currentPage: 'hostTest',
+      user: req.session.user,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('서버 오류');
+  }
 };
-
-// // 공동구매 주최자 물품 등록
-// exports.registerProduct = (req, res) => {
-//   // 유저가 입력한 물품 정보
-//   console.log('유저가 입력한 물품 정보', req.body);
-//   console.log('유저가 입력한 물품 파일', req.file);
-
-//   // 파일명만 추출
-//   const filename = req.file ? req.file.filename : null;
-
-//   db.Product.create({
-//     name: req.body.name,
-//     deadline: req.body.deadline,
-//     price: req.body.price,
-//     max_quantity: req.body.max_quantity,
-//     image: filename,
-//     category_id: req.body.category_id,
-//     user_id: req.session.user.user_pk,
-//   })
-//     .then((result) => console.log(result))
-//     .catch((err) => console.log(err));
-//   res.send('응답완료');
-// };
 
 exports.registerProduct = (req, res) => {
   try {
-    // 데이터 저장 로직
     db.Product.create({
       name: req.body.name,
       deadline: req.body.deadline,
       price: req.body.price,
+      net_price: req.body.net_price, // net_price 추가
       max_quantity: req.body.max_quantity,
       image: req.file ? req.file.filename : null,
       category_id: req.body.category_id,
       user_id: req.session.user.user_pk,
     })
       .then(() => {
-        // 저장 성공 시 홈 화면으로 리다이렉트 신호 반환
         res.status(200).json({ success: true, redirectUrl: '/' });
       })
       .catch((err) => {

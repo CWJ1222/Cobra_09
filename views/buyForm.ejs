@@ -24,15 +24,21 @@
 
       .commentListContainer {
         width: 600px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
       }
 
       .commentBox {
+        border: 1px solid black;
       }
 
       .replyBox {
         display: flex;
         align-items: center;
         gap: 20px;
+
+        border: 1px solid black;
       }
 
       .replyBox > textarea {
@@ -178,7 +184,7 @@
 
                 // 태그 클래스명 추가
                 commentContainer.classList.add('commentContainer');
-                commentContainer.classList.add('commentBox');
+                commentBox.classList.add('commentBox');
 
                 // 태그 추가
                 commentBox.append(writer, content, createdAt);
@@ -228,6 +234,7 @@
       }
 
       function addComment() {
+        console.log('댓글달기');
         const content = document.querySelector('.inputCommentBox').value;
         axios({
           url: '/comments',

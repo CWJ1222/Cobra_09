@@ -162,17 +162,20 @@
           target="buyform"
           onclick="window.open(this.href, 'buyform', 'width=800,height=600'); return false;"
         >
-          <img
-            src="/public/img/<%= product.image %>"
-            alt="<%= product.name %>"
-          />
+          <!-- 상품카드 보이게 경로 수정 ->uploads로 -->
+          <img src="/uploads/<%= product.image %>" alt="<%= product.name %>" />
           <div class="productDetails">
             <div class="productName"><%= product.name %></div>
             <div class="productPrice"><%= product.price %> 원</div>
           </div>
         </a>
         <!-- 임시 찜 버튼(wishlist) -->
-        <button class="addWishBtn">임시 찜 버튼</button>
+        <button
+          class="addWishBtn"
+          data-product-key="<%= product.product_key %>"
+        >
+          찜하기
+        </button>
       </div>
 
       <% }) %> <% } else { %>
@@ -216,6 +219,29 @@
           location.reload(); // 페이지 새로고침
         } else {
           getItemsByCategory(categoryId); // API 호출로 데이터 업데이트
+        }
+      });
+    });
+  });
+
+  //찜하기 버튼 클릭 이벤트
+  document.addEventListener('DOMContentLoaded', () => {
+    const wishButtons = document.querySelectorAll('.addWishBtn');
+
+    wishButtons.forEach((button) => {
+      button.addEventListener('click', async (e) => {
+        const productKey = button.dataset.productKey;
+
+        try {
+          const response = await axios.post(`/wishlist/${productKey}`);
+          if (response.data.isSuccess) {
+            alert(response.data.message);
+          } else {
+            alert('찜하기에 실패했습니다.');
+          }
+        } catch (error) {
+          console.error('찜하기 오류:', error);
+          alert('로그인 후 이용해주세요.');
         }
       });
     });
