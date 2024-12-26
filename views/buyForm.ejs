@@ -19,15 +19,29 @@
         background-color: var(--color-white);
         border-radius: 9px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        /* overflow: hidden; */
-        /* position: relative; */
-        /* text-align: center; */
         padding: 5px;
       }
 
-      .inputCommentContent {
-        width: 500px;
-        height: 50px;
+      .commentListContainer {
+        width: 600px;
+      }
+
+      .commentBox {
+      }
+
+      .replyBox {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .replyBox > textarea {
+        border: 1px solid gray;
+      }
+
+      .commentContainer {
+        display: flex;
+        justify-content: space-between;
       }
     </style>
   </head>
@@ -79,11 +93,12 @@
       <button type="submit">구매하기</button>
     </form>
     <label>
-      <textarea class="inputCommentContent" required></textarea
+      <textarea class="inputCommentBox" required></textarea
       ><button onclick="addComment()">댓글 등록</button></label
     >
-    <div></div>
-    <div class="commentContainer"></div>
+
+    <div class="commentListContainer"></div>
+
     <script>
       // 주소검색기능
       function openSearch() {
@@ -134,62 +149,81 @@
           method: 'get',
         })
           .then((result) => {
-            const commentContainer =
-              document.querySelector('.commentContainer');
-            commentContainer.innerText = '';
+            console.log('댓글 응답', result);
+            const commentListContainer = document.querySelector(
+              '.commentListContainer'
+            );
+            commentListContainer.innerText = '';
             if (result.data.comments) {
               for (let i = 0; i < result.data.comments.length; i++) {
-                const newComment = document.createElement('li');
+                // 렌더링되는 댓글
+                // 태그 생성
+                const commentContainer = document.createElement('li');
+                const commentBox = document.createElement('div');
                 const writer = document.createElement('div');
                 const content = document.createElement('div');
                 const createdAt = document.createElement('div');
-                const commentId = document.createElement('div');
-                const parentId = document.createElement('div');
 
-                newComment.classList.add('commentBox');
-
+                // 태그 값 추가
                 writer.innerText = result.data.comments[i].user.nickname;
                 content.innerText = result.data.comments[i].content;
                 createdAt.innerText = result.data.comments[i].createdAt;
-                commentId.innerText = result.data.comments[i].comment_id;
-                parentId.innerText = result.data.comments[i].parent_id;
 
-                // 답글 달기 박스
-                const replyInput = document.createElement('input');
+                const inputCommentBox =
+                  document.querySelector('.inputCommentBox');
+                inputCommentBox.setAttribute(
+                  'style',
+                  'resize: none; width:500px; height:50px'
+                );
+
+                // 태그 클래스명 추가
+                commentContainer.classList.add('commentContainer');
+                commentContainer.classList.add('commentBox');
+
+                // 태그 추가
+                commentBox.append(writer, content, createdAt);
+
+                ////////////////////////////////////////////////
+
+                // 답글 추가 박스
+                const replyBox = document.createElement('div');
+                const replyInput = document.createElement('textarea');
                 const replyBtn = document.createElement('button');
 
-                replyInput.classList.add(
-                  `replyInput${result.data.comments[i].comment_id}`
-                );
-                replyBtn.innerText = `답글`;
+                // 답글 값 추가
+                replyBtn.innerText = `답글달기`;
                 replyBtn.onclick = () => {
                   replyComment({
                     comment_id: result.data.comments[i].comment_id,
                     parent_id: result.data.comments[i].parent_id,
                   });
                 };
+                replyInput.setAttribute('style', 'resize: none;');
 
-                newComment.append(
-                  writer,
-                  content,
-                  createdAt,
-                  commentId,
-                  parentId,
-                  replyInput,
-                  replyBtn
+                // 답글 클래스명 추가
+                replyBox.classList.add('replyBox');
+                replyInput.classList.add(
+                  `replyInput${result.data.comments[i].comment_id}`
                 );
-                newComment.style.marginLeft = `${
+
+                // 답글 태그 추가
+                replyBox.append(replyInput, replyBtn);
+
+                // 최종 태그 스타일 추가
+                commentContainer.style.marginLeft = `${
                   60 * result.data.comments[i].comment_depth
                 }px`;
-                // newComment.style.backgroundColor = 'skyblue';
-                commentContainer.append(newComment);
+
+                // 최종 태그 추가
+                commentContainer.append(commentBox, replyBox);
+                commentListContainer.append(commentContainer);
               }
             } else {
               commentContainer.innerText = '등록된 댓글이 없습니다.';
             }
           })
           .catch((err) => {
-            alert('답글 달기 실패');
+            alert('댓글 가져오기 실패');
           });
       }
 

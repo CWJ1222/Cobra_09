@@ -276,7 +276,7 @@ exports.logoutUser = async (req, res) => {
       attributes: ['user_id', 'email', 'password', 'nickname', 'user_type'],
     });
     const user_type = findResult.dataValues.user_type; // 유저 타입 구분
-    if (user_type === 'normal') {
+    if (user_type === '1') {
       req.session.destroy((err) => {
         if (err) {
           res.status(500).send({
