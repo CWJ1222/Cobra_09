@@ -1,54 +1,47 @@
-my buy page
-
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <%- include('include/head')%>
+    <%-include('include/head')%>
     <title>title</title>
     <link rel="stylesheet" href="../public/css/mybuypage.css" />
   </head>
   <body>
+    <%#- include('include/header') %>
     <main class="max-container">
       <h1>나의 구매 목록 페이지</h1>
-      <p>구매내역을 확인 하세요!</p>
-      <br />
-      <% if (isSuccess) { orders.forEach(order => { %>
-      <div class="list">
-        <a href="/host/list/<%=order.product_key%>">
-          <span>
-            <ul>
-              <img src="" alt="" />
-            </ul>
-            <ul class="order-item">
-              <li>상품명: <%=order.product.name %></li>
-              <li>구매가격: <%= order.product.price %></li>
-              <li>수량: <%= order.quantity %></li>
-              <li>배송지: <%= order.address %></li>
-              <li>구매 마감일: <%= order.product.deadline %></li>
-              <li>product_user_id: <%= order.product.user_id %></li>
-              <li>구매 현황</li>
-              <li>물품 : <%=order.product_key%></li>
-            </ul>
-            <div>
-              <progress
-                class="count"
-                max="30"
-                value="<%#=order.quantity %>10"
-              ></progress
-              ><%#= order.quantity %>10개
-            </div>
-          </span>
-        </a>
-      </div>
 
-      <!-- progress max값은 구매올린사람이 원하는 최대 갯수 -->
-      <!-- progress value값은 상품 전체 구매 개수 -->
-      <!-- userOderCount이거 동일 userid말고 동일 product키로 바꿔서 
-         같은 사람이 아니고 같은물건이 몇개나 구매됐는지 확인 -->
-      <!-- product는 테이블이름? - models의 Product 안에 product -->
-      <!-- 마지막 li (user_id) display none-->
-      <hr />
-      <% }) } else { %>
+      <div class="contain">
+        <% if (isSuccess) {%>
+        <div class="product-card list">
+          <% orders.forEach(order => { %>
+          <div class="buy-card">
+            <a href="/host/list/<%=order.product_key%>">
+              <img
+                src="/public/img/logo-title.png"
+                alt="<%=order.product.name %>"
+              />
+              <ul class="order-item">
+                <li>상품명: <%=order.product.name %></li>
+                <li>상품 가격: <%= order.product.price %></li>
+                <li>수량: <%= order.quantity %></li>
+                <li>배송지: <%= order.address %></li>
+                <li>구매 마감일: <%= order.product.deadline %></li>
+                <!-- ???? -->
+              </ul>
+              <div>
+                <progress
+                  class="count"
+                  max="30"
+                  value="<%#=order.quantity %>10"
+                ></progress
+                >10개
+              </div>
+            </a>
+          </div>
+          <%})%>
+        </div>
+      </div>
+      <% } else { %>
       <p><%= message %></p>
       <% } %>
     </main>
