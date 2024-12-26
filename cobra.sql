@@ -131,6 +131,8 @@ VALUES (
 
 -- product 테이블에 데이터 삽입
 
+INSERT INTO wishlists (user_id, product_key) VALUES (30,33);
+
 --이미지 경로 문제때문에 실제 파일명으로 입력받아야함
 INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id,net_price)
 VALUES
