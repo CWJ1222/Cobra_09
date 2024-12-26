@@ -12,7 +12,8 @@
         justify-content: center;
         flex-direction: column;
         align-items: center;
-        padding: 50px 0;
+        padding: 40px 0;
+        min-height: 100vh; /* 화면 중앙 위치 설정 */
       }
       .form-container {
         padding: 1rem;
@@ -32,16 +33,77 @@
       }
 
       #signupForm input {
-        margin-bottom: 1rem;
+        margin-bottom: 10px;
         width: 300px;
         height: 42px;
         padding: 12px;
         border: 1px solid var(--color-secondary);
         border-radius: 9px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
-      .error-message {
-        color: red;
-        font-size: 0.8rem;
+
+      /* 비밀번호 보기 숨기기 */
+      .passwordInput-wrapper,
+      .info-wrapper {
+        position: relative;
+      }
+      .toggleBtn {
+        position: absolute;
+        cursor: pointer;
+        color: var(--color-secondary);
+      }
+      .pwToggle {
+        top: 25%;
+        right: 45px;
+      }
+
+      .confirmPwToggle {
+        top: 30%;
+        right: 60px;
+      }
+
+      .toggleBtn::before {
+        content: '\f070'; /* 눈 감김 */
+        font-family: fontAwesome;
+      }
+      .toggleBtn.show::before {
+        content: '\f06e'; /* 눈 뜸! */
+        font-family: fontAwesome;
+      }
+
+      /* 에러 메시지 */
+      #error {
+        display: none;
+        width: 320px;
+        background-color: #fafafa;
+        padding: 20px;
+        text-align: start;
+        font-size: 14px;
+        color: var(--color-error);
+        margin-bottom: 20px;
+        margin-left: 5px;
+      }
+      #error::before {
+        content: '\f06a'; /* 느낌표 */
+        font-family: fontAwesome;
+        margin-right: 5px;
+      }
+
+      /* 가입하기 버튼 */
+      #signup-button {
+        width: 320px;
+        background-color: var(--color-primary);
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        transition: all 0.3x ease;
+        margin-left: 5px;
+      }
+      #signup-button:hover {
+        background-color: var(--color-primary-dark);
       }
     </style>
   </head>
@@ -73,13 +135,13 @@
             <div class="passwordInput-wrapper">
               <input
                 type="password"
+                id="password"
                 name="password"
                 placeholder="비밀번호(영문+숫자+특수문자 8자 이상)"
                 required
               />
+              <span class="toggleBtn pwToggle"></span>
             </div>
-
-            <div class="error-message" id="password-error"></div>
           </div>
 
           <!-- 비밀번호 확인 -->
@@ -92,7 +154,7 @@
               placeholder="비밀번호 확인"
               required
             />
-            <div class="error-message" id="confirmPasswordError"></div>
+            <span class="toggleBtn confirmPwToggle"></span>
           </div>
 
           <!-- 닉네임 입력 (자동으로 채워짐) -->
@@ -107,9 +169,12 @@
             />
             <div class="error-message" id="nickname-error"></div>
           </div>
+
+          <!-- 에러 메시지 -->
+          <div id="error" class="error-message"></div>
+
           <!-- 가입하기 버튼 -->
           <button type="button" id="signup-button">가입하기</button>
-          <div id="error" class="error-message"></div>
         </form>
       </div>
     </main>
@@ -125,7 +190,11 @@
       const passwordInput = form.password;
       const confirmPasswordInput = form.confirmPassword;
       const signupButton = document.getElementById('signup-button');
-      const errorMessage = document.getElementById('error');
+
+      // 에러 메시지 영역 초기화
+      const errorMsg = document.getElementById('error');
+      errorMsg.style.display = 'none';
+      errorMsg.innerText = '';
 
       // 이메일 입력 시 nickname 자동 설정
       emailInput.addEventListener('input', () => {
@@ -134,24 +203,56 @@
           const nickname = email.split('@')[0]; // @ 앞부분 가져오기
           nicknameInput.value = nickname;
         }
-        // (todo) 이메일 형식 유효성 검사
       });
 
-      // 회원가입
+      // 비밀번호 유효성 검사
+      function checkPassword(pw) {
+        // 영문 + 숫자 + 특수문자 포함 8자 이상
+        const pwRegex =
+          /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        return pwRegex.test(pw);
+      }
+
+      // 이메일 유효성 검사 : example@domain.com
+      function checkEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+
+      // 회원가입 버튼 클릭 이벤트
       signupButton.addEventListener('click', async () => {
         const email = emailInput.value.trim();
         const password = passwordInput.value.trim();
         const confirmPassword = confirmPasswordInput.value.trim();
         const nickname = nicknameInput.value.trim();
 
+        // 에러 초기화
+        errorMsg.style.display = 'none';
+        errorMsg.innerText = '';
+
         // 유효성 검사
         if (!email || !password || !nickname) {
-          alert('이메일, 비밀번호, 닉네임은 필수 입력값입니다.');
+          errorMsg.style.display = 'block';
+          errorMsg.innerText = '이메일, 비밀번호, 닉네임은 필수 입력값입니다.';
           return;
         }
+
+        if (!checkEmail(email)) {
+          errorMsg.style.display = 'block';
+          errorMsg.innerText = '유효한 이메일 형식을 입력해주세요.';
+          return;
+        }
+
+        if (!checkPassword(password)) {
+          errorMsg.style.display = 'block';
+          errorMsg.innerText =
+            '비밀번호는 영문, 숫자, 특수문자를 포함한 8자 이상이어야 합니다.';
+          return;
+        }
+
         if (password !== confirmPassword) {
-          document.getElementById('confirmPasswordError').innerText =
-            '비밀번호 불일치';
+          errorMsg.style.display = 'block';
+          errorMsg.innerText = '비밀번호가 일치하지 않습니다.';
           return;
         }
 
@@ -164,18 +265,36 @@
           const res = await axios.post('/member/signup', data);
 
           if (res.data.isSuccess) {
-            alert(res.data.message);
+            alert(`${nickname}님,` + res.data.message);
             window.location.href = '/auth/login';
           } else {
-            errorMessage.innerText = res.data.message;
+            errorMsg.style.display = 'block';
+            errorMsg.innerText = res.data.message;
           }
         } catch (err) {
           console.error('🚨회원가입 요청 중 에러 발생:', err);
-          errorMessage.innerText = res.data.message;
+          errorMsg.style.display = 'block';
+          errorMsg.innerText = res.data.message;
         }
       });
     });
 
-    // (todo) 비밀번호 보이기/숨기기 토글
+    // 비밀번호 보기/숨기기 이벤트
+    document.querySelectorAll('.toggleBtn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const pwToggle = btn.classList.contains('pwToggle');
+        const targetInput = pwToggle
+          ? document.getElementById('password') // 비밀번호 입력 필드
+          : document.getElementById('confirm-password'); // 비밀번호 확인 필드
+
+        if (targetInput.type === 'password') {
+          targetInput.setAttribute('type', 'text');
+          btn.classList.add('show');
+        } else {
+          targetInput.setAttribute('type', 'password');
+          btn.classList.remove('show');
+        }
+      });
+    });
   </script>
 </html>
