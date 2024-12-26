@@ -212,7 +212,29 @@
                 찜하기
               </button>
             </div>`;
+          //   productGrid.insertAdjacentHTML('beforeend', productCard);
+          // });
           productGrid.insertAdjacentHTML('beforeend', productCard);
+        });
+
+        // 새로 생성된 찜하기 버튼에 이벤트 리스너 등록
+        const wishButtons = document.querySelectorAll('.addWishBtn');
+        wishButtons.forEach((button) => {
+          button.addEventListener('click', async (e) => {
+            const productKey = button.dataset.productKey;
+
+            try {
+              const response = await axios.post(`/wishlist/${productKey}`);
+              if (response.data.isSuccess) {
+                alert(response.data.message);
+              } else {
+                alert('찜하기에 실패했습니다.');
+              }
+            } catch (error) {
+              console.error('찜하기 오류:', error);
+              alert('로그인 후 이용해주세요.');
+            }
+          });
         });
       } else {
         productGrid.innerHTML = '<p>해당 카테고리에 상품이 없습니다.</p>';
