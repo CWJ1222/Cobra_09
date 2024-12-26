@@ -21,6 +21,7 @@
             닉네임
             <input
               type="text"
+              id="nickname"
               name="nickname"
               value="<%=user.nickname%>"
               required
@@ -39,7 +40,7 @@
         </fieldset>
 
         <div class="btn">
-          <button type="button" onclick="profileEdit();">수정하기</button>
+          <button type="button" onclick="editUserProfile();">수정하기</button>
         </div>
 
         <div class="logout-btn">
@@ -49,16 +50,16 @@
     </form>
 
     <section class="q section buy hide">
-      이거 살래! 내역
+      이거 살래! 내역 내가 판매한!????
       <div class="buyBox">
         <% if (isSuccess) { product.forEach(product => { %>
         <div class="myBuy 1">
-          <a class="buyImg 1" href="/host/list/<%=product.product_key%>">
-            <img src="" alt="공구 참여 상품 1" />
+          <a class="buyImg 1">
+            <img src="" alt="공구 참여 상품" />
             <li>상품명: <%=product.product.name%></li>
-            <li>수량:<%=product.product.max_quantity%></li>
-            <li>상품 가격</li>
-            <li>Dead-Line</li>
+            <li>수량:<%=product.quantity%></li>
+            <li>상품 가격 :<%=product.product.price%></li>
+            <li>Dead-Line ::<%=product.product.deadline%></li>
           </a>
         </div>
         <hr />
@@ -124,25 +125,7 @@
     </div>
 
     <script>
-      //회원 정보 render & 버튼 수정
-      function profileEdit() {
-        const form = document.forms['userProfile'];
-        const btnBox = document.querySelector('.btn');
-        console.log(form);
-        const nickname = form.nickname;
-        const password = form.password;
-
-        nickname.removeAttribute('readonly');
-        nickname.setAttribute('placeholder', form.nickname.value);
-        nickname.value = '';
-
-        password.removeAttribute('readonly');
-
-        const editBtn = `<button type="button" onclick="editUserProfile()">수정완료</button>`;
-        btnBox.innerHTML = editBtn;
-      }
-
-      // 회원 정보 수정
+      // 회원 정보 수정 -> 수정!
       async function editUserProfile() {
         const nickname = document
           .querySelector('input[name="nickname"]')
@@ -151,8 +134,11 @@
           .querySelector('input[name="password"]')
           .value.trim();
 
-        if (!nickname && !password) {
-          alert('닉네임 또는 비밀번호 중 하나를 입력해주세요.');
+        console.log(nickname);
+        console.log(password);
+
+        if (!nickname || !password) {
+          alert('닉네임과 변경할 비밀번호 모두 입력해주세요.');
           return;
         }
 
@@ -167,11 +153,10 @@
           }
         } catch (err) {
           console.error('사용자 정보 수정 중 오류:', err);
-          alert('최소 1개의 항목을 수정해야 합니다.');
         }
       }
 
-      // 회원 탈퇴
+      // 회원 탈퇴 -> v
       async function confirmUserDelete() {
         if (confirm('정말 탈퇴하시겠습니까?')) {
           try {

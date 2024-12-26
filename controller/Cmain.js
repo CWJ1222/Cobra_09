@@ -39,13 +39,14 @@ exports.postChangeUser = async (req, res) => {
     const { nickname, password } = req.body; // 클라이언트에서 닉네임과 비밀번호 받기
 
     // 유효성 검사: 입력된 값이 없으면 실패 응답
-    if (!nickname && !password) {
+    if (!nickname || !password) {
       return res.status(400).send({
         isSuccess: false,
         message: '닉네임 또는 비밀번호 중 하나를 입력해주세요.',
       });
     }
-
+    console.log(nickname);
+    console.log(password);
     const updateData = {};
 
     // 닉네임이 입력된 경우 업데이트 데이터에 추가
@@ -198,7 +199,7 @@ exports.renderMypage = async (req, res) => {
       include: [
         {
           model: Order,
-          attributes: ['product_key'],
+          attributes: ['product_key', 'quantity'],
           include: [
             {
               model: Product,
