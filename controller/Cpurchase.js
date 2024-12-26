@@ -10,7 +10,11 @@ exports.purchasePage = async (req, res) => {
     console.log('상품', products);
 
     // 데이터를 purchaseTest.ejs로 전달
-    res.render('purchase', { products, currentPage: 'purchase' });
+    res.render('purchase', {
+      products,
+      currentPage: 'purchase',
+      user: req.session.user,
+    });
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).send('서버 오류');
@@ -39,7 +43,7 @@ exports.buyForm = async (req, res) => {
       return res.redirect('/auth/login'); // 쿼리스트링 제거
     }
 
-    res.render('buyForm', { product, userId });
+    res.render('buyForm', { product, userId, user: req.session.user });
   } catch (error) {
     console.error(error);
     res.status(500).send('서버 오류');

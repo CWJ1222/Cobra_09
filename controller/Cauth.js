@@ -49,9 +49,10 @@ exports.isSessionInvalid = (req, res, next) => {
 // 로그인 페이지 렌더링
 exports.renderLoginPage = (req, res) => {
   const redirectUrl = req.session.redirectUrl || '/'; // 세션에 저장된 URL 사용
-
+  // console.log('컨트롤러 user 확인', user);
   res.render('login', {
-    currentPage: 'login',
+    currentPage: '',
+    user: req.session.user, //세션에 사용자 정보 추가
     redirectUrl, // 로그인 성공 후 이동할 URL 전달
   });
 };
@@ -71,6 +72,7 @@ exports.loginUser = async (req, res) => {
       },
     });
     console.log('resultUser', resultUser);
+    // 401 unauthorized
     if (!resultUser) {
       res.status(200).send({
         isSuccess: false,
@@ -78,15 +80,21 @@ exports.loginUser = async (req, res) => {
       });
       return;
     }
+
     const isEqual = verifyPassword(
       inputUserPw,
       resultUser.salt,
       resultUser.password
     );
     if (isEqual) {
+      // 세션에 로그인 상태 저장
       req.session.user = {
         user_pk: resultUser.user_id,
+        isLogin: true, // 로그인 여부 추가
       };
+      console.log('일반 로그인 후 세션:', req.session.user);
+
+      // 201 created
       res.status(200).send({
         isLogin: true,
         nickname: resultUser.nickname,
@@ -100,6 +108,7 @@ exports.loginUser = async (req, res) => {
       });
     }
   } catch (err) {
+    // 500 internal server error
     res.status(200).send({
       isSuccess: false,
       message: '서버 에러',
@@ -275,7 +284,7 @@ exports.logoutUser = async (req, res) => {
       attributes: ['user_id', 'email', 'password', 'nickname', 'user_type'],
     });
     const user_type = findResult.dataValues.user_type; // 유저 타입 구분
-    if (user_type === 'normal') {
+    if (user_type === '1') {
       req.session.destroy((err) => {
         if (err) {
           res.status(500).send({
