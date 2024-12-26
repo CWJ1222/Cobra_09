@@ -77,6 +77,12 @@
         color: var(--color-text-sub);
       }
 
+      /* 로그인 에러 메시지 */
+      #error {
+        background-color: #fafafa;
+        padding: 20px;
+        text-align: start;
+      }
       .errorMsg{
         font-size: 14px;
         color: var(--color-error)
@@ -166,7 +172,7 @@
       <!-- 로그인 카드 -->
       <div class="loginCard">
         <h1>로그인</h1>
-        <p>테스트 ID: test@naver.com, PW: 1234</p>
+        
         <!-- 로그인 폼 -->
         <form id="loginForm" name="loginForm">
           <div class="inputWrapper">
@@ -248,6 +254,7 @@
       errorMsg.innerText = '';
 
       // 유효성 검사
+      // (todo) 유효성 검사 추가: 이메일 형식/ 영문,숫자,특수문자 포함 8자 이상
       if (!userId || !password) {
         errorMsg.innerText =
           '이메일과 비밀번호를 모두 입력해주세요 🥹';
