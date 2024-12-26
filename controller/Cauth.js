@@ -72,11 +72,13 @@ exports.loginUser = async (req, res) => {
       },
     });
     console.log('resultUser', resultUser);
-    // 401 unauthorized
+
+    // 404 not found
     if (!resultUser) {
-      res.status(200).send({
+      res.status(401).send({
         isSuccess: false,
-        message: '회원이 아닙니다.',
+        message:
+          '회원 정보를 찾을 수 없습니다. 이메일, 비밀번호를 확인 또는 회원가입을 진행해주세요.',
       });
       return;
     }
@@ -94,7 +96,7 @@ exports.loginUser = async (req, res) => {
       };
       console.log('일반 로그인 후 세션:', req.session.user);
 
-      // 201 created
+      // 200 ok
       res.status(200).send({
         isLogin: true,
         nickname: resultUser.nickname,
@@ -102,14 +104,15 @@ exports.loginUser = async (req, res) => {
         message: '로그인 성공 했습니다.',
       });
     } else {
-      res.status(200).send({
+      // 비밀번호 불일치: 401 unauthorized
+      res.status(401).send({
         isSuccess: false,
         message: '비밀번호가 일치 하지 않습니다.',
       });
     }
   } catch (err) {
-    // 500 internal server error
-    res.status(200).send({
+    // 서버 내부 에러: 500 internal server error
+    res.status(500).send({
       isSuccess: false,
       message: '서버 에러',
     });
