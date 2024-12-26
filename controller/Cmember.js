@@ -21,7 +21,7 @@ function verifyPassword(password, salt, hash) {
 // **1. 회원가입 페이지 렌더링 (GET)**
 exports.signuppage = (req, res) => {
   try {
-    res.render('signup', { currentPage: '' }); // views/signup.ejs 렌더링
+    res.render('signup', { currentPage: '', user: req.session.user }); // views/signup.ejs 렌더링
   } catch (error) {
     console.error(error);
     res.status(500).send('서버 오류');

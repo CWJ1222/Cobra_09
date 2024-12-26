@@ -1,20 +1,185 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <%-include('include/head')%>
+    <%- include('include/head') %>
     <title><%= title %></title>
   </head>
   <body>
-    <!-- 헤더 -->
     <%- include('include/header') %>
 
-    <!-- 메인 -->
     <main class="max-container">
-      <br />
-      <h1>여기는 메인페이지🏡</h1>
+      <h1>찜 많은 순으로 상품 나열</h1>
+
+      <!-- 슬라이더 컨테이너 -->
+      <div class="slider-wrapper">
+        <!-- 왼쪽 화살표 -->
+        <button class="slider-button left" onclick="sideLeft()">&#8249;</button>
+
+        <!-- 상품 리스트 -->
+        <div class="slider-container">
+          <ul class="product-list">
+            <% products.forEach((product) => { %>
+            <li class="product-card">
+              <div class="product-image">
+                <img
+                  src="/uploads/<%= product.ProductWishlists.image %>"
+                  alt="<%= product.ProductWishlists.name %>"
+                />
+              </div>
+              <div class="product-info">
+                <h2><%= product.ProductWishlists.name %></h2>
+                <p>
+                  마감일: <%= new
+                  Date(product.ProductWishlists.deadline).toLocaleString('ko-KR',
+                  { year: '2-digit', month: '2-digit', day: '2-digit', hour:
+                  '2-digit', minute: '2-digit', hour12: false, }) %>
+                </p>
+                <p>가격: <%= product.ProductWishlists.price %>원</p>
+                <p>찜 개수: <%= product.wishlistCount %></p>
+              </div>
+            </li>
+            <% }) %>
+          </ul>
+        </div>
+
+        <!-- 오른쪽 화살표 -->
+        <button class="slider-button right" onclick="sideRight()">
+          &#8250;
+        </button>
+      </div>
     </main>
 
-    <!-- footer -->
-    <%- include('include/footer', { title: 'test' })%>
+    <%- include('include/footer', { title: '메인 페이지' }) %>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+      }
+
+      h1 {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 24px;
+      }
+
+      .slider-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 0;
+      }
+
+      .slider-container {
+        overflow: hidden; /* 초과된 내용 숨김 */
+        width: 800px; /* 3개의 카드만 보이도록 고정 */
+      }
+
+      .product-list {
+        display: flex;
+        gap: 20px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        transition: transform 0.5s ease-in-out;
+      }
+
+      .product-card {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 250px; /* 카드 너비 고정 */
+        text-align: center;
+        overflow: hidden;
+        flex-shrink: 0; /* 카드 크기 고정 */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .product-image img {
+        width: 100%; /* 이미지가 카드의 가로 면적에 맞게 */
+        height: 180px; /* 고정된 높이 */
+        object-fit: cover; /* 이미지 비율 유지하며 카드에 맞춤 */
+        border-bottom: 1px solid #ddd;
+      }
+
+      .product-info {
+        padding: 15px;
+        text-align: center;
+      }
+
+      .product-info h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .product-info p {
+        font-size: 14px;
+        color: #555;
+        margin: 5px 0;
+      }
+
+      .slider-button {
+        position: absolute; /* 슬라이더 컨테이너 기준으로 위치 */
+        top: 50%; /* 수직 가운데 정렬 */
+        transform: translateY(-50%); /* 가운데 정렬 보정 */
+        background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+        color: white; /* 화살표 색상 */
+        border: none;
+        padding: 15px;
+        font-size: 24px; /* 화살표 크기 */
+        cursor: pointer;
+        z-index: 10; /* 다른 요소 위에 표시 */
+        border-radius: 50%; /* 둥근 모양 */
+      }
+
+      .slider-button.left {
+        left: 150px; /* 왼쪽 버튼 위치 */
+      }
+
+      .slider-button.right {
+        right: 150px; /* 오른쪽 버튼 위치 */
+      }
+
+      .slider-button:hover {
+        background-color: rgba(0, 0, 0, 0.8); /* 호버 시 배경 어둡게 */
+      }
+    </style>
+
+    <script>
+      const productList = document.querySelector('.product-list');
+      const productListWrapper = document.querySelector('.slider-container');
+      let scrollPosition = 0; // 현재 스크롤 위치 초기화
+
+      // 왼쪽으로 스크롤
+      function sideLeft() {
+        const maxScrollLeft = 0; // 가장 왼쪽
+        scrollPosition += 270; // 카드 너비 + 간격만큼 이동
+        if (scrollPosition > maxScrollLeft) {
+          scrollPosition = maxScrollLeft; // 왼쪽 경계 제한
+        }
+        productList.style.transform = `translateX(${scrollPosition}px)`; // 위치 적용
+      }
+
+      // 오른쪽으로 스크롤
+      function sideRight() {
+        const maxScrollRight =
+          productList.scrollWidth - productListWrapper.clientWidth; // 가장 오른쪽
+        scrollPosition -= 270; // 카드 너비 + 간격만큼 이동
+        if (scrollPosition < -maxScrollRight) {
+          scrollPosition = -maxScrollRight; // 오른쪽 경계 제한
+        }
+        productList.style.transform = `translateX(${scrollPosition}px)`; // 위치 적용
+      }
+    </script>
   </body>
 </html>
