@@ -79,11 +79,10 @@
 
       /* 로그인 에러 메시지 */
       #error {
+        display: none;
         background-color: #fafafa;
         padding: 20px;
         text-align: start;
-      }
-      .errorMsg{
         font-size: 14px;
         color: var(--color-error)
       }
@@ -251,6 +250,7 @@
 
       // 에러 메시지 영역 초기화
       const errorMsg = document.getElementById('error');
+      errorMsg.style.display = 'none'; //초기화 시 숨김
       errorMsg.innerText = '';
 
       // 유효성 검사
@@ -258,6 +258,7 @@
       if (!userId || !password) {
         errorMsg.innerText =
           '이메일과 비밀번호를 모두 입력해주세요 🥹';
+          errorMsg.style.display = 'block'; 
         return;
       }
 
@@ -296,6 +297,8 @@
           console.error('네트워크 오류 발생:', err);
           errorMsg.textContent = '네트워크 오류가 발생했습니다. 다시 시도해주세요.';
         }
+
+        errorMsg.style.display='block'
       }
     }
 
