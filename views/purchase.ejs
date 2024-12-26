@@ -190,21 +190,51 @@
     const productGrid = document.querySelector('.productGrid');
     const filterButtons = document.querySelectorAll('.filterBtn');
 
-    // (todo) 상품 목록 업데이트 함수
+    // 상품 목록 업데이트 함수
     const updateProductGrid = (products) => {
-      productGrid.innerHTML = ''; // 기존 목록 초기화
+      // 기존 목록 초기화
+      productGrid.innerHTML = '';
+
+      // 새로운 상품 렌더링
+      if (products.length > 0) {
+        products.forEach((product) => {
+          const productCard = `
+            <div class="productCard">
+              <a href="/buyform/${product.product_key}" target="buyform"
+                 onclick="window.open(this.href, 'buyform', 'width=800,height=600'); return false;">
+                <img src="/uploads/${product.image}" alt="${product.name}" />
+                <div class="productDetails">
+                  <div class="productName">${product.name}</div>
+                  <div class="productPrice">${product.price} 원</div>
+                </div>
+              </a>
+              <button class="addWishBtn" data-product-key="${product.product_key}">
+                찜하기
+              </button>
+            </div>`;
+          productGrid.insertAdjacentHTML('beforeend', productCard);
+        });
+      } else {
+        productGrid.innerHTML = '<p>해당 카테고리에 상품이 없습니다.</p>';
+      }
     };
 
-    // (todo) 카테고리 필터링 API 호출
-    // const getItemsByCategory = async (categoryId) => {
-    //   try {
-    //     const res = await axios.get(`/products/${categoryId}`);
-    //     console.log(`카테고리 ${categoryId} 데이터:`, res.data);
-    //     updateProductGrid(res.data); // 받아온 데이터로 업데이트
-    //   } catch (err) {
-    //     console.error(`카테고리 ${categoryId} 데이터 호출 오류:`, err);
-    //   }
-    // };
+    // 카테고리 필터링 API 호출
+    const getItemsByCategory = async (categoryId) => {
+      try {
+        const res = await axios.get(`/products/${categoryId}`);
+        console.log('API 응답 데이터:', res.data); // 응답 데이터 확인
+        if (Array.isArray(res.data)) {
+          updateProductGrid(res.data); // 배열일 경우 업데이트
+        } else {
+          console.error('응답 데이터가 배열이 아닙니다:', res.data);
+          productGrid.innerHTML = '<p>데이터 형식 오류가 발생했습니다.</p>';
+        }
+      } catch (err) {
+        console.error(`카테고리 ${categoryId} 데이터 호출 오류:`, err);
+        productGrid.innerHTML = '<p>상품 데이터를 불러오지 못했습니다.</p>';
+      }
+    };
 
     // 필터 버튼 클릭 이벤트
     filterButtons.forEach((button) => {
@@ -246,6 +276,4 @@
       });
     });
   });
-
-  // (todo) 찜 목록
 </script>

@@ -14,13 +14,11 @@ exports.getAllProducts = (req, res) => {
   })
     .then((products) => {
       console.log('전체 상품 데이터:', products);
-      res
-        .status(200)
-        .render('purchase', {
-          products,
-          currentPage: 'product',
-          user: req.session.user,
-        });
+      res.status(200).render('purchase', {
+        products,
+        currentPage: 'product',
+        user: req.session.user,
+      });
     })
     .catch((err) => {
       res.status(500).render('purchase', {
@@ -48,10 +46,11 @@ exports.getItemsByCategory = (req, res) => {
     ],
   })
     .then((result) => {
-      console.log('result', result);
-      res.status(200).json(result);
+      console.log('result', result); // 반환 데이터 확인
+      res.status(200).json(result); // 배열로 반환
     })
     .catch((err) => {
+      console.error('Error fetching products by category:', err);
       res.status(500).send({
         isSuccess: false,
         message: '서버 에러가 발생했습니다.',
