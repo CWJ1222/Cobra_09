@@ -40,6 +40,37 @@
         border-radius: 9px;
       }
 
+      /* 비밀번호 보기 숨기기 */
+      .passwordInput-wrapper,
+      .info-wrapper {
+        position: relative;
+      }
+      .toggleBtn {
+        position: absolute;
+        /* top: 30%;
+        right: 40px; */
+        cursor: pointer;
+        color: var(--color-secondary);
+      }
+      .pwToggle {
+        top: 25%;
+        right: 45px;
+      }
+
+      .confirmPwToggle {
+        top: 30%;
+        right: 60px;
+      }
+
+      .toggleBtn::before {
+        content: '\f070'; /* 눈 감김 */
+        font-family: fontAwesome;
+      }
+      .toggleBtn.show::before {
+        content: '\f06e'; /* 눈 뜸! */
+        font-family: fontAwesome;
+      }
+
       /* 에러 메시지 */
       #error {
         display: none;
@@ -85,10 +116,12 @@
             <div class="passwordInput-wrapper">
               <input
                 type="password"
+                id="password"
                 name="password"
                 placeholder="비밀번호(영문+숫자+특수문자 8자 이상)"
                 required
               />
+              <span class="toggleBtn pwToggle"></span>
             </div>
 
             <div class="error-message" id="password-error"></div>
@@ -104,6 +137,7 @@
               placeholder="비밀번호 확인"
               required
             />
+            <span class="toggleBtn confirmPwToggle"></span>
           </div>
 
           <!-- 닉네임 입력 (자동으로 채워짐) -->
@@ -228,6 +262,22 @@
       });
     });
 
-    // (todo) 비밀번호 보이기/숨기기 토글
+    // 비밀번호 보기/숨기기 이벤트
+    document.querySelectorAll('.toggleBtn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const pwToggle = btn.classList.contains('pwToggle');
+        const targetInput = pwToggle
+          ? document.getElementById('password') // 비밀번호 입력 필드
+          : document.getElementById('confirm-password'); // 비밀번호 확인 필드
+
+        if (targetInput.type === 'password') {
+          targetInput.setAttribute('type', 'text');
+          btn.classList.add('show');
+        } else {
+          targetInput.setAttribute('type', 'password');
+          btn.classList.remove('show');
+        }
+      });
+    });
   </script>
 </html>
