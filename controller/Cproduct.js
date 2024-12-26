@@ -14,7 +14,13 @@ exports.getAllProducts = (req, res) => {
   })
     .then((products) => {
       console.log('전체 상품 데이터:', products);
-      res.status(200).render('purchase', { products, currentPage: 'product' });
+      res
+        .status(200)
+        .render('purchase', {
+          products,
+          currentPage: 'product',
+          user: req.session.user,
+        });
     })
     .catch((err) => {
       res.status(500).render('purchase', {

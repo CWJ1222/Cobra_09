@@ -77,7 +77,12 @@
         color: var(--color-text-sub);
       }
 
-      .errorMsg{
+      /* 로그인 에러 메시지 */
+      #error {
+        display: none;
+        background-color: #fafafa;
+        padding: 20px;
+        text-align: start;
         font-size: 14px;
         color: var(--color-error)
       }
@@ -166,7 +171,7 @@
       <!-- 로그인 카드 -->
       <div class="loginCard">
         <h1>로그인</h1>
-        <p>테스트 ID: test@naver.com, PW: 1234</p>
+        
         <!-- 로그인 폼 -->
         <form id="loginForm" name="loginForm">
           <div class="inputWrapper">
@@ -216,10 +221,6 @@
         </div>
       </div>
 
-        <!-- 백엔드 테스트를 위한 로그아웃 버튼 -->
-          <a href="/auth/logout">로그아웃</a>
-          <br>
-          <br>
       </form>
     </main>
 
@@ -249,46 +250,55 @@
 
       // 에러 메시지 영역 초기화
       const errorMsg = document.getElementById('error');
+      errorMsg.style.display = 'none'; //초기화 시 숨김
       errorMsg.innerText = '';
 
       // 유효성 검사
+      // (todo) 유효성 검사 추가: 이메일 형식/ 영문,숫자,특수문자 포함 8자 이상
       if (!userId || !password) {
         errorMsg.innerText =
-          '아이디와 비밀번호를 모두 입력해주세요 🥹';
+          '이메일과 비밀번호를 모두 입력해주세요 🥹';
+          errorMsg.style.display = 'block'; 
         return;
       }
 
       // 서버로 데이터 전송
-      // (todo) BE 상태코드 수정된 후 반영하여 수정해야함
       const data = { userId, password };
       console.log('로그인 데이터', data);
 
       try {
         const res = await axios.post('/auth', data);
 
-        if (res.status===200) {
-            if(res.data.isLogin){
-              alert(`${res.data.nickname}님, 안녕하세요! ${res.data.message}`);
-            // window.location.href = '/';
-
-            window.location.href = res.data.redirectUrl || '/'; // 리다이렉트 URL로 이동
-
-            } else if(res.data.message === '회원이 아닙니다.' && !resultUser){
-              errorMsg.innerText = '가입되지 않은 사용자입니다. 회원가입을 먼저 진행해주세요.'
-            } else if(res.data.message==='비밀번호가 일치 하지 않습니다.'){
-              errorMsg.innerText= '비밀번호를 다시 한 번 확인해주세요.'
-            } else{
-              errorMsg.innerText=res.data.message||'알 수 없는 오류가 발생했습니다.'
-            }
-          
-        } else {
-          // 서버 오류 응답
-          errorMsg.innerText = '서버 처리 중 문제가 발생했습니다.';
+        // 로그인 성공
+        if (res.status === 200 && res.data.isLogin) {
+          alert(`${res.data.nickname}님, 환영합니다!`);
+          window.location.href = res.data.redirectUrl || '/';
         }
       } catch (err) {
-        // 네트워크 또는 서버 내부 에러 처리
-        console.error('🚨로그인 요청 중 에러 발생:', err);
-        document.getElementById('error').innerText = '🚨 서버 오류 발생';
+        // 상태 코드 기반 fe 메시지 처리
+        if (err.response) {
+          const { status, data } = err.response;
+
+          if (status === 401) {
+            // 비밀번호 불일치 또는 회원 정보 없음
+            errorMsg.textContent = data.message || '로그인에 실패했습니다.';
+          } else if (status === 404) {
+            // 회원 정보 없음
+            errorMsg.textContent = '회원 정보를 찾을 수 없습니다. 회원가입을 진행해주세요.';
+          } else if (status === 500) {
+            // 서버 오류
+            errorMsg.textContent = '서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+          } else {
+            // 기타 예외
+            errorMsg.textContent = '알 수 없는 오류가 발생했습니다.';
+          }
+        } else {
+          // 네트워크 오류
+          console.error('네트워크 오류 발생:', err);
+          errorMsg.textContent = '네트워크 오류가 발생했습니다. 다시 시도해주세요.';
+        }
+
+        errorMsg.style.display='block'
       }
     }
 
@@ -305,13 +315,5 @@
         toggleBtn.classList.remove('show')
       }
     })
-
-
-    // 백엔드 테스트를 위한 로그아웃 (todo) 추후 마이페이지로 기능 이동
-    function handleLogout() {
-      axios({ method: 'delete', url: '/auth' }).then((res) =>
-        console.log(res.data)
-      );
-    }
   </script>
 </html>

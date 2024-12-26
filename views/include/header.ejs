@@ -7,19 +7,18 @@
   <div class="header__utils">
     <!-- 로그인/회원가입 -->
     <div class="header__auth">
-      <!-- (todo) 로그인 후 마이페이지 버튼으로 변경-->
-      <a href="/auth/login">
-        <button class="login-button">로그인/회원가입</button>
-      </a>
+      <!-- 로그인 여부에 따른 버튼 표시-->
+      <% if(user){ %>
+        <a href="/user/mypage">
+          <button class="mypage">마이페이지</button>
+        </a>
+      <% } else { %>
+        <a href="/auth/login">
+          <button class="login-button">로그인/회원가입</button>
+        </a> 
+     <%  } %>
+    
     </div>
-    <!-- /////////////////////////////////////////// -->
-    <div class="header__mypage">
-      <!-- (todo) 로그인 후 마이페이지 버튼으로 변경-->
-      <a href="/user/mypage">
-        <button class="mypage">마이페이지</button>
-      </a>
-    </div>
-<!-- //////////////////////////////////////////////////// -->
     <!-- 검색 영역 -->
     <div class="header__search">
       <input type="text" class="search-input" id="search-input" placeholder="검색어를 입력해주세요">
@@ -36,7 +35,7 @@
         <li><a href="/" class="header__menu__item <%=currentPage === 'home' ? 'active': ''%>">홈</a</li>
           <!-- FE : BE 테스트 페이지(purchaseTest)에서 purchase로 변경 -->
         <li><a href="/products" class="header__menu__item <%=currentPage ==='product'? 'active' : ''%>">구매</a></li>
-        <li><a href="/host" class="header__menu__item <%=currentPage ==='host'? 'active':'' %>">판매</a></li>
+        <li><a href="/host" class="header__menu__item <%=currentPage ==='purchase'? 'active':'' %>">판매</a></li>
       </ul>
     </ul>
   </nav>
@@ -44,6 +43,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+    // 1. 판매 메뉴 클릭 이벤트
     const sellMenu = document.querySelector('a[href="/host"]');
 
     sellMenu.addEventListener("click", async (event) => {
@@ -65,6 +65,19 @@
       } catch (err) {
         console.error("오류 발생:", err);
         alert("문제가 발생했습니다. 다시 시도해주세요.");
+      }
+    });
+
+    // 2. 검색창 토글 이벤트
+    const searchIcon = document.getElementById('search-icon');
+    const searchInput = document.getElementById('search-input');
+
+    searchIcon.addEventListener('click', () => {
+      console.log('Search icon clicked');
+      searchInput.classList.toggle('show');
+
+      if (searchInput.classList.contains('show')) {
+        searchInput.focus();
       }
     });
   });

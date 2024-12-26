@@ -31,6 +31,7 @@ exports.main = async (req, res) => {
     // 메인 페이지 렌더링
     res.render('index', {
       title: '메인 페이지',
+      user: req.session.user,
       products,
       currentPage: 'home',
     });
@@ -42,7 +43,11 @@ exports.main = async (req, res) => {
 
 // 사용하고 있지 않음 API -> 수정 필요
 exports.purchase = (req, res) => {
-  res.render('purchase', { title: '구매 페이지', currentPage: 'purchase' });
+  res.render('purchase', {
+    title: '구매 페이지',
+    user: req.session.user,
+    currentPage: 'purchase',
+  });
 };
 
 // 세션이 있는지를 검증
@@ -273,7 +278,9 @@ exports.getProduct = async (req, res) => {
         'category_id',
       ],
     });
-    res.status(200).render('products', { isSuccess: true, product });
+    res
+      .status(200)
+      .render('products', { isSuccess: true, product, user: req.session.user });
   } catch (err) {
     console.log('err', err);
     res.status(200).send({ isSuccess: false });
