@@ -1,42 +1,155 @@
-form {
-  min-width: 700px;
-  min-height: 200px;
-  /* background-color: yellow; */
-}
-.q {
-  border: 5px solid green;
-  border-radius: 25px;
-  width: 700px;
-  height: 350px;
-  padding-left: 50px;
-  margin-right: 50px;
-  /* background-color: pink; */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.section.hide {
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #7309f6;
+  margin-bottom: 20px;
+}
+
+form,
+.section {
+  max-width: 600px;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
   display: none;
 }
 
-li {
-  list-style-type: none;
+form.active,
+.section.active {
+  display: block;
 }
 
-.mybuyProduct {
-  border: 1 solid black;
-  border-radius: 15px;
-  background-color: yellowgreen;
+button {
+  display: inline-block;
+  background: #7309f6;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 10px;
 }
 
-.buyBox {
-  display: flex;
-  justify-content: space-evenly;
+button:hover {
+  background: #5c07c6;
 }
+
+.btn-group {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.buyBox,
 .sellBox {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.myBuy,
+.mySell {
   display: flex;
-  justify-content: space-evenly;
+  flex-direction: column;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #7309f6;
+  border-radius: 5px;
+}
+
+.buyImg img {
+  max-width: 100px;
+  margin-right: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.buyDetails ul,
+.sellBox ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.buyDetails ul li,
+.sellBox ul li {
+  margin-bottom: 5px;
+}
+
+.moreLink {
+  display: block;
+  text-align: right;
+  margin-top: 20px;
+  color: #7309f6;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.moreLink:hover {
+  text-decoration: underline;
 }
 
 .profileBox {
-  width: 500px;
-  height: 250px;
+  border: 1px solid #7309f6;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.profile-delete {
+  text-align: center;
+  margin-top: 20px;
+}
+
+input[type='text'],
+input[type='password'] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+input[type='text']:focus,
+input[type='password']:focus {
+  border-color: #7309f6;
+  outline: none;
+  box-shadow: 0 0 5px rgba(115, 9, 246, 0.5);
+}
+
+.wishlist-btn {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.wishlist-btn a {
+  display: inline-block;
+  background: #7309f6;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.wishlist-btn a:hover {
+  background: #5c07c6;
 }

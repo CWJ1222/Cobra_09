@@ -4,236 +4,194 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>mypage</title>
-    <link rel="stylesheet" href="/public/css/mypage.css" />
+    <link rel="stylesheet" href="../public/css/mypage.css" />
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
   <body>
-    <h1>mypage</h1>
-    <form name="userProfile" class="section mypage">
-      <section class="q">
-        <fieldset class="profileBox">
-          <legend>회원정보</legend>
-          <legend>
-            이메일
-            <input type="text" name="email" value="<%=user.email%>" readonly />
-          </legend>
-          <legend>
-            닉네임
-            <input
-              type="text"
-              name="nickname"
-              value="<%=user.nickname%>"
-              readonly
-              required
-            />
-          </legend>
-          <legend>
-            새 비밀번호
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="새 비밀번호를 입력하세요"
-              readonly
-              required
-            />
-          </legend>
-        </fieldset>
-
-        <div class="btn">
-          <button type="button" onclick="profileEdit();">수정하기</button>
-        </div>
-
-        <div class="logout-btn">
-          <a href="/auth/logout"> 로그아웃 </a>
-        </div>
-      </section>
+    <h1>MyPage</h1>
+    <form name="userProfile" class="section mypage active">
+      <fieldset class="profileBox">
+        <legend>회원정보</legend>
+        <p>
+          이메일:
+          <input type="text" name="email" value="<%=user.email%>" readonly />
+        </p>
+        <p>
+          닉네임:
+          <input
+            type="text"
+            name="nickname"
+            value="<%=user.nickname%>"
+            readonly
+          />
+        </p>
+        <p>
+          새 비밀번호:
+          <input
+            type="password"
+            name="password"
+            placeholder="비밀번호"
+            readonly
+          />
+        </p>
+      </fieldset>
+      <div class="btn">
+        <button type="button" onclick="profileEdit()">수정하기</button>
+        <button type="button" onclick="editUserProfile()" style="display: none">
+          수정완료
+        </button>
+      </div>
+      <div class="profile-delete">
+        <button type="button" onclick="confirmUserDelete()">회원탈퇴</button>
+      </div>
     </form>
 
-    <section class="q section buy hide">
-      이거 살래! 내역
+    <section class="section buy">
+      <h2>공동 구매 상품 구매한 내역</h2>
       <div class="buyBox">
         <% if (isSuccess) { product.forEach(product => { %>
-        <div class="myBuy 1">
-          <a class="buyImg 1" href="/host/list/<%=product.product_key%>">
-            <img src="" alt="공구 참여 상품 1" />
-            <li>상품명: <%=product.product.name%></li>
-            <li>수량:<%=product.product.max_quantity%></li>
-            <li>상품 가격</li>
-            <li>Dead-Line</li>
-          </a>
+        <div class="myBuy">
+          <div class="buyImg">
+            <img
+              src="<%= product.product.imageUrl || '/default-image.png' %>"
+              alt="공구 참여 상품"
+            />
+          </div>
+          <div class="buyDetails">
+            <ul>
+              <li>상품명: <%= product.product.name %></li>
+              <li>수량: <%= product.quantity %></li>
+              <li>상품 가격: <%= product.product.price %>원</li>
+              <li>
+                마감일: <%= new
+                Date(product.product.deadline).toLocaleDateString('ko-KR', {
+                year: 'numeric', month: '2-digit', day: '2-digit' }) %>
+              </li>
+            </ul>
+          </div>
         </div>
         <hr />
+        <% }) } else { %>
+        <p><%= message %></p>
+        <% } %>
       </div>
-      <% }) } else { %>
-      <p><%= message %></p>
-      <% } %>
-      <a href="/join">더보기</a>
+      <a href="/join" class="moreLink">더보기</a>
     </section>
-    <section class="q section sell hide">
-      같이 살래? 내역
+
+    <section class="section sell">
+      <h2>공동 구매 판매 등록 내역</h2>
       <div class="sellBox">
-        <div class="mySell 1">
-          <a class="sellImg 1" href="구매 하는 상품 폼으로 이동">
-            <img src="" alt="공구 올린 상품 1" />
-          </a>
-          <a class="sellProduct 1" href="구매하는 상품 폼으로 이동">
-            <li>상품명 / 구매 수량</li>
-            <li>상품 가격</li>
-            <li>Dead-Line</li>
-          </a>
+        <% if (order && order.length > 0) { %> <% order.forEach((item, index) =>
+        { %>
+        <div class="mySell">
+          <ul>
+            <li>번호: <%= index + 1 %></li>
+            <li>상품명: <%= item.dataValues.name %></li>
+            <li>
+              마감일: <%= new
+              Date(item.dataValues.deadline).toLocaleDateString('ko-KR', { year:
+              'numeric', month: '2-digit', day: '2-digit' }) %>
+            </li>
+            <li>최대 수량: <%= item.dataValues.max_quantity %></li>
+          </ul>
         </div>
-        <div class="mySell 2">
-          <a class="sellImg 2" href="구매 하는 상품 폼으로 이동">
-            <img src="" alt="공구 올린 상품 1" />
-          </a>
-          <a class="buyProduct 2" href="구매하는 상품 폼으로 이동">
-            <li>상품명 / 구매 수량</li>
-            <li>상품 가격</li>
-            <li>Dead-Line</li>
-          </a>
-        </div>
-        <div class="mySell 3">
-          <a class="sellImg 3" href="구매 하는 상품 폼으로 이동">
-            <img src="" alt="공구 올린 상품 1" />
-          </a>
-          <a class="sellProduct 3" href="구매하는 상품 폼으로 이동">
-            <li>상품명 / 구매 수량</li>
-            <li>상품 가격</li>
-            <li>Dead-Line</li>
-          </a>
-        </div>
+        <hr />
+        <% }) %> <% } else { %>
+        <p>등록된 판매 내역이 없습니다.</p>
+        <% } %>
       </div>
-      <a href="/2024-12-21/views/mysellpage.ejs">더보기</a>
     </section>
 
-    <button onclick="changeMySection(this)" class="my-btn">마이페이지</button>
-
-    <button onclick="changeBuySection(this)" class="buy-btn">
-      구매 페이지
-    </button>
-    <button onclick="changeSellSection(this)" class="sell-btn">
-      판매 페이지
-    </button>
-
-    <div class="profile-delete">
-      <button type="button" onclick="confirmUserDelete()">회원 탈퇴</button>
+    <div class="btn-group">
+      <button class="my-btn" onclick="changeSection('mypage')">
+        마이페이지
+      </button>
+      <button class="buy-btn" onclick="changeSection('buy')">
+        구매 페이지
+      </button>
+      <button class="sell-btn" onclick="changeSection('sell')">
+        판매 페이지
+      </button>
     </div>
 
     <!-- 찜한 상품 -->
     <div class="wishlist-btn">
       <a href="/wishlist/my">찜한 상품</a>
     </div>
+  </body>
+  <script>
+    function changeSection(section) {
+      // 모든 섹션 숨기기
+      document.querySelectorAll('.section').forEach((el) => {
+        el.classList.remove('active');
+      });
+      // 선택한 섹션만 보이기
+      document.querySelector(`.${section}`).classList.add('active');
+    }
 
-    <script>
-      //회원 정보 render & 버튼 수정
-      function profileEdit() {
-        const form = document.forms['userProfile'];
-        const btnBox = document.querySelector('.btn');
-        console.log(form);
-        const nickname = form.nickname;
-        const password = form.password;
+    function profileEdit() {
+      const nickname = document.querySelector('input[name="nickname"]');
+      const password = document.querySelector('input[name="password"]');
+      const editButton = document.querySelector('.btn button:nth-child(1)');
+      const saveButton = document.querySelector('.btn button:nth-child(2)');
 
-        nickname.removeAttribute('readonly');
-        nickname.setAttribute('placeholder', form.nickname.value);
-        nickname.value = '';
+      // 닉네임과 비밀번호 필드 활성화
+      nickname.removeAttribute('readonly');
+      password.removeAttribute('readonly');
 
-        password.removeAttribute('readonly');
+      // 버튼 전환
+      editButton.style.display = 'none';
+      saveButton.style.display = 'inline-block';
 
-        const editBtn = `<button type="button" onclick="editUserProfile()">수정완료</button>`;
-        btnBox.innerHTML = editBtn;
+      alert('닉네임과 비밀번호를 수정할 수 있습니다.');
+    }
+
+    // 회원 정보 수정 -> 수정!
+    async function editUserProfile() {
+      const nickname = document
+        .querySelector('input[name="nickname"]')
+        .value.trim();
+      const password = document
+        .querySelector('input[name="password"]')
+        .value.trim();
+
+      console.log(nickname);
+      console.log(password);
+
+      if (!nickname || !password) {
+        alert('닉네임과 변경할 비밀번호 모두 입력해주세요.');
+        return;
       }
 
-      // 회원 정보 수정
-      async function editUserProfile() {
-        const nickname = document
-          .querySelector('input[name="nickname"]')
-          .value.trim();
-        const password = document
-          .querySelector('input[name="password"]')
-          .value.trim();
+      try {
+        const response = await axios.put('/user', { nickname, password });
 
-        if (!nickname && !password) {
-          alert('닉네임 또는 비밀번호 중 하나를 입력해주세요.');
-          return;
+        if (response.data.isSuccess) {
+          alert(response.data.message); // 성공 메시지 출력
+          location.reload(); // 페이지 새로고침
+        } else {
+          alert(response.data.message); // 실패 메시지 출력
         }
+      } catch (err) {
+        console.error('사용자 정보 수정 중 오류:', err);
+      }
+    }
 
+    async function confirmUserDelete() {
+      if (confirm('정말 탈퇴하시겠습니까?')) {
         try {
-          const response = await axios.put('/user', { nickname, password });
-
-          if (response.data.isSuccess) {
-            alert(response.data.message); // 성공 메시지 출력
-            location.reload(); // 페이지 새로고침
+          const response = await axios.delete('/delete'); // 탈퇴 요청 전송
+          if (response.status === 200 && response.data.isSuccess) {
+            alert('탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.');
+            window.location.href = '/'; // 메인 페이지로 이동
           } else {
-            alert(response.data.message); // 실패 메시지 출력
+            alert('탈퇴에 실패했습니다. 다시 시도해주세요.');
           }
         } catch (err) {
-          console.error('사용자 정보 수정 중 오류:', err);
-          alert('최소 1개의 항목을 수정해야 합니다.');
+          console.error('회원 탈퇴 중 오류:', err);
+          alert('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.');
         }
       }
-
-      // 회원 탈퇴
-      async function confirmUserDelete() {
-        if (confirm('정말 탈퇴하시겠습니까?')) {
-          try {
-            const response = await axios.delete('/delete'); // 탈퇴 요청 전송
-            if (response.status === 200 && response.data.isSuccess) {
-              alert('탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.');
-              window.location.href = '/'; // 메인 페이지로 이동
-            } else {
-              alert('탈퇴에 실패했습니다. 다시 시도해주세요.');
-            }
-          } catch (err) {
-            console.error('회원 탈퇴 중 오류:', err);
-            alert('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.');
-          }
-        }
-      }
-
-      // 구매, 판매 내역 조회 칸 보이기
-      // 판매 내역 버튼 누르면 my, buy hide
-      function changeSellSection(btn) {
-        const mypageSection = document.querySelector('.mypage');
-        const sellSection = document.querySelector('.sell');
-        const buySection = document.querySelector('.buy');
-        console.log(mypageSection);
-        console.log(sellSection);
-        console.log(buySection);
-        if (btn.classList.contains('sell-btn')) {
-          sellSection.classList.remove('hide');
-          mypageSection.classList.add('hide');
-          buySection.classList.add('hide');
-        }
-      }
-      // 구매 내역 버튼 누르면 my, sell hide
-      function changeBuySection(btn) {
-        const mypageSection = document.querySelector('.mypage');
-        const sellSection = document.querySelector('.sell');
-        const buySection = document.querySelector('.buy');
-        console.log(mypageSection);
-        console.log(sellSection);
-        console.log(buySection);
-        if (btn.classList.contains('buy-btn')) {
-          buySection.classList.remove('hide');
-          sellSection.classList.add('hide');
-          mypageSection.classList.add('hide');
-        }
-      }
-      // 마이페이지 버튼 누르면 sell, buy hide
-      function changeMySection(btn) {
-        const mypageSection = document.querySelector('.mypage');
-        const sellSection = document.querySelector('.sell');
-        const buySection = document.querySelector('.buy');
-        console.log(mypageSection);
-        console.log(sellSection);
-        console.log(buySection);
-        if (btn.classList.contains('my-btn')) {
-          mypageSection.classList.remove('hide');
-          sellSection.classList.add('hide');
-          buySection.classList.add('hide');
-        }
-      }
-    </script>
-  </body>
+    }
+  </script>
 </html>
