@@ -249,7 +249,7 @@
     
     <div class="commentListContainer">
       <% if(comments.length){ %> <% for (let i = 0; i < comments.length; i++){%>
-        <div class="commentWrapper" style="margin-left: <%= comments[i].comment_depth * 60 %>px">
+        <div class="commentWrapper" style=<%= "margin-left:"+ comments[i].comment_depth * 60+"px"%>
               <!-- reply icon 추가 (depth가 1이상일때만)-->
             <% if(comments[i].comment_depth > 0){ %>
               <span class="replyIcon"></span>
@@ -267,16 +267,16 @@
             </div>
 
             <div class="replyButton<%= comments[i].comment_id %> replyButton">
-              <button onclick="toggleReplyBox(<%=comments[i].comment_id%>); saveScrollPosition();">답글달기</button>
+              <button onclick="toggleReplyBox('<%=comments[i].comment_id%>'); saveScrollPosition();">답글달기</button>
             </div>
 
             <div class="addReplyButton<%= comments[i].comment_id %> invisible addReplyButton" >
               <input type="text" class="replyInput<%= comments[i].comment_id %>"/>
               <button onclick="replyComment({
-                comment_id: <%=comments[i].comment_id%>,
-                parent_id: <%=comments[i].parent_id%>,
+                comment_id: '<%=comments[i].comment_id%>',
+                parent_id: '<%=comments[i].parent_id%>',
               })">등록</button>
-              <button onclick="toggleReplyBox(<%=comments[i].comment_id%>)">취소</button>
+              <button onclick="toggleReplyBox('<%=comments[i].comment_id%>')">취소</button>
             </div>
           </li>
         </div>
@@ -356,6 +356,12 @@
         })
           .then((result) => {
             console.log('답글 달기 성공', result);
+            if(!result.data.isSuccess){
+              alert(result.data.message);
+              return;
+            }
+            replyContent.value = '';
+
             toggleReplyBox(commentInfo.comment_id);
             window.location.href = `/buyform/${product_id}`;
           })
