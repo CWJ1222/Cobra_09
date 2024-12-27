@@ -185,8 +185,8 @@
     display: inline-block;
 
     position: relative;
-    top: 30px; 
-    left: 20px;
+    top: 35px; 
+    left: -35px;
   }
 
     </style>
@@ -249,35 +249,37 @@
     
     <div class="commentListContainer">
       <% if(comments.length){ %> <% for (let i = 0; i < comments.length; i++){%>
-        <!-- reply icon 추가 (depth가 1이상일때만)-->
-        <% if(comments[i].comment_depth > 0){ %>
-          <span class="replyIcon"></span>
-        <% } %>
-      <li
-        class="commentContainer"
-        style="margin-left: <%= comments[i].comment_depth * 60 %>px"
-      >
-        <div class="commentBox">
-          <div class="nickname"><%=comments[i].user.nickname %></div>
-          <div class="content"><%=comments[i].content %></div>
-          <div class="createdAt">
-            <%=new Date( comments[i].createdAt).toLocaleString("ko-KR") %>
-          </div>
-        </div>
+        <div class="commentWrapper" style="margin-left: <%= comments[i].comment_depth * 60 %>px">
+              <!-- reply icon 추가 (depth가 1이상일때만)-->
+            <% if(comments[i].comment_depth > 0){ %>
+              <span class="replyIcon"></span>
+            <% } %>
+          <li
+            class="commentContainer"
+            
+          >
+            <div class="commentBox">
+              <div class="nickname"><%=comments[i].user.nickname %></div>
+              <div class="content"><%=comments[i].content %></div>
+              <div class="createdAt">
+                <%=new Date( comments[i].createdAt).toLocaleString("ko-KR") %>
+              </div>
+            </div>
 
-        <div class="replyButton<%= comments[i].comment_id %> replyButton">
-          <button onclick="toggleReplyBox(<%=comments[i].comment_id%>); saveScrollPosition();">답글달기</button>
-        </div>
+            <div class="replyButton<%= comments[i].comment_id %> replyButton">
+              <button onclick="toggleReplyBox(<%=comments[i].comment_id%>); saveScrollPosition();">답글달기</button>
+            </div>
 
-        <div class="addReplyButton<%= comments[i].comment_id %> invisible addReplyButton" >
-          <input type="text" class="replyInput<%= comments[i].comment_id %>"/>
-          <button onclick="replyComment({
-            comment_id: <%=comments[i].comment_id%>,
-            parent_id: <%=comments[i].parent_id%>,
-          })">등록</button>
-          <button onclick="toggleReplyBox(<%=comments[i].comment_id%>)">취소</button>
+            <div class="addReplyButton<%= comments[i].comment_id %> invisible addReplyButton" >
+              <input type="text" class="replyInput<%= comments[i].comment_id %>"/>
+              <button onclick="replyComment({
+                comment_id: <%=comments[i].comment_id%>,
+                parent_id: <%=comments[i].parent_id%>,
+              })">등록</button>
+              <button onclick="toggleReplyBox(<%=comments[i].comment_id%>)">취소</button>
+            </div>
+          </li>
         </div>
-      </li>
       <% } %> 
       <% }else{ %>
         <p class="noneComment">
