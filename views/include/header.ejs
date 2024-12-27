@@ -1,70 +1,96 @@
 <header class="header">
   <div class="header__title">
     <div class="header__logo">
-      <img src="/public/img/logo-title.png" alt="logo" class="header__logo__img" />
+      <img
+        src="/public/img/logo-title.png"
+        alt="logo"
+        class="header__logo__img"
+      />
       <h1 class="header__logo__title"><a href="/">코브라09</a></h1>
     </div>
-  <div class="header__utils">
-    <!-- 로그인/회원가입 -->
-    <div class="header__auth">
-      <!-- 로그인 여부에 따른 버튼 표시-->
-      <% if(user){ %>
+    <div class="header__utils">
+      <!-- 로그인/회원가입 -->
+      <div class="header__auth">
+        <!-- 로그인 여부에 따른 버튼 표시-->
+        <% if(user){ %>
         <a href="/user/mypage">
-          <button class="mypage">마이페이지</button>
+          <button>마이페이지</button>
         </a>
-      <% } else { %>
+        <% } else { %>
         <a href="/auth/login">
           <button class="login-button">로그인/회원가입</button>
-        </a> 
-      <%  } %>
-    
+        </a>
+        <% } %>
+      </div>
+      <!-- 검색 영역 -->
+      <div class="header__search">
+        <input
+          type="text"
+          class="search-input"
+          id="search-input"
+          placeholder="검색어를 입력해주세요"
+        />
+        <button class="search-icon" id="search-icon">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
     </div>
-    <!-- 검색 영역 -->
-    <div class="header__search">
-      <input type="text" class="search-input" id="search-input" placeholder="검색어를 입력해주세요">
-      <button class="search-icon" id="search-icon">        
-        <i class="fa-solid fa-magnifying-glass"></i>
-      </button>    
-    </div>
-  </div>
   </div>
 
   <nav class="header__nav">
     <ul class="header__nav">
       <ul class="header__menu">
-        <li><a href="/" class="header__menu__item <%=currentPage === 'home' ? 'active': ''%>">홈</a</li>
-          <!-- FE : BE 테스트 페이지(purchaseTest)에서 purchase로 변경 -->
-        <li><a href="/products" class="header__menu__item <%=currentPage ==='product'? 'active' : ''%>">구매</a></li>
-        <li><a href="/host" class="header__menu__item <%=currentPage ==='host'? 'active':'' %>">판매</a></li>
+        <li>
+          <a
+            href="/"
+            class="header__menu__item <%=currentPage === 'home' ? 'active': ''%>"
+            >홈</a
+          >
+        </li>
+        <!-- FE : BE 테스트 페이지(purchaseTest)에서 purchase로 변경 -->
+        <li>
+          <a
+            href="/products"
+            class="header__menu__item <%=currentPage ==='product'? 'active' : ''%>"
+            >구매</a
+          >
+        </li>
+        <li>
+          <a
+            href="/host"
+            class="header__menu__item <%=currentPage ==='purchase'? 'active':'' %>"
+            >판매</a
+          >
+        </li>
       </ul>
     </ul>
   </nav>
 </header>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener('DOMContentLoaded', () => {
     // 1. 판매 메뉴 클릭 이벤트
     const sellMenu = document.querySelector('a[href="/host"]');
 
-    sellMenu.addEventListener("click", async (event) => {
+    sellMenu.addEventListener('click', async (event) => {
       event.preventDefault(); // 기본 동작 방지
 
       try {
         // 판매 페이지 접근 시도
-        const response = await fetch("/host", {
-          method: "GET",
+        const response = await fetch('/host', {
+          method: 'GET',
         });
 
         if (response.status === 401) {
-       // 로그인 화면으로 리다이렉트
-       window.location.href = "/auth/login";
+          // 로그인 화면으로 리다이렉트
+          window.location.href = '/auth/login';
         } else {
           // 세션이 유효한 경우 판매 페이지로 이동
-          window.location.href = "/host";
+          window.location.href = '/host';
         }
       } catch (err) {
-        console.error("오류 발생:", err);
-        alert("문제가 발생했습니다. 다시 시도해주세요.");
+        console.error('오류 발생:', err);
+        alert('문제가 발생했습니다. 다시 시도해주세요.');
       }
     });
 
@@ -82,4 +108,3 @@
     });
   });
 </script>
-

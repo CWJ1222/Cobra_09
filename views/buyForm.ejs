@@ -12,12 +12,10 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
-    <!-- fontawsome -->
-<script
-src="https://kit.fontawesome.com/837ff3adc1.js"
-crossorigin="anonymous"
-></script>
-    <style>
+    <!-- Material Symbols Outlined 스타일(대댓글 아이콘) -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+  </head>
+  <style>
   @import url("../public/css/common.css");
   body{
       padding: 50px;
@@ -176,9 +174,23 @@ crossorigin="anonymous"
 
   .commentContainer .invisible {
     display: none;
+    position: absolute;
   }
+
+  .replyIcon::before{
+    content: '\f4f6'; /* 댓글 아이콘 */
+    font-family: 'Material Symbols Outlined';
+    color: var(--color-secondary);
+    font-size: 24px;
+    display: inline-block;
+
+    position: relative;
+    top: 30px; 
+    left: 20px;
+  }
+
     </style>
-  </head>
+
   <body>
     <div class="productContainer">
       <h1><%= product.name %> 구매하기</h1>
@@ -237,6 +249,10 @@ crossorigin="anonymous"
     
     <div class="commentListContainer">
       <% if(comments.length){ %> <% for (let i = 0; i < comments.length; i++){%>
+        <!-- reply icon 추가 (depth가 1이상일때만)-->
+        <% if(comments[i].comment_depth > 0){ %>
+          <span class="replyIcon"></span>
+        <% } %>
       <li
         class="commentContainer"
         style=<%= "margin-left:"+ comments[i].comment_depth * 60 +"px"%>
