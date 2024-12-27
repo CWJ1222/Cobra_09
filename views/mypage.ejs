@@ -89,7 +89,7 @@
             <a class="buyProduct" href="/host/list/<%= product.product_key %>">
               <div id="buypr">
                 <img
-                  src="/public/img/logo-title.png"
+                  src="/uploads/<%= image[0] %>"
                   alt="<%= product.product.name %>"
                 />
               </div>
@@ -124,35 +124,24 @@
         <!-- 배열 3개까지 출력-->
         <% if (isSuccess) { %>
         <div class="sellBox">
-          <% product.slice(0, 3).forEach(order => { %>
+          <% order.slice(0, 3).forEach((item, index) => { %>
           <div class="mySell">
             <a
               class="sellProduct"
-              href="/host/list/<%= order.product.product_key %>"
+              href="/host/list/ <%=item.dataValues.product_key%>"
             >
               <div id="sellpr">
                 <img
-                  src="/public/img/logo-title.png"
-                  alt="<%= order.product.name %>"
+                  src="/uploads/<%=item.dataValues.image%>"
+                  alt="<%=item.dataValues.name%>"
                 />
               </div>
               <ul>
-                <li>
-                  <!-- 구매내역이랑 충돌나는 듯 이름이 같음. 밑에 수량이나 가격은 
-                   주선내역이 맞는데 이름 하고 product_key는 구매내역이랑 같음 1시간30분헤멤 
-                   이거 product_key가 같으니까 단일 상품 이동 할 때에도 같은 화면으로 넘어가짐
-                   mypage에서만 문제고 각자 더보기로 들어가서 단일 상품 들어가면 잘됨
-                   되는 부분 : 각 페이지(더보기 들어갔을 때)에서는 잘 나옴, 단일 상품 눌렀을 때에도 데이터 잘 받아짐
-                   안되;는 부분 : mypage에서 받아지는 주선내역의 data가 안맞음 안겹치는 
-                   max_quantity만 제대로 들어오고 겹치는 항목들은 구매내역이랑 똑같이 나옴
-                   mypage에서 단일상품으로 들어가도 주선내역물품인데 구매내역으로 들어가짐 -->
-                  <strong>상품명:</strong> <%=order.product.dataValues.name%>
-                </li>
                 <!-- 내가 구매한 수량, order_item에서 가져옴 -->
-                <li><strong>수량:</strong><%=order.product.max_quantity%></li>
-                <li><strong>상품 가격:</strong> <%=order.product.price%></li>
-                <li><strong>상품명:</strong> <%=order.product.deadline%></li>
-                <li><strong>확인:</strong> <%=order.product.product_key%></li>
+                <li><strong>수량:</strong><%=item.dataValues.max_quantity%></li>
+                <li><strong>상품 가격:</strong> <%=item.dataValues.price%></li>
+                <li><strong>상품명:</strong> <%=item.dataValues.name%></li>
+                <li><strong>확인:</strong> <%=item.dataValues.product_key%></li>
               </ul>
             </a>
           </div>

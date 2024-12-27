@@ -16,7 +16,10 @@
           <% products.forEach(product => { %>
           <div class="buy-card">
             <a href="/host/list/<%=product.product_key%>">
-              <img src="/public/img/logo-title.png" alt="<%=product.name %>" />
+              <img
+                src="/uploads/<%=product.image %>"
+                alt="<%=product.name %>"
+              />
               <ul class="order-item">
                 <li>상품명: <%=product.name %></li>
                 <li>상품 가격: <%=product.price %></li>

@@ -131,7 +131,14 @@ exports.getMyProducts = async (req, res) => {
 
     const products = await Product.findAll({
       where: { user_id: target },
-      attributes: ['name', 'price', 'deadline', 'max_quantity', 'product_key'],
+      attributes: [
+        'name',
+        'price',
+        'deadline',
+        'max_quantity',
+        'product_key',
+        'image',
+      ],
     });
 
     res
@@ -156,7 +163,7 @@ exports.getMyJoins = async (req, res) => {
       include: [
         {
           model: Product,
-          attributes: ['name', 'user_id', 'price', 'deadline'],
+          attributes: ['name', 'user_id', 'price', 'deadline', 'image'],
         },
       ],
     });
@@ -220,11 +227,20 @@ exports.renderMypage = async (req, res) => {
         },
       ],
     });
-    console.log('user', user);
+    console.log(user.order_items);
+
+    const images = user.Order_items.map((item) => item.product.image) || [];
 
     const products = await Product.findAll({
       where: { user_id: target },
-      attributes: ['name', 'deadline', 'max_quantity', 'price'],
+      attributes: [
+        'product_key',
+        'name',
+        'deadline',
+        'max_quantity',
+        'price',
+        'image',
+      ],
     });
 
     if (!user) {
@@ -237,6 +253,7 @@ exports.renderMypage = async (req, res) => {
       product: user.Order_items,
       // 내가 등록한 물품도 전달
       order: products,
+      image: images,
       currentPage: '',
     });
   } catch (error) {
