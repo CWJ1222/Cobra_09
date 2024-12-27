@@ -203,17 +203,12 @@ exports.renderMypage = async (req, res) => {
   try {
     // // 세션에서 사용자 ID 가져오기
     const userId = req.session.user.user_pk;
-
     if (!userId) {
       // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
       return res.redirect('/auth/login');
     }
-
-    // 데이터베이스에서 사용자 정보 조회
-    const target = req.session.user.user_pk;
-    // const target = 2;
     const user = await User.findOne({
-      where: { user_id: target },
+      where: { user_id: userId },
       attributes: ['email', 'nickname'], // 필요한 필드만 선택
       include: [
         {
@@ -227,12 +222,9 @@ exports.renderMypage = async (req, res) => {
         },
       ],
     });
-    console.log(user.order_items);
-
     const images = user.Order_items.map((item) => item.product.image) || [];
-
     const products = await Product.findAll({
-      where: { user_id: target },
+      where: { user_id: userId },
       attributes: [
         'product_key',
         'name',
@@ -242,19 +234,58 @@ exports.renderMypage = async (req, res) => {
         'image',
       ],
     });
-    if (!user) {
-      return res.status(404).send('사용자를 찾을 수 없습니다.');
-    }
+    const wishlists = await Wishlists.findAll({
+      where: { user_id: userId },
+      attributes: ['product_key'],
+      include: [
+        {
+          model: Product,
+          attributes: ['name', 'price', 'image', 'deadline'],
+          as: 'ProductWishlists',
+        },
+      ],
+    });
+    const formattedWishlists = wishlists.map((wishlist) => {
+      const product = wishlist.dataValues.ProductWishlists?.dataValues;
+      return {
+        product_key: wishlist.dataValues.product_key,
+        name: product?.name,
+        price: product?.price,
+        image: product?.image,
+        deadline: product?.deadline,
+      };
+    });
 
     res.render('mypage', {
       isSuccess: true,
       user,
       product: user.Order_items,
-      // 내가 등록한 물품도 전달
       order: products,
       image: images,
+      wish: formattedWishlists,
       currentPage: '',
     });
+
+    /*
+          {
+        "wish": [
+          {
+            "product_key": 32,
+            "name": "테스트",
+            "price": 123,
+            "image": "tshirt1735134143448.jpg",
+            "deadline": "2024-12-27T05:45:00.000Z"
+          },
+          {
+            "product_key": 33,
+            "name": "test11",
+            "price": 111,
+            "image": "macbook1735135375948.png",
+            "deadline": "2024-12-27T07:06:00.000Z"
+          }
+        ]
+      }
+    */
   } catch (error) {
     console.error('마이페이지 렌더링 오류:', error);
     res.status(500).send('서버 오류');
