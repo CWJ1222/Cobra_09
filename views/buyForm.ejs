@@ -13,97 +13,257 @@
       referrerpolicy="no-referrer"
     ></script>
     <style>
-      li {
-        list-style: none;
-        display: flex;
-        background-color: var(--color-white);
-        border-radius: 9px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 5px;
+  @import url("../public/css/common.css");
+  body{
+      padding: 50px;
       }
+      
+  .productContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 50px;
+  }
 
-      .commentListContainer {
-        width: 600px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
+  .productContainer h1 {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
 
-      .commentBox {
-        border: 1px solid black;
-      }
+  .productContainer p {
+    font-size: 16px;
+  }
 
-      .replyBox {
-        display: flex;
-        align-items: center;
-        gap: 20px;
+  .productContainer img {
+    max-width: 100%;
+  }
 
-        border: 1px solid black;
-      }
+  .productContainer form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 50px;
+  }
 
-      .replyBox > textarea {
-        border: 1px solid gray;
-      }
+  .productContainer input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+  }
 
-      .commentContainer {
-        display: flex;
-        justify-content: space-between;
-      }
+  .productContainer button {
+    padding: 10px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: var(--color-primary);
+    border-radius: 5px;
+  }
+
+  .inputCommentContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 50px;
+  }
+
+  .inputCommentContainer input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #a4abb1e8;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .inputCommentContainer button {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: var( --color-primary);
+    border: none;
+    border-radius: 5px;
+  }
+
+  .commentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background-color: var(--color-white);
+    border-radius: 9px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    padding:10px;
+    margin-bottom: 30px;
+  }
+
+  .commentContainer .commentBox {
+    font-size: 14px;
+    color: #333;
+  }
+
+  .commentContainer .commentBox div {
+    margin-bottom: 5px;
+  }
+
+  .commentContainer .replyButton {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .commentContainer .replyButton button {
+  padding: 8px 12px;
+  font-size: 14px; 
+  color: #ffffff;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 5px;
+  }
+
+  .commentContainer .addReplyButton {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .commentContainer .addReplyButton input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .commentContainer .addReplyButton button {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: var( --color-primary);
+    border: none;
+    border-radius: 5px;
+  }
+
+
+  .commentBox {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .commentBox .nickname{
+    font-weight: bold;
+    font-size: 15px;
+  }
+
+  .commentBox .content{
+    font-size: 18px;
+  }
+
+  .noneComment{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .commentContainer .invisible {
+    display: none;
+  }
     </style>
   </head>
   <body>
-    <h1><%= product.name %> 구매하기</h1>
-    <p>가격: <%= product.price %>원</p>
-    <p>마감일: <%= product.deadline %></p>
-    <img
-      src="/uploads/<%= product.image %>"
-      alt="<%= product.name %>"
-      style="max-width: 300px"
-    />
-    <form action="/purchase" method="POST">
-      <!-- Hidden Field -->
-      <input
-        type="hidden"
-        name="product_key"
-        value="<%= product.product_key %>"
+    <div class="productContainer">
+      <h1><%= product.name %> 구매하기</h1>
+      <img
+        src="/uploads/<%= product.image %>"
+        alt="<%= product.name %>"
+        style="max-width: 300px"
       />
+      <p>가격: <%= product.price %>원</p>
+      <p>마감일: <%= new Date( product.deadline).toLocaleString("ko-KR")  %></p>
+      <form action="/purchase" method="POST">
+        <!-- Hidden Field -->
+        <input
+          type="hidden"
+          name="product_key"
+          value="<%= product.product_key %>"
+        />
+  
+        <!-- Quantity -->
+        <label for="quantity">수량: </label>
+        <input
+          type="number"
+          id="quantity"
+          name="quantity"
+          required
+          min="1"
+          max="<%= product.max_quantity %>"
+        />
+  
+        <!-- Address -->
+        <label for="address">주소: </label>
+        <input
+          type="text"
+          id="address"
+          name="address"
+          required
+          onclick="openSearch()"
+        />
 
-      <!-- Quantity -->
-      <label for="quantity">수량: </label>
-      <input
-        type="number"
-        id="quantity"
-        name="quantity"
-        required
-        min="1"
-        max="<%= product.max_quantity %>"
-      />
+        <!-- Phone -->
+        <label for="phone">전화번호: </label>
+        <input type="text" id="phone" name="phone" required />
+    
+        <!-- Cpurchase에서 온 userId -->
+        <input type="hidden" id="user_id" name="user_id" value="<%= userId %>" />
+    
+        <button type="submit">구매하기</button>
+      </form>
+    </div>
 
-      <!-- Address -->
-      <label for="address">주소: </label>
-      <input
-        type="text"
-        id="address"
-        name="address"
-        required
-        onclick="openSearch()"
-      />
 
-      <!-- Phone -->
-      <label for="phone">전화번호: </label>
-      <input type="text" id="phone" name="phone" required />
+    <div class="inputCommentContainer">
+      <input type="text" class="inputComment" required></ㅇ>
+      <button onclick="addComment()">댓글 등록</button>
+    </div>
 
-      <!-- Cpurchase에서 온 userId -->
-      <input type="hidden" id="user_id" name="user_id" value="<%= userId %>" />
+    <div class="commentListContainer">
+      <% if(comments.length){ %> <% for (let i = 0; i < comments.length; i++){%>
+      <li
+        class="commentContainer"
+        style="margin-left: <%= comments[i].comment_depth * 60 %>px"
+      >
+        <div class="commentBox">
+          <div class="nickname"><%=comments[i].user.nickname %></div>
+          <div class="content"><%=comments[i].content %></div>
+          <div class="createdAt">
+            <%=new Date( comments[i].createdAt).toLocaleString("ko-KR") %>
+          </div>
+        </div>
 
-      <button type="submit">구매하기</button>
-    </form>
-    <label>
-      <textarea class="inputCommentBox" required></textarea
-      ><button onclick="addComment()">댓글 등록</button></label
-    >
+        <div class="replyButton<%= comments[i].comment_id %> replyButton">
+          <button onclick="toggleReplyBox(<%=comments[i].comment_id%>)">답글달기</button>
+        </div>
 
-    <div class="commentListContainer"></div>
+        <div class="addReplyButton<%= comments[i].comment_id %> invisible addReplyButton" >
+          <input type="text" class="replyInput<%= comments[i].comment_id %>"/>
+          <button onclick="replyComment({
+            comment_id: <%=comments[i].comment_id%>,
+            parent_id: <%=comments[i].parent_id%>,
+          })">등록</button>
+          <button onclick="toggleReplyBox(<%=comments[i].comment_id%>)">취소</button>
+        </div>
+      </li>
+      <% } %> 
+      <% }else{ %>
+        <p class="noneComment">
+          등록된 댓글이 없습니다.
+        </p>
+      <% } %>
+    </div>
 
     <script>
       // 주소검색기능
@@ -122,6 +282,24 @@
 
       const path = window.location.pathname;
       const product_id = path.split('/')[2];
+      console.log("product_id는",product_id)
+      function addComment() {
+        console.log('댓글달기');
+        const content = document.querySelector('.inputComment').value;
+        axios({
+          url: '/comments',
+          method: 'post',
+          data: { content: content, product_key: product_id },
+        })
+          .then((result) => {
+            console.log('댓글 달기 성공', result);
+            window.location.href = `/buyform/${product_id}`;
+          })
+          .catch((err) => {
+            console.log('페이지단에서 에러발생', err);
+            alert('댓글 달기 실패');
+          });
+      }
 
       // 대댓글 달기
       function replyComment(commentInfo) {
@@ -141,117 +319,30 @@
         })
           .then((result) => {
             console.log('답글 달기 성공', result);
-            getComments();
+            toggleReplyBox(commentInfo.comment_id);
+            window.location.href = `/buyform/${product_id}`;
           })
           .catch((err) => {
+            console.log("err는",err)
             alert('답글 달기 실패');
           });
       }
 
-      // 전체 댓글 가져오기
-      function getComments() {
-        axios({
-          url: `/comments/${product_id}`,
-          method: 'get',
-        })
-          .then((result) => {
-            console.log('댓글 응답', result);
-            const commentListContainer = document.querySelector(
-              '.commentListContainer'
-            );
-            commentListContainer.innerText = '';
-            if (result.data.comments) {
-              for (let i = 0; i < result.data.comments.length; i++) {
-                // 렌더링되는 댓글
-                // 태그 생성
-                const commentContainer = document.createElement('li');
-                const commentBox = document.createElement('div');
-                const writer = document.createElement('div');
-                const content = document.createElement('div');
-                const createdAt = document.createElement('div');
+      function toggleReplyBox (commentId){
+        console.log("commentId는",commentId)
+        const replyButton = document.querySelector(`.replyButton${commentId}`)
+        const addReplyButton = document.querySelector(`.addReplyButton${commentId}`)
+        console.log("replyButton는",replyButton)
+        console.log("addReplyButton",addReplyButton)
 
-                // 태그 값 추가
-                writer.innerText = result.data.comments[i].user.nickname;
-                content.innerText = result.data.comments[i].content;
-                createdAt.innerText = result.data.comments[i].createdAt;
+        replyButton.classList.toggle("invisible")
+        addReplyButton.classList.toggle("invisible")
 
-                const inputCommentBox =
-                  document.querySelector('.inputCommentBox');
-                inputCommentBox.setAttribute(
-                  'style',
-                  'resize: none; width:500px; height:50px'
-                );
-
-                // 태그 클래스명 추가
-                commentContainer.classList.add('commentContainer');
-                commentBox.classList.add('commentBox');
-
-                // 태그 추가
-                commentBox.append(writer, content, createdAt);
-
-                ////////////////////////////////////////////////
-
-                // 답글 추가 박스
-                const replyBox = document.createElement('div');
-                const replyInput = document.createElement('textarea');
-                const replyBtn = document.createElement('button');
-
-                // 답글 값 추가
-                replyBtn.innerText = `답글달기`;
-                replyBtn.onclick = () => {
-                  replyComment({
-                    comment_id: result.data.comments[i].comment_id,
-                    parent_id: result.data.comments[i].parent_id,
-                  });
-                };
-                replyInput.setAttribute('style', 'resize: none;');
-
-                // 답글 클래스명 추가
-                replyBox.classList.add('replyBox');
-                replyInput.classList.add(
-                  `replyInput${result.data.comments[i].comment_id}`
-                );
-
-                // 답글 태그 추가
-                replyBox.append(replyInput, replyBtn);
-
-                // 최종 태그 스타일 추가
-                commentContainer.style.marginLeft = `${
-                  60 * result.data.comments[i].comment_depth
-                }px`;
-
-                // 최종 태그 추가
-                commentContainer.append(commentBox, replyBox);
-                commentListContainer.append(commentContainer);
-              }
-            } else {
-              commentContainer.innerText = '등록된 댓글이 없습니다.';
-            }
-          })
-          .catch((err) => {
-            alert('댓글 가져오기 실패');
-          });
+        
       }
-
-      function addComment() {
-        console.log('댓글달기');
-        const content = document.querySelector('.inputCommentBox').value;
-        axios({
-          url: '/comments',
-          method: 'post',
-          data: { content: content, product_key: product_id },
-        })
-          .then((result) => {
-            console.log('댓글 달기 성공', result);
-            getComments();
-          })
-          .catch((err) => {
-            alert('댓글 달기 실패');
-          });
-      }
-
-      // 첫 렌더링시 전체 댓글 가져오기
-      getComments();
     </script>
   </body>
 </html>
+
+
+

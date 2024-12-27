@@ -202,7 +202,7 @@ exports.getMyAllJoins = async (req, res) => {
 exports.renderMypage = async (req, res) => {
   try {
     // // 세션에서 사용자 ID 가져오기
-    const userId = req.session.user?.user_pk;
+    const userId = req.session.user.user_pk;
 
     if (!userId) {
       // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
@@ -242,7 +242,6 @@ exports.renderMypage = async (req, res) => {
         'image',
       ],
     });
-
     if (!user) {
       return res.status(404).send('사용자를 찾을 수 없습니다.');
     }

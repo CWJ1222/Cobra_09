@@ -169,9 +169,60 @@ ul li {
 ul li strong {
   font-weight: normal;
 }
+
+.btn-group {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.buyBox,
 .sellBox {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.myBuy,
+.mySell {
   display: flex;
-  justify-content: space-evenly;
+  flex-direction: column;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #7309f6;
+  border-radius: 5px;
+}
+
+.buyImg img {
+  max-width: 100px;
+  margin-right: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.buyDetails ul,
+.sellBox ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.buyDetails ul li,
+.sellBox ul li {
+  margin-bottom: 5px;
+}
+
+.moreLink {
+  display: block;
+  text-align: right;
+  margin-top: 20px;
+  color: #7309f6;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.moreLink:hover {
+  text-decoration: underline;
 }
 
 /* 주선한 내역 */

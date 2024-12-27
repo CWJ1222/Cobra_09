@@ -84,12 +84,12 @@
         <!-- 배열 3개까지 출력-->
         <% if (isSuccess) { %>
         <div class="buyBox">
-          <% product.slice(0, 3).forEach(product => { %>
+          <% product.slice(0, 3).forEach((product,i)=> { %>
           <div class="myBuy">
             <a class="buyProduct" href="/host/list/<%= product.product_key %>">
               <div id="buypr">
                 <img
-                  src="/uploads/<%= image[0] %>"
+                  src="/uploads/<%= image[i] %>"
                   alt="<%= product.product.name %>"
                 />
               </div>
