@@ -239,7 +239,7 @@ crossorigin="anonymous"
       <% if(comments.length){ %> <% for (let i = 0; i < comments.length; i++){%>
       <li
         class="commentContainer"
-        style="margin-left: <%= comments[i].comment_depth * 60 %>px"
+        style=<%= "margin-left:"+ comments[i].comment_depth * 60 +"px"%>
       >
         <div class="commentBox">
           <div class="nickname"><%=comments[i].user.nickname %></div>
@@ -250,16 +250,16 @@ crossorigin="anonymous"
         </div>
 
         <div class="replyButton<%= comments[i].comment_id %> replyButton">
-          <button onclick="toggleReplyBox(<%=comments[i].comment_id%>); saveScrollPosition();">답글달기</button>
+          <button onclick="toggleReplyBox('<%=comments[i].comment_id%>'); saveScrollPosition();">답글달기</button>
         </div>
 
         <div class="addReplyButton<%= comments[i].comment_id %> invisible addReplyButton" >
           <input type="text" class="replyInput<%= comments[i].comment_id %>"/>
           <button onclick="replyComment({
-            comment_id: <%=comments[i].comment_id%>,
-            parent_id: <%=comments[i].parent_id%>,
+            comment_id: '<%=comments[i].comment_id%>',
+            parent_id: '<%=comments[i].parent_id%>',
           })">등록</button>
-          <button onclick="toggleReplyBox(<%=comments[i].comment_id%>)">취소</button>
+          <button onclick="toggleReplyBox('<%=comments[i].comment_id%>')">취소</button>
         </div>
       </li>
       <% } %> 
@@ -285,23 +285,22 @@ crossorigin="anonymous"
         }
       }
 
-      function saveScrollPosition (){
-        const scrollY = window.scrollY;
-        window.sessionStorage.setItem("scrollY",scrollY)
-        console.log("scrollY는     " , scrollY)
-      }
-
       const path = window.location.pathname;
       const product_id = path.split('/')[2];
       console.log("product_id는",product_id)
       const scrollY = window.sessionStorage.getItem("scrollY")
       console.log("저장된 scrollY는     " , scrollY)
+
       if(scrollY){
         // window.scrollTo(0,scrollY);
-        document.documentElement.scrollTop = scrollY;
+        document.documentElement.scrollTop = +scrollY + 100;
         window.sessionStorage.removeItem("scrollY")
       }
-
+      function saveScrollPosition (){
+        const scrollY = window.scrollY;
+        window.sessionStorage.setItem("scrollY",scrollY)
+        console.log("scrollY는     " , scrollY)
+      }
       function addComment() {
         console.log('댓글달기');
         const content = document.querySelector('.inputComment').value;
@@ -338,8 +337,12 @@ crossorigin="anonymous"
         })
           .then((result) => {
             console.log('답글 달기 성공', result);
+            if(!result.data.isSuccess){
+              alert(result.data.message);
+              return;
+            }
             toggleReplyBox(commentInfo.comment_id);
-            window.location.href = `/buyform/${product_id}`;
+            // window.location.href = `/buyform/${product_id}`;
           })
           .catch((err) => {
             console.log("err는",err)

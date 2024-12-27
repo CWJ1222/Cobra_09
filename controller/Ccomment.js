@@ -139,6 +139,15 @@ exports.writeComment = async (req, res) => {
       // 2. 선택한 댓글을 조회(group_id 값 가져옴)
       baseComment = await getColByCommentId(comment_id);
 
+      if (baseComment.comment_depth > 4) {
+        console.log('뎁스값 확인', baseComment.comment_depth);
+        res.send({
+          isSuccess: false,
+          message: '더 이상 댓글을 추가할 수 없습니다.',
+        });
+        return;
+      }
+
       // 3. 선택한 댓글(comment_id)의 모든 자식갯수를 계산
       totalChildren = await countChildComments(
         baseComment.comment_id,
@@ -182,6 +191,7 @@ exports.writeComment = async (req, res) => {
       comments: createResult.dataValues,
     });
   } catch (err) {
+    console.log('발생에러는    ', err);
     res.send({ isSuccess: false, message: '댓글 등록 실패' });
   }
 };
