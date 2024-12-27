@@ -11,11 +11,11 @@
     <div class="section">
       <div class="change-btn">
         <!-- 찜한 상품 -->
-        <div class="wishlist-btn">
+        <!-- <div class="wishlist-btn">
           <a href="/wishlist/my">
             <i class="fa-regular fa-heart fa-2x"></i>
           </a>
-        </div>
+        </div> -->
         <button onclick="changeMySection(this)" class="my-btn">
           <i id="img" class="fa-regular fa-user fa-3x"></i>
         </button>
@@ -25,9 +25,13 @@
         <button onclick="changeSellSection(this)" class="sell-btn">
           <i class="fas fa-store fa-3x"></i>
         </button>
+        <button onclick="changeWishSection(this)" class="wish-btn">
+          <i class="fa-regular fa-heart fa-3x"></i>
+        </button>
       </div>
       <form name="userProfile">
         <section class="q profile mypage">
+          <div id="myinfo">MY INFO</div>
           <!-- insection = img + profileBox -->
           <div id="inSection">
             <div class="profileImg">
@@ -36,7 +40,7 @@
             </div>
             <!-- profileBox = input + editbtn -->
             <fieldset class="profileBox">
-              <legend>회원정보</legend>
+              <legend>회원 정보</legend>
               <legend class="le">
                 이메일
                 <input
@@ -100,10 +104,8 @@
                   <strong>상품 가격:</strong> <%= product.product.price %>
                 </li>
                 <li>
-                  <strong>Dead-Line:</strong> <%= product.product.deadline %>
-                </li>
-                <li>
-                  <strong>확인:</strong> <%= product.product.product_key %>
+                  <strong>구매 마감일일:</strong> <%= product.product.deadline
+                  %>
                 </li>
               </ul>
             </a>
@@ -152,6 +154,44 @@
         <% } %>
         <div class="plus">
           <a href="/host/lists">더보기</a>
+        </div>
+      </section>
+
+      <!-- 내가 찜한 내역 -->
+      <section class="q wish hide">
+        <div id="mywish">내 찜 내역</div>
+        <!-- 배열 3개까지 출력-->
+        <% if (isSuccess) { %>
+        <div class="wishBox">
+          <% product.slice(0, 3).forEach((wishlist,i)=> { %>
+          <div class="myWish">
+            <a
+              class="wishProduct"
+              href="/host/list/<%= 
+                  wish[i].product_key  %>"
+            >
+              <div id="wishpr">
+                <img
+                  src="/uploads/<%=
+                  wish[i].image %>"
+                  alt="<%=
+                  wish[i].name %>"
+                />
+              </div>
+              <ul>
+                <li><strong>상품명:</strong> <%= wish[i].name %></li>
+                <li><strong>상품 가격:</strong> <%= wish[i].price %></li>
+                <li><strong>구매 마감일:</strong> <%= wish[i].deadline %></li>
+              </ul>
+            </a>
+          </div>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <p><%= message %></p>
+        <% } %>
+        <div class="plus">
+          <a href="/wishlist/my">더보기</a>
         </div>
       </section>
 
@@ -234,6 +274,7 @@
         const mypageSection = document.querySelector('.mypage');
         const sellSection = document.querySelector('.sell');
         const buySection = document.querySelector('.buy');
+        const wishSection = document.querySelector('.wish');
         console.log(mypageSection);
         console.log(sellSection);
         console.log(buySection);
@@ -241,6 +282,7 @@
           sellSection.classList.remove('hide');
           mypageSection.classList.add('hide');
           buySection.classList.add('hide');
+          wishSection.classList.add('hide');
         }
       }
       // 구매 내역 버튼 누르면 my, sell hide
@@ -248,6 +290,7 @@
         const mypageSection = document.querySelector('.mypage');
         const sellSection = document.querySelector('.sell');
         const buySection = document.querySelector('.buy');
+        const wishSection = document.querySelector('.wish');
         console.log(mypageSection);
         console.log(sellSection);
         console.log(buySection);
@@ -255,6 +298,7 @@
           buySection.classList.remove('hide');
           sellSection.classList.add('hide');
           mypageSection.classList.add('hide');
+          wishSection.classList.add('hide');
         }
       }
       // 마이페이지 버튼 누르면 sell, buy hide
@@ -262,6 +306,7 @@
         const mypageSection = document.querySelector('.mypage');
         const sellSection = document.querySelector('.sell');
         const buySection = document.querySelector('.buy');
+        const wishSection = document.querySelector('.wish');
         console.log(mypageSection);
         console.log(sellSection);
         console.log(buySection);
@@ -269,6 +314,24 @@
           mypageSection.classList.remove('hide');
           sellSection.classList.add('hide');
           buySection.classList.add('hide');
+          wishSection.classList.add('hide');
+        }
+      }
+
+      // 위시페이지 버튼 누르면 sell, buy, my hide
+      function changeWishSection(btn) {
+        const mypageSection = document.querySelector('.mypage');
+        const sellSection = document.querySelector('.sell');
+        const buySection = document.querySelector('.buy');
+        const wishSection = document.querySelector('.wish');
+        console.log(mypageSection);
+        console.log(sellSection);
+        console.log(buySection);
+        if (btn.classList.contains('wish-btn')) {
+          wishSection.classList.remove('hide');
+          sellSection.classList.add('hide');
+          buySection.classList.add('hide');
+          mypageSection.classList.add('hide');
         }
       }
     </script>
