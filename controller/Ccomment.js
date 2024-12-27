@@ -140,10 +140,9 @@ exports.writeComment = async (req, res) => {
       baseComment = await getColByCommentId(comment_id);
 
       if (baseComment.comment_depth > 4) {
-        console.log('뎁스값 확인', baseComment.comment_depth);
         res.send({
           isSuccess: false,
-          message: '더 이상 댓글을 추가할 수 없습니다.',
+          message: '더 이상 답변 댓글을 추가할 수 없습니다.',
         });
         return;
       }

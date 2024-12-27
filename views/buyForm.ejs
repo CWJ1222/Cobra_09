@@ -191,7 +191,7 @@
 
     </style>
 
-  <body>
+  <body >
     <div class="productContainer">
       <h1><%= product.name %> 구매하기</h1>
       <img
@@ -246,12 +246,11 @@
       <input type="text" class="inputComment" required></ㅇ>
       <button onclick="addComment()">댓글 등록</button>
     </div>
-    
     <div class="commentListContainer">
       <% if(comments.length){ %> <% for (let i = 0; i < comments.length; i++){%>
         <!-- reply icon 추가 (depth가 1이상일때만)-->
         <% if(comments[i].comment_depth > 0){ %>
-          <span class="replyIcon"></span>
+          <span class="replyIcon" ></span>
         <% } %>
       <li
         class="commentContainer"
@@ -307,16 +306,18 @@
       const scrollY = window.sessionStorage.getItem("scrollY")
       console.log("저장된 scrollY는     " , scrollY)
 
+      // 댓글달기전 스크롤 위치
       if(scrollY){
-        // window.scrollTo(0,scrollY);
         document.documentElement.scrollTop = +scrollY + 100;
         window.sessionStorage.removeItem("scrollY")
       }
+
       function saveScrollPosition (){
         const scrollY = window.scrollY;
         window.sessionStorage.setItem("scrollY",scrollY)
         console.log("scrollY는     " , scrollY)
       }
+
       function addComment() {
         console.log('댓글달기');
         const content = document.querySelector('.inputComment').value;
@@ -357,8 +358,9 @@
               alert(result.data.message);
               return;
             }
+            replyContent.value = '';
             toggleReplyBox(commentInfo.comment_id);
-            // window.location.href = `/buyform/${product_id}`;
+            window.location.href = `/buyform/${product_id}`;
           })
           .catch((err) => {
             console.log("err는",err)
