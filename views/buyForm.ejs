@@ -12,6 +12,11 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
+    <!-- fontawsome -->
+<script
+src="https://kit.fontawesome.com/837ff3adc1.js"
+crossorigin="anonymous"
+></script>
     <style>
   @import url("../public/css/common.css");
   body{
@@ -229,7 +234,7 @@
       <input type="text" class="inputComment" required></ㅇ>
       <button onclick="addComment()">댓글 등록</button>
     </div>
-
+    
     <div class="commentListContainer">
       <% if(comments.length){ %> <% for (let i = 0; i < comments.length; i++){%>
       <li
@@ -245,7 +250,7 @@
         </div>
 
         <div class="replyButton<%= comments[i].comment_id %> replyButton">
-          <button onclick="toggleReplyBox(<%=comments[i].comment_id%>)">답글달기</button>
+          <button onclick="toggleReplyBox(<%=comments[i].comment_id%>); saveScrollPosition();">답글달기</button>
         </div>
 
         <div class="addReplyButton<%= comments[i].comment_id %> invisible addReplyButton" >
@@ -280,9 +285,23 @@
         }
       }
 
+      function saveScrollPosition (){
+        const scrollY = window.scrollY;
+        window.sessionStorage.setItem("scrollY",scrollY)
+        console.log("scrollY는     " , scrollY)
+      }
+
       const path = window.location.pathname;
       const product_id = path.split('/')[2];
       console.log("product_id는",product_id)
+      const scrollY = window.sessionStorage.getItem("scrollY")
+      console.log("저장된 scrollY는     " , scrollY)
+      if(scrollY){
+        // window.scrollTo(0,scrollY);
+        document.documentElement.scrollTop = scrollY;
+        window.sessionStorage.removeItem("scrollY")
+      }
+
       function addComment() {
         console.log('댓글달기');
         const content = document.querySelector('.inputComment').value;
