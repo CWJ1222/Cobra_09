@@ -1,21 +1,29 @@
+@import url(/public/css/common.css);
+.footer {
+  background-color: var(--color-primary-light);
+}
+
 li {
-  list-style-type: none;
   display: flex;
 }
 
 #q {
-  width: 100px;
+  width: 150px;
   height: auto;
-  padding-top: 10px;
-  font-size: 20px;
+
+  font-size: 15px;
   font-weight: bold;
 }
 
 img {
-  width: 55px;
-  height: 55px;
-  border-radius: 15px;
-  /* margin-left: 40px; */
+  width: 30px;
+  height: 30px;
+
+  padding-right: 2px;
+}
+
+.fa-github {
+  padding-right: 9px;
 }
 
 p {
@@ -25,18 +33,22 @@ p {
 }
 /* teamIcon */
 .teamIcon {
-  width: calc(50vw);
+  width: 51%;
   height: auto;
   text-align: end;
 }
 
 .teamName {
   opacity: 0;
+  text-align: center;
+  padding-top: 7px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 .teamIcon:hover {
   transform: scale(1.2);
-  translate: -45px;
+  translate: -78px;
   transition: 1s ease 0s;
 }
 
@@ -48,50 +60,62 @@ p {
 
 /* teamGithub */
 .teamGithubIcon {
-  width: calc(50vw);
+  width: 51%;
   height: auto;
   text-align: end;
 }
 
 .teamGithub {
   opacity: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: center;
+  /* padding-top: 5px; */
 }
 
 .teamGithubIcon:hover {
   transform: scale(1.2);
-  translate: -45px;
+  translate: -78px;
   transition: 1s ease 0s;
 }
 
 .teamGithubIcon:hover + .teamGithub {
   opacity: 1;
-  transform: translateX(20px);
+  transform: translateX(30px);
   transition: 1s ease 0s;
 }
 
 /* teamPlayer */
 .teamPlayers {
-  width: calc(50vw);
+  width: 52%;
   height: auto;
   text-align: end;
+  padding: 0 7px 0 0;
 }
 
 .teamPlayersName {
   opacity: 0;
-  width: 45vw;
+  width: 50%;
+  display: flex;
   height: auto;
-  padding-top: 15px;
   font-size: 15px;
+}
+
+.teamPlayersName div {
+  width: 100px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 .teamPlayers:hover {
   transform: scale(1.2);
-  translate: -45px;
+  translate: -78px;
   transition: 1s ease 0s;
 }
 
 .teamPlayers:hover + .teamPlayersName {
   opacity: 1;
-  transform: translateX(30px);
+  transform: translateX(10px);
   transition: 1s ease 0s;
 }

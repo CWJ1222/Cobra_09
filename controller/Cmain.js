@@ -131,9 +131,19 @@ exports.getMyProducts = async (req, res) => {
 
     const products = await Product.findAll({
       where: { user_id: target },
-      attributes: ['name', 'deadline', 'max_quantity'],
+      attributes: [
+        'name',
+        'price',
+        'deadline',
+        'max_quantity',
+        'product_key',
+        'image',
+      ],
     });
-    res.status(200).send({ isSuccess: true, products });
+
+    res
+      .status(200)
+      .render('mysellpage', { isSuccess: true, products, currentPage: '' });
   } catch (err) {
     console.log('err', err);
     res.status(500).send({
@@ -153,12 +163,13 @@ exports.getMyJoins = async (req, res) => {
       include: [
         {
           model: Product,
-          attributes: ['name', 'user_id', 'price', 'deadline'],
+          attributes: ['name', 'user_id', 'price', 'deadline', 'image'],
         },
       ],
     });
-    // console.log('봐주세요', orders[0]);
-    res.status(200).render('mybuypage', { isSuccess: true, orders });
+    res
+      .status(200)
+      .render('mybuypage', { isSuccess: true, orders, currentPage: '' });
   } catch (err) {
     console.log('err', err);
     res.status(500).send({
@@ -187,36 +198,6 @@ exports.getMyAllJoins = async (req, res) => {
   }
 };
 
-// mypage render
-// exports.renderMypage = async (req, res) => {
-//   try {
-//     // 세션에서 사용자 ID 가져오기
-//     const userId = req.session.user ? req.session.user.user_pk : null;
-
-//     if (!userId) {
-//       // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
-//       return res.redirect('/auth/login');
-//     }
-
-//     // 데이터베이스에서 사용자 정보 조회
-//     const target = req.session.user.user_pk;
-//     const user = await User.findOne({
-//       where: { user_id: target },
-//       attributes: ['email', 'nickname'], // 필요한 필드만 선택
-//     });
-//     if (!user) {
-//       return res.status(404).send('사용자를 찾을 수 없습니다.');
-//     }
-
-//     // mypage.ejs로 사용자 정보 전달
-//     res.render('mypage', { isSuccess: true, user });
-//   } catch (error) {
-//     console.error('마이페이지 렌더링 오류:', error);
-//     res.status(500).send('서버 오류');
-//   }
-// };
-
-//////
 // GET '/user/mypage' : 마이페이지 렌더링 + 사용자 정보 조회
 exports.renderMypage = async (req, res) => {
   try {
@@ -246,17 +227,24 @@ exports.renderMypage = async (req, res) => {
         },
       ],
     });
-    console.log('user', user);
+    console.log(user.order_items);
+
+    const images = user.Order_items.map((item) => item.product.image) || [];
 
     const products = await Product.findAll({
       where: { user_id: target },
-      attributes: ['name', 'deadline', 'max_quantity'],
+      attributes: [
+        'product_key',
+        'name',
+        'deadline',
+        'max_quantity',
+        'price',
+        'image',
+      ],
     });
-
     if (!user) {
       return res.status(404).send('사용자를 찾을 수 없습니다.');
     }
-    //console.log('producttttttttttttttttttt', products[1].dataValues.name);
 
     res.render('mypage', {
       isSuccess: true,
@@ -264,14 +252,14 @@ exports.renderMypage = async (req, res) => {
       product: user.Order_items,
       // 내가 등록한 물품도 전달
       order: products,
+      image: images,
+      currentPage: '',
     });
-    // res.render('mypage', { user, product: user.Order_items });
   } catch (error) {
     console.error('마이페이지 렌더링 오류:', error);
     res.status(500).send('서버 오류');
   }
 };
-///////
 
 // 특정 하나의 판매 물품만 가져옴 - GET /host/list/:id
 exports.getProduct = async (req, res) => {
@@ -289,9 +277,7 @@ exports.getProduct = async (req, res) => {
         'category_id',
       ],
     });
-    res
-      .status(200)
-      .render('products', { isSuccess: true, product, user: req.session.user });
+    res.status(200).render('products', { isSuccess: true, product });
   } catch (err) {
     console.log('err', err);
     res.status(200).send({ isSuccess: false });
