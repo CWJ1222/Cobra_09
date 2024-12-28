@@ -292,7 +292,3 @@ exports.getCommentsByProduct = async (product_key) => {
     console.log('댓글가져오기 에러', err);
   }
 };
-
-exports.renderCommentPage = (req, res) => {
-  res.render('commentTest');
-};

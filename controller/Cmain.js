@@ -1,6 +1,7 @@
 // const { Op } = require('sequelize');
 const { Op, sequelize } = require('../models'); // sequelize 추가
 const { Category, Product, User, Order, Wishlists } = require('../models');
+const axios = require('axios');
 
 // GET '/' : 메인 페이지 렌더링
 // exports.main = (req, res) => {
@@ -338,6 +339,20 @@ exports.deleteMyUser = async (req, res) => {
         isSuccess: false,
         message: '사용자를 찾을 수 없습니다.',
       });
+    }
+
+    console.log('카카오 연결끊기 유저 타입 조회 시작', req.session);
+    if (req.session.user.user_type === '2') {
+      console.log('카카오 연결끊기 유저 타입 조회 시작');
+      const unlinkResult = await axios({
+        url: 'http://localhost:8080/auth/kakao/unlink',
+        method: 'post',
+        data: {
+          access_token: req.session.user.token.access_token,
+          user_pk: req.session.user.user_pk,
+        },
+      });
+      console.log('카카오 연결끊기 result 끝', unlinkResult);
     }
 
     // 세션 삭제
