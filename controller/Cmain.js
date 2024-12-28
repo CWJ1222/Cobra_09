@@ -306,6 +306,7 @@ exports.getProduct = async (req, res) => {
         'max_quantity',
         'image',
         'category_id',
+        'product_key',
       ],
     });
     res.status(200).render('products', { isSuccess: true, product });

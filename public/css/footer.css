@@ -48,7 +48,7 @@ p {
 
 .teamIcon:hover {
   transform: scale(1.2);
-  translate: -78px;
+  translate: -60px;
   transition: 1s ease 0s;
 }
 
@@ -75,7 +75,7 @@ p {
 
 .teamGithubIcon:hover {
   transform: scale(1.2);
-  translate: -78px;
+  translate: -60px;
   transition: 1s ease 0s;
 }
 
@@ -110,7 +110,7 @@ p {
 
 .teamPlayers:hover {
   transform: scale(1.2);
-  translate: -78px;
+  translate: -60px;
   transition: 1s ease 0s;
 }
 

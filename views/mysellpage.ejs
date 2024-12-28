@@ -21,11 +21,14 @@
                 alt="<%=product.name %>"
               />
               <ul class="order-item">
-                <li>상품명: <%=product.name %></li>
-                <li>상품 가격: <%=product.price %></li>
-                <li>구매 마감일: <%=product.deadline %></li>
-                <li>구매 현황: <%=product.max_quantity %></li>
-                <li>확인: <%=product.product_key%></li>
+                <li>상품명: <strong><%=product.name %></strong></li>
+                <li>상품 가격: <strong><%=product.price %></strong></li>
+                <li>
+                  최대 구매 수량: <strong><%=product.max_quantity %></strong>
+                </li>
+                <div class="deadline">
+                  마감일: <strong><%=product.deadline %></strong>
+                </div>
               </ul>
               <div>
                 <progress
@@ -44,5 +47,61 @@
       <p><%= message %></p>
       <% } %>
     </main>
+    <div class="home">
+      <a href="/user/mypage">
+        <img class="home" src="/public/img/logo-title.png" alt="home" />
+      </a>
+    </div>
+    <script>
+      const dateTags = document.querySelectorAll('.deadline > strong');
+
+      dateTags.forEach((dateTag) => {
+        const text = dateTag.innerText.split('GMT')[0];
+
+        const deadLineDate = new Date(text);
+        const year = deadLineDate.getFullYear();
+        const month = deadLineDate.getMonth() + 1;
+        const date = deadLineDate.getDate();
+
+        const time = `${deadLineDate.getHours()}:${deadLineDate.getMinutes()}:${deadLineDate.getSeconds()}`;
+
+        let day = getDayInKorean(deadLineDate.getDay());
+        const dateText = `${year}-${month}-${date} (${day})`;
+
+        dateTag.innerText = dateText;
+      });
+
+      function getDayInKorean(number) {
+        let day;
+        switch (number) {
+          case 0:
+            day = '일';
+            break;
+          case 1:
+            day = '월';
+            break;
+          case 2:
+            day = '화';
+            break;
+          case 3:
+            day = '수';
+            break;
+          case 4:
+            day = '목';
+            break;
+          case 5:
+            day = '금';
+            break;
+          case 6:
+            day = '토';
+            break;
+          default:
+            day = '?';
+            break;
+        }
+
+        return day;
+      }
+    </script>
   </body>
 </html>
