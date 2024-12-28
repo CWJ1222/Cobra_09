@@ -25,7 +25,9 @@
                 <li>상품 가격: <%= order.product.price %></li>
                 <li>수량: <%= order.quantity %></li>
                 <li>배송지: <%= order.address %></li>
-                <li>구매 마감일: <%= order.product.deadline %></li>
+                <li class="deadline">
+                  구매 마감일:<strong><%= order.product.deadline %></strong>
+                </li>
                 <!-- ???? -->
               </ul>
               <div>
@@ -50,5 +52,56 @@
         <img class="home" src="/public/img/logo-title.png" alt="home" />
       </a>
     </div>
+    <script>
+      const dateTags = document.querySelectorAll('.deadline > strong');
+
+      dateTags.forEach((dateTag) => {
+        const text = dateTag.innerText.split('GMT')[0];
+
+        const deadLineDate = new Date(text);
+        const year = deadLineDate.getFullYear();
+        const month = deadLineDate.getMonth() + 1;
+        const date = deadLineDate.getDate();
+
+        const time = `${deadLineDate.getHours()}:${deadLineDate.getMinutes()}:${deadLineDate.getSeconds()}`;
+
+        let day = getDayInKorean(deadLineDate.getDay());
+        const dateText = `${year}-${month}-${date} (${day})`;
+
+        dateTag.innerText = dateText;
+      });
+
+      function getDayInKorean(number) {
+        let day;
+        switch (number) {
+          case 0:
+            day = '일';
+            break;
+          case 1:
+            day = '월';
+            break;
+          case 2:
+            day = '화';
+            break;
+          case 3:
+            day = '수';
+            break;
+          case 4:
+            day = '목';
+            break;
+          case 5:
+            day = '금';
+            break;
+          case 6:
+            day = '토';
+            break;
+          default:
+            day = '?';
+            break;
+        }
+
+        return day;
+      }
+    </script>
   </body>
 </html>

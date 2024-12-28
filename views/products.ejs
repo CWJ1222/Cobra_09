@@ -3,42 +3,164 @@
   <head>
     <%- include('include/head', { title: 'mybuypage' })%>
     <title>title</title>
+    <style>
+      @import url('./common.css');
+      main.Product {
+        max-width: 900px;
+        margin: 50px auto;
+        border: 2px solid var(--color-primary);
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+      div.prBox {
+        max-width: 800px;
+        margin: 50px auto;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: var(--color-primary-light);
+        padding: 20px;
+      }
+
+      h1.name {
+        font-size: 60px;
+        color: var(--color-primary);
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      ul div {
+        font-size: 20px;
+        margin-bottom: 10px;
+        display: flex;
+        text-align: center;
+      }
+
+      ul div strong {
+        font-weight: bold;
+        color: var(--color-primary);
+        margin-right: 10px;
+      }
+
+      ul div img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      a.primg {
+        display: inline-block;
+        color: white;
+        background-color: var(--color-primary);
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 14px;
+        margin-top: 20px;
+      }
+
+      .buyButton {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .home {
+        text-align: center;
+        width: 100%;
+      }
+      a .home {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
     <main class="Product">
-      <h1><%= product.name %></h1>
-      <p>상품 상세 설명!</p>
-      <br />
-
-      <ul>
-        <li>상품명:<%= product.name %></li>
+      <div class="prBox">
+        <h1 class="name"><%= product.name %></h1>
         <br />
-        <li>마감일:<%= product.deadline %></li>
-        <br />
-        <li>상품 가격:<%= product.price %></li>
-        <br />
-        <li>user_id:<%= product.user_id %></li>
-        <br />
-        <li>category_id:<%= product.category_id %></li>
-        <br />
-        <li>최대 구매 수량:<%= product.max_quantity %></li>
-        <br />
-        <li><img src="/public/img/<%= product.image %>" alt="상품이미지" /></li>
-        <br />
-        <li>
-          <a
-            href="/buyform/<%= product.product_key %>"
-            target="buyform"
-            onclick="window.open(this.href, 'buyform', 'width=800,height=600'); return false;"
-          >
-            <img
-              src="/public/img/<%= product.image %>"
-              alt="<%= product.name %>"
-              style="max-width: 100px"
-            />
-          </a>
-        </li>
-      </ul>
+        <ul class="products">
+          <div>상품명:<strong><%= product.name %></strong></div>
+          <br />
+          <div class="deadline">
+            구매 마감일:<strong><%= product.deadline %></strong>
+          </div>
+          <br />
+          <div>상품 가격:<strong><%= product.price %></strong></div>
+          <br />
+          <div>최대 구매 수량:<strong><%= product.max_quantity %></strong></div>
+          <br />
+          <div>
+            <img src="/uploads/<%=product.image %>" alt="<%= product.name %>" />
+          </div>
+          <br />
+          <div>
+            <a
+              class="primg"
+              href="/buyform/<%= product.product_key %>"
+              target="buyform"
+              onclick="window.open(this.href, 'buyform', 'width=800,height=600'); return false;"
+            >
+              구매 하기
+            </a>
+          </div>
+        </ul>
+      </div>
+      <div class="home">
+        <a href="/user/mypage">
+          <img class="home" src="/public/img/logo-title.png" alt="home" />
+        </a>
+      </div>
     </main>
+    <script>
+      const dateTag = document.querySelector('.deadline > strong');
+
+      const text = dateTag.innerText.split('GMT')[0];
+
+      const deadLineDate = new Date(text);
+      const year = deadLineDate.getFullYear();
+      const month = deadLineDate.getMonth() + 1;
+      const date = deadLineDate.getDate();
+
+      const time = `${deadLineDate.getHours()}:${deadLineDate.getMinutes()}:${deadLineDate.getSeconds()}`;
+
+      let day = getDayInKorean(deadLineDate.getDay());
+      const dateText = `${year}-${month}-${date} ${time} (${day})`;
+
+      dateTag.innerText = dateText;
+
+      function getDayInKorean(number) {
+        let day;
+        switch (number) {
+          case 0:
+            day = '일';
+            break;
+          case 1:
+            day = '월';
+            break;
+          case 2:
+            day = '화';
+            break;
+          case 3:
+            day = '수';
+            break;
+          case 4:
+            day = '목';
+            break;
+          case 5:
+            day = '금';
+            break;
+          case 6:
+            day = '토';
+            break;
+          default:
+            day = '?';
+            break;
+        }
+
+        return day;
+      }
+    </script>
   </body>
 </html>

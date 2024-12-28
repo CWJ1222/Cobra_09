@@ -10,12 +10,6 @@
     <!-- <h1>mypage</h1> -->
     <div class="section">
       <div class="change-btn">
-        <!-- 찜한 상품 -->
-        <!-- <div class="wishlist-btn">
-          <a href="/wishlist/my">
-            <i class="fa-regular fa-heart fa-2x"></i>
-          </a>
-        </div> -->
         <button onclick="changeMySection(this)" class="my-btn">
           <i id="img" class="fa-regular fa-user fa-3x"></i>
         </button>
@@ -98,14 +92,14 @@
                 />
               </div>
               <ul>
-                <li><strong>상품명:</strong> <%= product.product.name %></li>
-                <li><strong>수량:</strong> <%= product.quantity %></li>
+                <li>상품명: <strong><%= product.product.name %></strong></li>
+                <li>수량: <strong><%= product.quantity %></strong></li>
                 <li>
-                  <strong>상품 가격:</strong> <%= product.product.price %>
+                  상품 가격: <strong><%= product.product.price %>원</strong>
                 </li>
-                <li>
-                  <strong>구매 마감일일:</strong> <%= product.product.deadline
-                  %>
+                <li class="deadline">
+                  구매 마감일:
+                  <strong><%= product.product.deadline %></strong>
                 </li>
               </ul>
             </a>
@@ -140,10 +134,14 @@
               </div>
               <ul>
                 <!-- 내가 구매한 수량, order_item에서 가져옴 -->
-                <li><strong>수량:</strong><%=item.dataValues.max_quantity%></li>
-                <li><strong>상품 가격:</strong> <%=item.dataValues.price%></li>
-                <li><strong>상품명:</strong> <%=item.dataValues.name%></li>
-                <li><strong>확인:</strong> <%=item.dataValues.product_key%></li>
+                <li>수량:<strong><%=item.dataValues.max_quantity%></strong></li>
+                <li>
+                  상품 가격: <strong><%=item.dataValues.price%>원</strong>
+                </li>
+                <li>상품명: <strong> <%=item.dataValues.name%></strong></li>
+                <li class="deadline">
+                  구매 마감일: <strong> <%=item.dataValues.deadline%></strong>
+                </li>
               </ul>
             </a>
           </div>
@@ -179,9 +177,12 @@
                 />
               </div>
               <ul>
-                <li><strong>상품명:</strong> <%= wish[i].name %></li>
-                <li><strong>상품 가격:</strong> <%= wish[i].price %></li>
-                <li><strong>구매 마감일:</strong> <%= wish[i].deadline %></li>
+                <li>상품명: <strong><%= wish[i].name %></strong></li>
+                <li>상품 가격: <strong><%= wish[i].price %>원</strong></li>
+                <li class="deadline">
+                  구매 마감일:
+                  <strong> <%= wish[i].deadline %></strong>
+                </li>
               </ul>
             </a>
           </div>
@@ -333,6 +334,57 @@
           buySection.classList.add('hide');
           mypageSection.classList.add('hide');
         }
+      }
+
+      // 날짜 변환
+      const dateTags = document.querySelectorAll('.deadline > strong');
+
+      dateTags.forEach((dateTag) => {
+        const text = dateTag.innerText.split('GMT')[0];
+
+        const deadLineDate = new Date(text);
+        const year = deadLineDate.getFullYear();
+        const month = deadLineDate.getMonth() + 1;
+        const date = deadLineDate.getDate();
+
+        const time = `${deadLineDate.getHours()}:${deadLineDate.getMinutes()}:${deadLineDate.getSeconds()}`;
+
+        let day = getDayInKorean(deadLineDate.getDay());
+        const dateText = `${year}-${month}-${date} (${day})`;
+
+        dateTag.innerText = dateText;
+      });
+
+      function getDayInKorean(number) {
+        let day;
+        switch (number) {
+          case 0:
+            day = '일';
+            break;
+          case 1:
+            day = '월';
+            break;
+          case 2:
+            day = '화';
+            break;
+          case 3:
+            day = '수';
+            break;
+          case 4:
+            day = '목';
+            break;
+          case 5:
+            day = '금';
+            break;
+          case 6:
+            day = '토';
+            break;
+          default:
+            day = '?';
+            break;
+        }
+
+        return day;
       }
     </script>
   </body>

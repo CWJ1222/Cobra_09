@@ -251,10 +251,6 @@ div#mywish {
 ul li {
   margin: 10px 0;
   font-size: 90%;
-  font-weight: bold;
-  text-align: start;
-}
 
-ul li strong {
-  font-weight: normal;
+  text-align: start;
 }
