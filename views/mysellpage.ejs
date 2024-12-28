@@ -21,13 +21,14 @@
                 alt="<%=product.name %>"
               />
               <ul class="order-item">
-                <li>상품명: <%=product.name %></li>
-                <li>상품 가격: <%=product.price %></li>
+                <li>상품명: <strong><%=product.name %></strong></li>
+                <li>상품 가격: <strong><%=product.price %></strong></li>
+                <li>
+                  최대 구매 수량: <strong><%=product.max_quantity %></strong>
+                </li>
                 <div class="deadline">
-                  구매 마감일: <strong><%=product.deadline %></strong>
+                  마감일: <strong><%=product.deadline %></strong>
                 </div>
-                <li>구매 현황: <%=product.max_quantity %></li>
-                <li>확인: <%=product.product_key%></li>
               </ul>
               <div>
                 <progress

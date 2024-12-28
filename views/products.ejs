@@ -38,8 +38,11 @@
 
       ul div strong {
         font-weight: bold;
-        color: var(--color-primary);
+
         margin-right: 10px;
+      }
+      .deadline strong {
+        color: var(--color-primary-dark);
       }
 
       ul div img {
@@ -83,13 +86,13 @@
         <ul class="products">
           <div>상품명:<strong><%= product.name %></strong></div>
           <br />
-          <div class="deadline">
-            구매 마감일:<strong><%= product.deadline %></strong>
-          </div>
-          <br />
           <div>상품 가격:<strong><%= product.price %></strong></div>
           <br />
           <div>최대 구매 수량:<strong><%= product.max_quantity %></strong></div>
+          <br />
+          <div class="deadline">
+            마감일:<strong><%= product.deadline %></strong>
+          </div>
           <br />
           <div>
             <img src="/uploads/<%=product.image %>" alt="<%= product.name %>" />
@@ -115,8 +118,9 @@
     </main>
     <script>
       const dateTag = document.querySelector('.deadline > strong');
-
+      // const
       const text = dateTag.innerText.split('GMT')[0];
+      console.log(text);
 
       const deadLineDate = new Date(text);
       const year = deadLineDate.getFullYear();
@@ -124,10 +128,10 @@
       const date = deadLineDate.getDate();
 
       const time = `${deadLineDate.getHours()}:${deadLineDate.getMinutes()}:${deadLineDate.getSeconds()}`;
-
+      // console.log(deadLineDate.getDay()); // 0 은 일요일, 1은 월요일, .. 6은 토요일
       let day = getDayInKorean(deadLineDate.getDay());
       const dateText = `${year}-${month}-${date} ${time} (${day})`;
-
+      // const
       dateTag.innerText = dateText;
 
       function getDayInKorean(number) {

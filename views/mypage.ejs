@@ -93,12 +93,12 @@
               </div>
               <ul>
                 <li>상품명: <strong><%= product.product.name %></strong></li>
-                <li>수량: <strong><%= product.quantity %></strong></li>
                 <li>
                   상품 가격: <strong><%= product.product.price %>원</strong>
                 </li>
+                <li>수량: <strong><%= product.quantity %></strong></li>
                 <li class="deadline">
-                  구매 마감일:
+                  마감일:
                   <strong><%= product.product.deadline %></strong>
                 </li>
               </ul>
@@ -134,13 +134,13 @@
               </div>
               <ul>
                 <!-- 내가 구매한 수량, order_item에서 가져옴 -->
-                <li>수량:<strong><%=item.dataValues.max_quantity%></strong></li>
+                <li>상품명: <strong> <%=item.dataValues.name%></strong></li>
                 <li>
                   상품 가격: <strong><%=item.dataValues.price%>원</strong>
                 </li>
-                <li>상품명: <strong> <%=item.dataValues.name%></strong></li>
+                <li>수량:<strong><%=item.dataValues.max_quantity%></strong></li>
                 <li class="deadline">
-                  구매 마감일: <strong> <%=item.dataValues.deadline%></strong>
+                  마감일: <strong> <%=item.dataValues.deadline%></strong>
                 </li>
               </ul>
             </a>
@@ -180,7 +180,7 @@
                 <li>상품명: <strong><%= wish[i].name %></strong></li>
                 <li>상품 가격: <strong><%= wish[i].price %>원</strong></li>
                 <li class="deadline">
-                  구매 마감일:
+                  마감일:
                   <strong> <%= wish[i].deadline %></strong>
                 </li>
               </ul>

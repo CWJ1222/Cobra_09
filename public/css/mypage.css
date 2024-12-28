@@ -254,3 +254,6 @@ ul li {
 
   text-align: start;
 }
+.deadline {
+  color: var(--color-primary-dark);
+}
