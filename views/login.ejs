@@ -126,6 +126,8 @@
       .loginBtn.kakao{
         background-color: #ffe812;
         color: #3c1e1e;
+        cursor: pointer;
+        border-radius: 9px;
       }
 
       .loginBtn.naver {
@@ -207,11 +209,11 @@
 
         <!-- OAuth 로그인 버튼 -->
          <!-- (todo) 왼쪽에 아이콘 넣기 -->
-        <button class="loginBtn kakao">
+        <div class="loginBtn kakao">
           <a href="/auth/kakao">
             카카오로 시작하기
           </a>
-        </button>
+        </div>
         <!-- <button class="loginBtn naver">네이버로 시작하기</button> -->
 
          <!-- 하단 링크 -->
@@ -251,7 +253,7 @@
       const errorMsg = document.getElementById('error');
       errorMsg.style.display = 'none'; //초기화 시 숨김
       errorMsg.innerText = '';
-
+      
       // 유효성 검사
       // (todo) 유효성 검사 추가: 이메일 형식/ 영문,숫자,특수문자 포함 8자 이상
       if (!userId || !password) {
