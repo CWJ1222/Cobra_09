@@ -253,6 +253,13 @@ exports.loginKakaoUser = async (req, res, next) => {
         )}`,
       })(req, res, () => {
         const redirectUrl = req.session.redirectUrl || '/';
+        res.status(200).send({
+          isLogin: true,
+          nickname: createResult.nickname,
+          redirectUrl, // 로그인 성공 후 리다이렉트할 URL
+          message: '로그인 성공 했습니다.',
+        });
+
         res.redirect(`${redirectUrl || '/'}`);
         // res.status(200).send({
         //   isLogin: true,
@@ -265,6 +272,7 @@ exports.loginKakaoUser = async (req, res, next) => {
       req.session.user = {
         ...req.session.user,
         user_pk: findResult.user_id,
+        user_type: findResult.user_type,
       };
       req.token_for_msg = req.session.user.token.access_token;
       this.sendKakaoMsg({
@@ -344,19 +352,20 @@ exports.logoutKaKaoUser = (req, res, next) => {
 // 카카오와 애플리케이션 연결 끊기(회원탈퇴 - 동의창 새로 띄우기)
 // 엑세스, 리프레쉬 토큰 만료처리(로그아웃)도 같이 됨
 exports.unlinkKakaoUser = (req, res) => {
+  console.log('req.body.access_token는    ', req.body);
   axios({
     url: process.env.KAKAO_UNLINK_URI,
     method: 'post',
     headers: {
-      Authorization: `Bearer ${req.session.user.token.access_token}`,
+      Authorization: `Bearer ${req.body.access_token}`,
     },
   })
     .then((result) => {
       // 카카오서버의 회원 id를 응답받음
-      console.log(result.data);
+      console.log('카카오서버의 회원 id를 응답', result.data.id);
       db.User.destroy({
         where: {
-          user_id: req.session.user.user_pk,
+          user_id: req.body.user_pk,
         },
       })
         .then((result) => {

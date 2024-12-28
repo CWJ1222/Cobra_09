@@ -185,13 +185,13 @@
     display: inline-block;
 
     position: relative;
-    top: 30px; 
-    left: 20px;
+    top: 35px; 
+    left: -35px;
   }
 
     </style>
 
-  <body >
+  <body>
     <div class="productContainer">
       <h1><%= product.name %> 구매하기</h1>
       <img
@@ -246,37 +246,40 @@
       <input type="text" class="inputComment" required></ㅇ>
       <button onclick="addComment()">댓글 등록</button>
     </div>
+    
     <div class="commentListContainer">
       <% if(comments.length){ %> <% for (let i = 0; i < comments.length; i++){%>
-        <!-- reply icon 추가 (depth가 1이상일때만)-->
-        <% if(comments[i].comment_depth > 0){ %>
-          <span class="replyIcon" ></span>
-        <% } %>
-      <li
-        class="commentContainer"
-        style=<%= "margin-left:"+ comments[i].comment_depth * 60 +"px"%>
-      >
-        <div class="commentBox">
-          <div class="nickname"><%=comments[i].user.nickname %></div>
-          <div class="content"><%=comments[i].content %></div>
-          <div class="createdAt">
-            <%=new Date( comments[i].createdAt).toLocaleString("ko-KR") %>
-          </div>
-        </div>
+        <div class="commentWrapper" style=<%= "margin-left:"+ comments[i].comment_depth * 60+"px"%>
+              <!-- reply icon 추가 (depth가 1이상일때만)-->
+            <% if(comments[i].comment_depth > 0){ %>
+              <span class="replyIcon"></span>
+            <% } %>
+          <li
+            class="commentContainer"
+            
+          >
+            <div class="commentBox">
+              <div class="nickname"><%=comments[i].user.nickname %></div>
+              <div class="content"><%=comments[i].content %></div>
+              <div class="createdAt">
+                <%=new Date( comments[i].createdAt).toLocaleString("ko-KR") %>
+              </div>
+            </div>
 
-        <div class="replyButton<%= comments[i].comment_id %> replyButton">
-          <button onclick="toggleReplyBox('<%=comments[i].comment_id%>'); saveScrollPosition();">답글달기</button>
-        </div>
+            <div class="replyButton<%= comments[i].comment_id %> replyButton">
+              <button onclick="toggleReplyBox('<%=comments[i].comment_id%>'); saveScrollPosition();">답글달기</button>
+            </div>
 
-        <div class="addReplyButton<%= comments[i].comment_id %> invisible addReplyButton" >
-          <input type="text" class="replyInput<%= comments[i].comment_id %>"/>
-          <button onclick="replyComment({
-            comment_id: '<%=comments[i].comment_id%>',
-            parent_id: '<%=comments[i].parent_id%>',
-          })">등록</button>
-          <button onclick="toggleReplyBox('<%=comments[i].comment_id%>')">취소</button>
+            <div class="addReplyButton<%= comments[i].comment_id %> invisible addReplyButton" >
+              <input type="text" class="replyInput<%= comments[i].comment_id %>"/>
+              <button onclick="replyComment({
+                comment_id: '<%=comments[i].comment_id%>',
+                parent_id: '<%=comments[i].parent_id%>',
+              })">등록</button>
+              <button onclick="toggleReplyBox('<%=comments[i].comment_id%>')">취소</button>
+            </div>
+          </li>
         </div>
-      </li>
       <% } %> 
       <% }else{ %>
         <p class="noneComment">
@@ -300,22 +303,21 @@
         }
       }
 
+      function saveScrollPosition (){
+        const scrollY = window.scrollY;
+        window.sessionStorage.setItem("scrollY",scrollY)
+        console.log("scrollY는     " , scrollY)
+      }
+
       const path = window.location.pathname;
       const product_id = path.split('/')[2];
       console.log("product_id는",product_id)
       const scrollY = window.sessionStorage.getItem("scrollY")
       console.log("저장된 scrollY는     " , scrollY)
-
-      // 댓글달기전 스크롤 위치
       if(scrollY){
-        document.documentElement.scrollTop = +scrollY + 100;
+        // window.scrollTo(0,scrollY);
+        document.documentElement.scrollTop = scrollY;
         window.sessionStorage.removeItem("scrollY")
-      }
-
-      function saveScrollPosition (){
-        const scrollY = window.scrollY;
-        window.sessionStorage.setItem("scrollY",scrollY)
-        console.log("scrollY는     " , scrollY)
       }
 
       function addComment() {
@@ -359,6 +361,7 @@
               return;
             }
             replyContent.value = '';
+
             toggleReplyBox(commentInfo.comment_id);
             window.location.href = `/buyform/${product_id}`;
           })
@@ -383,6 +386,3 @@
     </script>
   </body>
 </html>
-
-
-

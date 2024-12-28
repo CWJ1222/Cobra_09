@@ -10,12 +10,6 @@
     <!-- <h1>mypage</h1> -->
     <div class="section">
       <div class="change-btn">
-        <!-- 찜한 상품 -->
-        <div class="wishlist-btn">
-          <a href="/wishlist/my">
-            <i class="fa-regular fa-heart fa-2x"></i>
-          </a>
-        </div>
         <button onclick="changeMySection(this)" class="my-btn">
           <i id="img" class="fa-regular fa-user fa-3x"></i>
         </button>
@@ -25,9 +19,13 @@
         <button onclick="changeSellSection(this)" class="sell-btn">
           <i class="fas fa-store fa-3x"></i>
         </button>
+        <button onclick="changeWishSection(this)" class="wish-btn">
+          <i class="fa-regular fa-heart fa-3x"></i>
+        </button>
       </div>
       <form name="userProfile">
         <section class="q profile mypage">
+          <div id="myinfo">MY INFO</div>
           <!-- insection = img + profileBox -->
           <div id="inSection">
             <div class="profileImg">
@@ -36,7 +34,7 @@
             </div>
             <!-- profileBox = input + editbtn -->
             <fieldset class="profileBox">
-              <legend>회원정보</legend>
+              <legend>회원 정보</legend>
               <legend class="le">
                 이메일
                 <input
@@ -94,16 +92,14 @@
                 />
               </div>
               <ul>
-                <li><strong>상품명:</strong> <%= product.product.name %></li>
-                <li><strong>수량:</strong> <%= product.quantity %></li>
+                <li>상품명: <strong><%= product.product.name %></strong></li>
                 <li>
-                  <strong>상품 가격:</strong> <%= product.product.price %>
+                  상품 가격: <strong><%= product.product.price %>원</strong>
                 </li>
-                <li>
-                  <strong>Dead-Line:</strong> <%= product.product.deadline %>
-                </li>
-                <li>
-                  <strong>확인:</strong> <%= product.product.product_key %>
+                <li>수량: <strong><%= product.quantity %></strong></li>
+                <li class="deadline">
+                  마감일:
+                  <strong><%= product.product.deadline %></strong>
                 </li>
               </ul>
             </a>
@@ -138,10 +134,14 @@
               </div>
               <ul>
                 <!-- 내가 구매한 수량, order_item에서 가져옴 -->
-                <li><strong>수량:</strong><%=item.dataValues.max_quantity%></li>
-                <li><strong>상품 가격:</strong> <%=item.dataValues.price%></li>
-                <li><strong>상품명:</strong> <%=item.dataValues.name%></li>
-                <li><strong>확인:</strong> <%=item.dataValues.product_key%></li>
+                <li>상품명: <strong> <%=item.dataValues.name%></strong></li>
+                <li>
+                  상품 가격: <strong><%=item.dataValues.price%>원</strong>
+                </li>
+                <li>수량:<strong><%=item.dataValues.max_quantity%></strong></li>
+                <li class="deadline">
+                  마감일: <strong> <%=item.dataValues.deadline%></strong>
+                </li>
               </ul>
             </a>
           </div>
@@ -152,6 +152,47 @@
         <% } %>
         <div class="plus">
           <a href="/host/lists">더보기</a>
+        </div>
+      </section>
+
+      <!-- 내가 찜한 내역 -->
+      <section class="q wish hide">
+        <div id="mywish">내 찜 내역</div>
+        <!-- 배열 3개까지 출력-->
+        <% if (isSuccess) { %>
+        <div class="wishBox">
+          <% product.slice(0, 3).forEach((wishlist,i)=> { %>
+          <div class="myWish">
+            <a
+              class="wishProduct"
+              href="/host/list/<%= 
+                  wish[i].product_key  %>"
+            >
+              <div id="wishpr">
+                <img
+                  src="/uploads/<%=
+                  wish[i].image %>"
+                  alt="<%=
+                  wish[i].name %>"
+                />
+              </div>
+              <ul>
+                <li>상품명: <strong><%= wish[i].name %></strong></li>
+                <li>상품 가격: <strong><%= wish[i].price %>원</strong></li>
+                <li class="deadline">
+                  마감일:
+                  <strong> <%= wish[i].deadline %></strong>
+                </li>
+              </ul>
+            </a>
+          </div>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <p><%= message %></p>
+        <% } %>
+        <div class="plus">
+          <a href="/wishlist/my">더보기</a>
         </div>
       </section>
 
@@ -234,6 +275,7 @@
         const mypageSection = document.querySelector('.mypage');
         const sellSection = document.querySelector('.sell');
         const buySection = document.querySelector('.buy');
+        const wishSection = document.querySelector('.wish');
         console.log(mypageSection);
         console.log(sellSection);
         console.log(buySection);
@@ -241,6 +283,7 @@
           sellSection.classList.remove('hide');
           mypageSection.classList.add('hide');
           buySection.classList.add('hide');
+          wishSection.classList.add('hide');
         }
       }
       // 구매 내역 버튼 누르면 my, sell hide
@@ -248,6 +291,7 @@
         const mypageSection = document.querySelector('.mypage');
         const sellSection = document.querySelector('.sell');
         const buySection = document.querySelector('.buy');
+        const wishSection = document.querySelector('.wish');
         console.log(mypageSection);
         console.log(sellSection);
         console.log(buySection);
@@ -255,6 +299,7 @@
           buySection.classList.remove('hide');
           sellSection.classList.add('hide');
           mypageSection.classList.add('hide');
+          wishSection.classList.add('hide');
         }
       }
       // 마이페이지 버튼 누르면 sell, buy hide
@@ -262,6 +307,7 @@
         const mypageSection = document.querySelector('.mypage');
         const sellSection = document.querySelector('.sell');
         const buySection = document.querySelector('.buy');
+        const wishSection = document.querySelector('.wish');
         console.log(mypageSection);
         console.log(sellSection);
         console.log(buySection);
@@ -269,7 +315,76 @@
           mypageSection.classList.remove('hide');
           sellSection.classList.add('hide');
           buySection.classList.add('hide');
+          wishSection.classList.add('hide');
         }
+      }
+
+      // 위시페이지 버튼 누르면 sell, buy, my hide
+      function changeWishSection(btn) {
+        const mypageSection = document.querySelector('.mypage');
+        const sellSection = document.querySelector('.sell');
+        const buySection = document.querySelector('.buy');
+        const wishSection = document.querySelector('.wish');
+        console.log(mypageSection);
+        console.log(sellSection);
+        console.log(buySection);
+        if (btn.classList.contains('wish-btn')) {
+          wishSection.classList.remove('hide');
+          sellSection.classList.add('hide');
+          buySection.classList.add('hide');
+          mypageSection.classList.add('hide');
+        }
+      }
+
+      // 날짜 변환
+      const dateTags = document.querySelectorAll('.deadline > strong');
+
+      dateTags.forEach((dateTag) => {
+        const text = dateTag.innerText.split('GMT')[0];
+
+        const deadLineDate = new Date(text);
+        const year = deadLineDate.getFullYear();
+        const month = deadLineDate.getMonth() + 1;
+        const date = deadLineDate.getDate();
+
+        const time = `${deadLineDate.getHours()}:${deadLineDate.getMinutes()}:${deadLineDate.getSeconds()}`;
+
+        let day = getDayInKorean(deadLineDate.getDay());
+        const dateText = `${year}-${month}-${date} (${day})`;
+
+        dateTag.innerText = dateText;
+      });
+
+      function getDayInKorean(number) {
+        let day;
+        switch (number) {
+          case 0:
+            day = '일';
+            break;
+          case 1:
+            day = '월';
+            break;
+          case 2:
+            day = '화';
+            break;
+          case 3:
+            day = '수';
+            break;
+          case 4:
+            day = '목';
+            break;
+          case 5:
+            day = '금';
+            break;
+          case 6:
+            day = '토';
+            break;
+          default:
+            day = '?';
+            break;
+        }
+
+        return day;
       }
     </script>
   </body>
