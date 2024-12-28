@@ -93,6 +93,7 @@ exports.loginUser = async (req, res) => {
       req.session.user = {
         user_pk: resultUser.user_id,
         isLogin: true, // 로그인 여부 추가
+        user_type: resultUser.user_type,
       };
       console.log('일반 로그인 후 세션:', req.session.user);
 
@@ -224,7 +225,7 @@ exports.loginKakaoUser = async (req, res, next) => {
         email: req.kakao_user_info.email,
         user_type: req.kakao_user_info.user_type,
       },
-      attributes: ['user_id', 'email', 'password', 'nickname'],
+      attributes: ['user_id', 'email', 'password', 'nickname', 'user_type'],
     });
 
     console.log('서버에서 찾은 유저 결과', findResult);
@@ -238,10 +239,12 @@ exports.loginKakaoUser = async (req, res, next) => {
         salt: 'kakao_default',
         user_type: req.kakao_user_info.user_type, // salt 임의값
       });
+      console.log('카카오 유저 새로만든 정보', createResult);
 
       req.session.user = {
         ...req.session.user,
         user_pk: createResult.user_id,
+        user_type: createResult.user_type,
       };
       req.token_for_msg = req.session.user.token.access_token;
       this.sendKakaoMsg({
@@ -249,11 +252,14 @@ exports.loginKakaoUser = async (req, res, next) => {
           'ko-KR'
         )}`,
       })(req, res, () => {
-        res.status(200).send({
-          isLogin: true,
-          nickname: createResult.nickname,
-          message: '회원가입 후 로그인 성공',
-        });
+        const redirectUrl = req.session.redirectUrl || '/';
+        res.redirect(`${redirectUrl || '/'}`);
+        // res.status(200).send({
+        //   isLogin: true,
+        //   redirectUrl,
+        //   nickname: createResult.nickname,
+        //   message: '회원가입 후 로그인 성공',
+        // });
       });
     } else {
       req.session.user = {
@@ -355,9 +361,11 @@ exports.unlinkKakaoUser = (req, res) => {
       })
         .then((result) => {
           console.log('카카오 탈퇴결과', result);
-          res.status(200).send({ message: '회원 탈퇴가 완료되었습니다.' });
+          // res.status(200).send({ message: '회원 탈퇴가 완료되었습니다.' });
         })
-        .catch();
+        .catch((err) => {
+          console.log('카카오 연결끊기 오류', err);
+        });
       // res.send(result.data);
     })
     .catch((err) => {
