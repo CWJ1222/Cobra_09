@@ -158,30 +158,26 @@
       <!-- 내가 찜한 내역 -->
       <section class="q wish hide">
         <div id="mywish">내 찜 내역</div>
-        <!-- 배열 3개까지 출력-->
+        <!-- 배열 3개까지 출력 -->
         <% if (isSuccess) { %>
         <div class="wishBox">
-          <% product.slice(0, 3).forEach((wishlist,i)=> { %>
+          <% wish.slice(0, 3).forEach((wishlist) => { %>
           <div class="myWish">
             <a
               class="wishProduct"
-              href="/host/list/<%= 
-                  wish[i].product_key  %>"
+              href="/host/list/<%= wishlist.product_key %>"
             >
               <div id="wishpr">
                 <img
-                  src="/uploads/<%=
-                  wish[i].image %>"
-                  alt="<%=
-                  wish[i].name %>"
+                  src="/uploads/<%= wishlist.image %>"
+                  alt="<%= wishlist.name %>"
                 />
               </div>
               <ul>
-                <li>상품명: <strong><%= wish[i].name %></strong></li>
-                <li>상품 가격: <strong><%= wish[i].price %>원</strong></li>
+                <li>상품명: <strong><%= wishlist.name %></strong></li>
+                <li>상품 가격: <strong><%= wishlist.price %>원</strong></li>
                 <li class="deadline">
-                  마감일:
-                  <strong> <%= wish[i].deadline %></strong>
+                  마감일: <strong><%= wishlist.deadline %></strong>
                 </li>
               </ul>
             </a>
@@ -231,8 +227,9 @@
           .querySelector('input[name="password"]')
           .value.trim();
 
-        if (!nickname || !password) {
-          alert('닉네임과 비밀번호 둘 다 입력해주세요.');
+        // 둘 다 입력하지 않은 경우 에러 반환
+        if (!nickname && !password) {
+          alert('닉네임이나 비밀번호를 입력해 주세요.');
           return;
         }
 

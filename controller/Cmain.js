@@ -266,27 +266,6 @@ exports.renderMypage = async (req, res) => {
       wish: formattedWishlists,
       currentPage: '',
     });
-
-    /*
-          {
-        "wish": [
-          {
-            "product_key": 32,
-            "name": "테스트",
-            "price": 123,
-            "image": "tshirt1735134143448.jpg",
-            "deadline": "2024-12-27T05:45:00.000Z"
-          },
-          {
-            "product_key": 33,
-            "name": "test11",
-            "price": 111,
-            "image": "macbook1735135375948.png",
-            "deadline": "2024-12-27T07:06:00.000Z"
-          }
-        ]
-      }
-    */
   } catch (error) {
     console.error('마이페이지 렌더링 오류:', error);
     res.status(500).send('서버 오류');
