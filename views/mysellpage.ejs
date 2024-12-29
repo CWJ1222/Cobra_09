@@ -1,12 +1,107 @@
-<head>
-  <%- include('include/head') %>
-  <title><%= title %></title>
-</head>
-<body>
-  <%- include('include/header') %>
-  <br />
-  <main class="max-container">
-    <h1>판매 내역 페이지</h1>
-    <p>판매 내역을 확인 하세요!</p>
-  </main>
-</body>
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <%-include('include/head')%>
+    <title>title</title>
+    <link rel="stylesheet" href="../public/css/mybuypage.css" />
+  </head>
+  <body>
+    <%#- include('include/header') %>
+    <main class="max-container">
+      <h1>나의 주선 목록 페이지</h1>
+
+      <div class="contain">
+        <% if (isSuccess) {%>
+        <div class="product-card list">
+          <% products.forEach(product => { %>
+          <div class="buy-card">
+            <a href="/host/list/<%=product.product_key%>">
+              <img
+                src="/uploads/<%=product.image %>"
+                alt="<%=product.name %>"
+              />
+              <ul class="order-item">
+                <li>상품명: <strong><%=product.name %></strong></li>
+                <li>상품 가격: <strong><%=product.price %></strong></li>
+                <li>
+                  최대 구매 수량: <strong><%=product.max_quantity %></strong>
+                </li>
+                <div class="deadline">
+                  마감일: <strong><%=product.deadline %></strong>
+                </div>
+              </ul>
+              <div>
+                <progress
+                  class="count"
+                  max="30"
+                  value="<%#=order.quantity %>10"
+                ></progress
+                >10개
+              </div>
+            </a>
+          </div>
+          <%})%>
+        </div>
+      </div>
+      <% } else { %>
+      <p><%= message %></p>
+      <% } %>
+    </main>
+    <div class="home">
+      <a href="/user/mypage">
+        <img class="home" src="/public/img/logo-title.png" alt="home" />
+      </a>
+    </div>
+    <script>
+      const dateTags = document.querySelectorAll('.deadline > strong');
+
+      dateTags.forEach((dateTag) => {
+        const text = dateTag.innerText.split('GMT')[0];
+
+        const deadLineDate = new Date(text);
+        const year = deadLineDate.getFullYear();
+        const month = deadLineDate.getMonth() + 1;
+        const date = deadLineDate.getDate();
+
+        const time = `${deadLineDate.getHours()}:${deadLineDate.getMinutes()}:${deadLineDate.getSeconds()}`;
+
+        let day = getDayInKorean(deadLineDate.getDay());
+        const dateText = `${year}-${month}-${date} (${day})`;
+
+        dateTag.innerText = dateText;
+      });
+
+      function getDayInKorean(number) {
+        let day;
+        switch (number) {
+          case 0:
+            day = '일';
+            break;
+          case 1:
+            day = '월';
+            break;
+          case 2:
+            day = '화';
+            break;
+          case 3:
+            day = '수';
+            break;
+          case 4:
+            day = '목';
+            break;
+          case 5:
+            day = '금';
+            break;
+          case 6:
+            day = '토';
+            break;
+          default:
+            day = '?';
+            break;
+        }
+
+        return day;
+      }
+    </script>
+  </body>
+</html>

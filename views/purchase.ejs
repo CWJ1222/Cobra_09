@@ -1,12 +1,301 @@
 <head>
   <%- include('include/head') %>
-  <title><%= title %></title>
+  <title><%#= title %></title>
+  <!-- (todo)public/css 분리 예정 -->
+  <style>
+    /* 상품 카테고리 필터 */
+    .categoryFilter {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .filterBtn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s ease, color 0.3s;
+    }
+
+    .filterBtn img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      transition: transform 0.3s;
+    }
+
+    .filterBtn.clotehs img {
+      background-color: lightblue;
+      border-radius: 50%;
+      padding: 5px;
+    }
+
+    .filterBtn.foods img {
+      background-color: #ededed;
+      border-radius: 50%;
+      padding: 5px;
+    }
+
+    .filterBtn span {
+      font-size: 14px;
+      color: var(--color-text);
+    }
+
+    .filterBtn.active img {
+      border: 2px solid var(--color-primary);
+      transform: scale(1.1);
+    }
+
+    .filterBtn.active span {
+      font-weight: bold;
+      /* color: var(--color-primary); */
+    }
+
+    .filterBtn:hover img {
+      transform: scale(1.1);
+    }
+    /* 상품 목록 */
+    .productGrid {
+      display: flex;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding: 30px;
+      flex-wrap: wrap;
+      margin: 0 30px;
+    }
+    .productCard {
+      background-color: var(--color-white);
+      border-radius: 9px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      position: relative;
+      text-align: center;
+      padding: 20px;
+    }
+    .productCard img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      margin-bottom: 20px;
+      border-radius: 9px;
+    }
+
+    .productDetails {
+      padding: 15px;
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: column;
+    }
+
+    .productName {
+      font-size: 18px;
+      margin: 10px 0;
+      color: var(--color-text);
+    }
+
+    .productPrice {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--color-text);
+      margin: 10px 0;
+    }
+
+    /* 찜(wishlist) 임시 스타일 */
+    .addWishBtn {
+      background-color: var(--color-secondary);
+    }
+    .addWishBtn:hover {
+      filter: brightness(0.9);
+    }
+  </style>
 </head>
 <body>
   <%- include('include/header') %>
   <br />
   <main class="max-container">
-    <h1>구매 페이지</h1>
-    <p>공동 구매를 진행해보세요!</p>
+    <!-- 카테고리 필터 -->
+    <!-- 식품/ 전자기기/의류 -->
+    <ul class="categoryFilter">
+      <li>
+        <button class="filterBtn active" data-category="all">
+          <img src="/public/img/filter-all.png" alt="전체" />
+          <span>전체</span>
+        </button>
+      </li>
+      <li>
+        <button class="filterBtn" data-category="1">
+          <img src="/public/img/filter-electronics.png" alt="식품" />
+          <span>식품</span>
+        </button>
+      </li>
+      <li>
+        <button class="filterBtn clothes" data-category="2">
+          <img src="/public/img/filter-clothes.png" alt="전자기기" />
+          <span>전자기기</span>
+        </button>
+      </li>
+      <!-- (todo) 필터 버튼 이미지 교체하기 -->
+      <li>
+        <button class="filterBtn foods" data-category="3">
+          <img src="/public/img/filter-books.png" alt="의류" />
+          <span>의류</span>
+        </button>
+      </li>
+    </ul>
+
+    <!-- 상품 목록 -->
+    <div class="productGrid max-container">
+      <% if (products && products.length > 0) { %> <%
+      products.forEach((product)=> { %>
+
+      <!--상품 카드-->
+
+      <div class="productCard" data-category-id="<%= product.product_key %>">
+        <a
+          href="/buyform/<%= product.product_key %>"
+          target="buyform"
+          onclick="window.open(this.href, 'buyform', 'width=800,height=600'); return false;"
+        >
+          <!-- 상품카드 보이게 경로 수정 ->uploads로 -->
+          <img src="/uploads/<%= product.image %>" alt="<%= product.name %>" />
+          <div class="productDetails">
+            <div class="productName"><%= product.name %></div>
+            <div class="productPrice"><%= product.price %> 원</div>
+          </div>
+        </a>
+        <!-- 임시 찜 버튼(wishlist) -->
+        <button
+          class="addWishBtn"
+          data-product-key="<%= product.product_key %>"
+        >
+          찜하기
+        </button>
+      </div>
+
+      <% }) %> <% } else { %>
+      <p>등록된 상품이 없습니다.</p>
+      <% } %>
+    </div>
   </main>
 </body>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const productGrid = document.querySelector('.productGrid');
+    const filterButtons = document.querySelectorAll('.filterBtn');
+
+    // 상품 목록 업데이트 함수
+    const updateProductGrid = (products) => {
+      // 기존 목록 초기화
+      productGrid.innerHTML = '';
+
+      // 새로운 상품 렌더링
+      if (products.length > 0) {
+        products.forEach((product) => {
+          const productCard = `
+            <div class="productCard">
+              <a href="/buyform/${product.product_key}" target="buyform"
+                 onclick="window.open(this.href, 'buyform', 'width=800,height=600'); return false;">
+                <img src="/uploads/${product.image}" alt="${product.name}" />
+                <div class="productDetails">
+                  <div class="productName">${product.name}</div>
+                  <div class="productPrice">${product.price} 원</div>
+                </div>
+              </a>
+              <button class="addWishBtn" data-product-key="${product.product_key}">
+                찜하기
+              </button>
+            </div>`;
+          //   productGrid.insertAdjacentHTML('beforeend', productCard);
+          // });
+          productGrid.insertAdjacentHTML('beforeend', productCard);
+        });
+
+        // 새로 생성된 찜하기 버튼에 이벤트 리스너 등록
+        const wishButtons = document.querySelectorAll('.addWishBtn');
+        wishButtons.forEach((button) => {
+          button.addEventListener('click', async (e) => {
+            const productKey = button.dataset.productKey;
+
+            try {
+              const response = await axios.post(`/wishlist/${productKey}`);
+              if (response.data.isSuccess) {
+                alert(response.data.message);
+              } else {
+                alert('찜하기에 실패했습니다.');
+              }
+            } catch (error) {
+              console.error('찜하기 오류:', error);
+              alert('로그인 후 이용해주세요.');
+            }
+          });
+        });
+      } else {
+        productGrid.innerHTML = '<p>해당 카테고리에 상품이 없습니다.</p>';
+      }
+    };
+
+    // 카테고리 필터링 API 호출
+    const getItemsByCategory = async (categoryId) => {
+      try {
+        const res = await axios.get(`/products/${categoryId}`);
+        // console.log('API 응답 데이터:', res.data); // 응답 데이터 확인
+        if (Array.isArray(res.data)) {
+          updateProductGrid(res.data); // 배열일 경우 업데이트
+        } else {
+          console.error('응답 데이터가 배열이 아닙니다:', res.data);
+          productGrid.innerHTML = '<p>데이터 형식 오류가 발생했습니다.</p>';
+        }
+      } catch (err) {
+        console.error(`카테고리 ${categoryId} 데이터 호출 오류:`, err);
+        productGrid.innerHTML = '<p>상품 데이터를 불러오지 못했습니다.</p>';
+      }
+    };
+
+    // 필터 버튼 클릭 이벤트
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        // 모든 버튼의 활성화 상태 초기화
+        filterButtons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        const categoryId = button.dataset.category;
+
+        if (categoryId === 'all') {
+          location.reload(); // 페이지 새로고침
+        } else {
+          getItemsByCategory(categoryId); // API 호출로 데이터 업데이트
+        }
+      });
+    });
+  });
+
+  //찜하기 버튼 클릭 이벤트
+  document.addEventListener('DOMContentLoaded', () => {
+    const wishButtons = document.querySelectorAll('.addWishBtn');
+
+    wishButtons.forEach((button) => {
+      button.addEventListener('click', async (e) => {
+        const productKey = button.dataset.productKey;
+
+        try {
+          const response = await axios.post(`/wishlist/${productKey}`);
+          if (response.data.isSuccess) {
+            alert(response.data.message);
+          } else {
+            alert('찜하기에 실패했습니다.');
+          }
+        } catch (error) {
+          console.error('찜하기 오류:', error);
+          alert('로그인 후 이용해주세요.');
+        }
+      });
+    });
+  });
+</script>

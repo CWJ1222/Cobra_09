@@ -2,6 +2,7 @@
 
 header {
   width: 100%;
+  height: 133px;
   z-index: 1;
   background-color: var(--color-white);
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
@@ -21,16 +22,20 @@ header {
   display: flex;
   align-items: center;
   gap: 1.2rem;
+  /* line-height: 1.2; */
+  justify-content: center;
 }
 
-.header__logo a {
+.header__logo__title a {
   color: var(--color-primary);
+  line-height: 1;
   font-size: 26px;
   cursor: pointer;
 }
 
 .header__logo__img {
   width: 54px;
+  height: 54px;
 }
 
 .header__utils {

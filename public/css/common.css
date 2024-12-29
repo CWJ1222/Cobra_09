@@ -2,20 +2,24 @@
 :root {
   /* App Colors */
   --color-primary: var(--color-purple);
+  --color-primary-dark: var(--color-purple-dark);
   --color-primary-light: var(--color-purple-light);
   --color-secondary: var(--color-gray-light);
   --color-text: var(--color-black);
   --color-text-sub: var(--color-gray);
-  --color-error: var(--color-red);
+  --color-error-critical: var(--color-red);
+  --color-error: var(--color-orange-dark);
 
   /* colors */
   --color-white: #ffffff;
   --color-black: #050a13;
   --color-purple: #7309f6;
+  --color-purple-dark: #4e06a3;
   --color-purple-light: #eddfff;
   --color-gray: #a6a6a6;
   --color-gray-light: #d5d5d3;
   --color-red: #ff0000;
+  --color-orange-dark: #e76444;
 
   /* Size */
   --size-max-width: 1200px;
@@ -49,6 +53,10 @@ ul {
 }
 
 ul {
+  list-style: none;
+  padding: 0;
+}
+li {
   list-style: none;
   padding: 0;
 }

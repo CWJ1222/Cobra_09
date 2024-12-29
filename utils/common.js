@@ -1,63 +1,109 @@
-// jsdocs
 const crypto = require('crypto');
-const constant = require('./constant.js');
-/**
- * 서버 에러시 응답 및 로그를 처리해주는 함수
- * @param {Response} res 응답객체
- * @param {Error} err
- * @param {string} msg
- * @returns {void}
- *
- *  * 회원가입시 비밀번호 암호화를 해주는 함수
- * @param {string} registerPw
- * @returns {{encryptedPw, salt}} 암호화된 비밀번호, 솔트
- *
- *  * boolean 로그인시 입력된 비밀번호와 DB의 비밀번호를 비교해주는 함수
- * @param {string} inputPw 입력 비밀번호
- * @param {string} savedSalt DB에 저장된 salt
- * @param {string} savedPw DB에 저장된 비밀번호
- * @returns {boolean} 비밀번호 일치 여부(true/false)
- */
-function error_log(res, err, msg = 'server error') {
-  console.log(msg, err);
-  res.status(500).render('500');
+const db = require('../models');
+
+// 비밀번호 암호화
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto
+    .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
+    .toString('hex');
+  return { salt, hash };
 }
 
-function encrypt_pw(registerPw) {
-  const salt = crypto.randomBytes(16).toString('base64');
-  const iterations = constant.ENCRYPT_ITERATIONS;
-  const keylens = constant.ENCRYPT_KEYLEN;
-  const algorithm = constant.ENCRYPT_ALGORITHM;
-
-  const encryptedPw = crypto.pbkdf2Sync(
-    registerPw,
-    salt,
-    iterations,
-    keylens,
-    algorithm
-  );
-
-  return { encryptedPw, salt };
+// 비밀번호 검증
+function verifyPassword(password, salt, hash) {
+  const newHash = crypto
+    .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
+    .toString('hex');
+  return newHash === hash;
 }
 
-function check_pw(inputPw, savedSalt, savedPw) {
-  const iterations = constant.ENCRYPT_ITERATIONS;
-  const keylens = constant.ENCRYPT_KEYLEN;
-  const algorithm = constant.ENCRYPT_ALGORITHM;
+// comment_group 최댓값 가져오기
+async function getMaxCommentGroup() {
+  const maxCommentResult = await db.Comment.findOne({
+    attributes: [
+      [
+        db.Sequelize.fn('MAX', db.Sequelize.col('comment_group')),
+        'max_comment_group',
+      ],
+    ],
+  });
+  return maxCommentResult?.dataValues?.max_comment_group || 0;
+}
 
-  const encryptedInput = crypto.pbkdf2Sync(
-    inputPw,
-    savedSalt,
-    iterations,
-    keylens,
-    algorithm
-  );
+// comment_id로 댓글 가져오기
+async function getColByCommentId(comment_id) {
+  return db.Comment.findOne({
+    where: { comment_id },
+  });
+}
 
-  return encryptedInput === savedPw;
+// 자식 댓글 수 계산 (재귀)
+async function countChildComments(commentId, groupId) {
+  try {
+    const childComments = await db.Comment.findAll({
+      where: {
+        parent_id: commentId,
+        comment_group: groupId,
+      },
+    });
+
+    let totalChildren = childComments.length;
+
+    for (const child of childComments) {
+      totalChildren += await countChildComments(child.comment_id, groupId);
+    }
+
+    return totalChildren;
+  } catch (err) {
+    console.error('Error counting child comments:', err);
+    return 0;
+  }
+}
+
+// comment_order 최댓값 가져오기
+async function getHighestOrder() {
+  const maxOrder = await db.Comment.findOne({
+    attributes: [
+      [
+        db.Sequelize.fn('MAX', db.Sequelize.col('comment_order')),
+        'max_comment_order',
+      ],
+    ],
+  });
+
+  return maxOrder?.dataValues?.max_comment_order || 0;
+}
+
+// 댓글 순서 조정
+async function arrangeOrder(maxOrder, baseComment, operation) {
+  try {
+    const updateCommentOrder = await db.Comment.update(
+      {
+        comment_order: db.Sequelize.literal(`comment_order ${operation} 1`),
+      },
+      {
+        where: {
+          comment_group: baseComment.comment_group,
+          comment_order: {
+            [db.Sequelize.Op.gt]: maxOrder + baseComment.comment_order,
+          },
+        },
+      }
+    );
+    return updateCommentOrder;
+  } catch (err) {
+    console.error('Error arranging comment order:', err);
+    return 0;
+  }
 }
 
 module.exports = {
-  error_log,
-  encrypt_pw,
-  check_pw,
+  hashPassword,
+  verifyPassword,
+  getMaxCommentGroup,
+  getColByCommentId,
+  countChildComments,
+  getHighestOrder,
+  arrangeOrder,
 };

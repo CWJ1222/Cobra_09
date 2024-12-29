@@ -5,54 +5,289 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <!-- axios -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"
+      integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <!-- Material Symbols Outlined 스타일(대댓글 아이콘) -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
   </head>
+  <style>
+  @import url("../public/css/common.css");
+  body{
+      padding: 50px;
+      }
+      
+  .productContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 50px;
+  }
+
+  .productContainer h1 {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .productContainer p {
+    font-size: 16px;
+  }
+
+  .productContainer img {
+    max-width: 100%;
+  }
+
+  .productContainer form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 50px;
+  }
+
+  .productContainer input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+  }
+
+  .productContainer button {
+    padding: 10px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: var(--color-primary);
+    border-radius: 5px;
+  }
+
+  .inputCommentContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 50px;
+  }
+
+  .inputCommentContainer input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #a4abb1e8;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .inputCommentContainer button {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: var( --color-primary);
+    border: none;
+    border-radius: 5px;
+  }
+
+  .commentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background-color: var(--color-white);
+    border-radius: 9px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    padding:10px;
+    margin-bottom: 30px;
+  }
+
+  .commentContainer .commentBox {
+    font-size: 14px;
+    color: #333;
+  }
+
+  .commentContainer .commentBox div {
+    margin-bottom: 5px;
+  }
+
+  .commentContainer .replyButton {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .commentContainer .replyButton button {
+  padding: 8px 12px;
+  font-size: 14px; 
+  color: #ffffff;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 5px;
+  }
+
+  .commentContainer .addReplyButton {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .commentContainer .addReplyButton input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .commentContainer .addReplyButton button {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: var( --color-primary);
+    border: none;
+    border-radius: 5px;
+  }
+
+
+  .commentBox {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .commentBox .nickname{
+    font-weight: bold;
+    font-size: 15px;
+  }
+
+  .commentBox .content{
+    font-size: 18px;
+  }
+
+  .noneComment{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .commentContainer .invisible {
+    display: none;
+    position: absolute;
+  }
+
+  .replyIcon::before{
+    content: '\f4f6'; /* 댓글 아이콘 */
+    font-family: 'Material Symbols Outlined';
+    color: var(--color-secondary);
+    font-size: 24px;
+    display: inline-block;
+
+    position: relative;
+    top: 35px; 
+    left: -35px;
+  }
+
+    </style>
+
   <body>
-    <h1><%= product.name %> 구매하기</h1>
-    <p>가격: <%= product.price %>원</p>
-    <p>마감일: <%= product.deadline %></p>
-    <img
-      src="/uploads/<%= product.image %>"
-      alt="<%= product.name %>"
-      style="max-width: 300px"
-    />
-    <form action="/purchase" method="POST">
-      <!-- Hidden Field -->
-      <input
-        type="hidden"
-        name="product_key"
-        value="<%= product.product_key %>"
+    <div class="productContainer">
+      <h1><%= product.name %> 구매하기</h1>
+      <img
+        src="/uploads/<%= product.image %>"
+        alt="<%= product.name %>"
+        style="max-width: 300px"
       />
+      <p>가격: <%= product.price %>원</p>
+      <p>마감일: <%= new Date( product.deadline).toLocaleString("ko-KR")  %></p>
+      <form action="/purchase" method="POST">
+        <!-- Hidden Field -->
+        <input
+          type="hidden"
+          name="product_key"
+          value="<%= product.product_key %>"
+        />
+  
+        <!-- Quantity -->
+        <label for="quantity">수량: </label>
+        <input
+          type="number"
+          id="quantity"
+          name="quantity"
+          required
+          min="1"
+          max="<%= product.max_quantity %>"
+        />
+  
+        <!-- Address -->
+        <label for="address">주소: </label>
+        <input
+          type="text"
+          id="address"
+          name="address"
+          required
+          onclick="openSearch()"
+        />
 
-      <!-- Quantity -->
-      <label for="quantity">수량: </label>
-      <input
-        type="number"
-        id="quantity"
-        name="quantity"
-        required
-        min="1"
-        max="<%= product.max_quantity %>"
-      />
+        <!-- Phone -->
+        <label for="phone">전화번호: </label>
+        <input type="text" id="phone" name="phone" required />
+    
+        <!-- Cpurchase에서 온 userId -->
+        <input type="hidden" id="user_id" name="user_id" value="<%= userId %>" />
+    
+        <button type="submit">구매하기</button>
+      </form>
+    </div>
 
-      <!-- Address -->
-      <label for="address">주소: </label>
-      <input
-        type="text"
-        id="address"
-        name="address"
-        required
-        onclick="openSearch()"
-      />
 
-      <!-- Phone -->
-      <label for="phone">전화번호: </label>
-      <input type="text" id="phone" name="phone" required />
+    <div class="inputCommentContainer">
+      <input type="text" class="inputComment" required></ㅇ>
+      <button onclick="addComment()">댓글 등록</button>
+    </div>
+    
+    <div class="commentListContainer">
+      <% if(comments.length){ %> <% for (let i = 0; i < comments.length; i++){%>
+        <div class="commentWrapper" style=<%= "margin-left:"+ comments[i].comment_depth * 60+"px"%>
+              <!-- reply icon 추가 (depth가 1이상일때만)-->
+            <% if(comments[i].comment_depth > 0){ %>
+              <span class="replyIcon"></span>
+            <% } %>
+          <li
+            class="commentContainer"
+            
+          >
+            <div class="commentBox">
+              <div class="nickname"><%=comments[i].user.nickname %></div>
+              <div class="content"><%=comments[i].content %></div>
+              <div class="createdAt">
+                <%=new Date( comments[i].createdAt).toLocaleString("ko-KR") %>
+              </div>
+            </div>
 
-      <!-- Cpurchase에서 온 userId -->
-      <input type="hidden" id="user_id" name="user_id" value="<%= userId %>" />
+            <div class="replyButton<%= comments[i].comment_id %> replyButton">
+              <button onclick="toggleReplyBox('<%=comments[i].comment_id%>'); saveScrollPosition();">답글달기</button>
+            </div>
 
-      <button type="submit">구매하기</button>
-    </form>
+            <div class="addReplyButton<%= comments[i].comment_id %> invisible addReplyButton" >
+              <input type="text" class="replyInput<%= comments[i].comment_id %>"/>
+              <button onclick="replyComment({
+                comment_id: '<%=comments[i].comment_id%>',
+                parent_id: '<%=comments[i].parent_id%>',
+              })">등록</button>
+              <button onclick="toggleReplyBox('<%=comments[i].comment_id%>')">취소</button>
+            </div>
+          </li>
+        </div>
+      <% } %> 
+      <% }else{ %>
+        <p class="noneComment">
+          등록된 댓글이 없습니다.
+        </p>
+      <% } %>
+    </div>
+
     <script>
       // 주소검색기능
       function openSearch() {
@@ -66,6 +301,87 @@
         } else {
           return;
         }
+      }
+
+      function saveScrollPosition (){
+        const scrollY = window.scrollY;
+        window.sessionStorage.setItem("scrollY",scrollY)
+        console.log("scrollY는     " , scrollY)
+      }
+
+      const path = window.location.pathname;
+      const product_id = path.split('/')[2];
+      // console.log("product_id는",product_id)
+      const scrollY = window.sessionStorage.getItem("scrollY")
+      // console.log("저장된 scrollY는     " , scrollY)
+      if(scrollY){
+        // window.scrollTo(0,scrollY);
+        document.documentElement.scrollTop = scrollY;
+        window.sessionStorage.removeItem("scrollY")
+      }
+
+      function addComment() {
+        // console.log('댓글달기');
+        const content = document.querySelector('.inputComment').value;
+        axios({
+          url: '/comments',
+          method: 'post',
+          data: { content: content, product_key: product_id },
+        })
+          .then((result) => {
+            console.log('댓글 달기 성공', result);
+            window.location.href = `/buyform/${product_id}`;
+          })
+          .catch((err) => {
+            console.log('페이지단에서 에러발생', err);
+            alert('댓글 달기 실패');
+          });
+      }
+
+      // 대댓글 달기
+      function replyComment(commentInfo) {
+        console.log('대댓글달기');
+        const replyContent = document.querySelector(
+          `.replyInput${commentInfo.comment_id}`
+        ).value;
+        axios({
+          url: '/comments',
+          method: 'post',
+          data: {
+            content: replyContent,
+            product_key: product_id,
+            comment_id: commentInfo.comment_id,
+            parent_id: commentInfo.parent_id,
+          },
+        })
+          .then((result) => {
+            console.log('답글 달기 성공', result);
+            if(!result.data.isSuccess){
+              alert(result.data.message);
+              return;
+            }
+            replyContent.value = '';
+
+            toggleReplyBox(commentInfo.comment_id);
+            window.location.href = `/buyform/${product_id}`;
+          })
+          .catch((err) => {
+            console.log("err는",err)
+            alert('답글 달기 실패');
+          });
+      }
+
+      function toggleReplyBox (commentId){
+        console.log("commentId는",commentId)
+        const replyButton = document.querySelector(`.replyButton${commentId}`)
+        const addReplyButton = document.querySelector(`.addReplyButton${commentId}`)
+        console.log("replyButton는",replyButton)
+        console.log("addReplyButton",addReplyButton)
+
+        replyButton.classList.toggle("invisible")
+        addReplyButton.classList.toggle("invisible")
+
+        
       }
     </script>
   </body>

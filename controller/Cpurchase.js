@@ -1,14 +1,21 @@
 const { Product } = require('../models'); // Product 모델 불러오기
 const { Order } = require('../models');
+const { getCommentsByProduct } = require('./Ccomment');
 
 // 구매 페이지 렌더링 (GET)
 exports.purchasePage = async (req, res) => {
   try {
     // Product 테이블에서 모든 데이터 가져오기
     const products = await Product.findAll();
+    // fe: 데이터 확인
+    // console.log('상품', products);
 
     // 데이터를 purchaseTest.ejs로 전달
-    res.render('purchaseTest', { products, currentPage: 'purchaseTest' });
+    res.render('purchase', {
+      products,
+      currentPage: 'purchase',
+      user: req.session.user,
+    });
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).send('서버 오류');
@@ -26,18 +33,21 @@ exports.buyForm = async (req, res) => {
     // 세션에서 사용자 ID 가져오기
     const userId = req.session.user ? req.session.user.user_pk : null;
 
-    // 사용자 ID가 없으면 로그인 페이지로 리다이렉트
-    // if (!userId) {
-    //   return res.redirect('/auth/login');
-    // }
-    // 로그인 후 원래 가려 했던 페이지로 이동하기
     if (!userId) {
       // 세션에 redirectUrl 저장
       req.session.redirectUrl = `/buyform/${req.params.product_key}`;
       return res.redirect('/auth/login'); // 쿼리스트링 제거
     }
-
-    res.render('buyForm', { product, userId });
+    const product_key = req.params.product_key;
+    // console.log('product_key', product_key);
+    const comments = await getCommentsByProduct(product_key);
+    // console.log('commentsByProduct는   ', comments);
+    res.render('buyForm', {
+      product,
+      userId,
+      user: req.session.user,
+      comments,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send('서버 오류');

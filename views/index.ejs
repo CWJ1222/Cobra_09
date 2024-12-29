@@ -1,20 +1,259 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <%-include('include/head')%>
+    <%- include('include/head') %>
     <title><%= title %></title>
   </head>
   <body>
-    <!-- 헤더 -->
     <%- include('include/header') %>
 
-    <!-- 메인 -->
     <main class="max-container">
-      <br />
-      <h1>여기는 메인페이지🏡</h1>
+      <h1>찜 많은 순으로 상품 나열</h1>
+
+      <!-- 슬라이더 컨테이너 -->
+      <div class="slider-wrapper">
+        <!-- 왼쪽 화살표 -->
+        <button class="slider-button left" onclick="sideLeft()">&#8249;</button>
+
+        <!-- 상품 리스트 -->
+        <div class="slider-container">
+          <ul class="product-list">
+            <% products.forEach((product) => { %>
+            <li
+              class="product-card"
+              data-link="/host/list/<%= product.product_key %>"
+              href="/host/list/<%= product.product_key %>"
+            >
+              <div class="product-image">
+                <img
+                  src="/uploads/<%= product.ProductWishlists.image %>"
+                  alt="<%= product.ProductWishlists.name %>"
+                />
+              </div>
+              <div class="product-info">
+                <h2><%= product.ProductWishlists.name %></h2>
+                <p>
+                  마감일: <%= new
+                  Date(product.ProductWishlists.deadline).toLocaleString('ko-KR',
+                  { year: '2-digit', month: '2-digit', day: '2-digit', hour:
+                  '2-digit', minute: '2-digit', hour12: false, }) %>
+                </p>
+                <p>가격: <%= product.ProductWishlists.price %>원</p>
+                <p>찜 개수: <%= product.wishlistCount %></p>
+              </div>
+            </li>
+            <% }) %>
+          </ul>
+        </div>
+
+        <!-- 오른쪽 화살표 -->
+        <button class="slider-button right" onclick="sideRight()">
+          &#8250;
+        </button>
+      </div>
     </main>
 
-    <!-- footer -->
-    <%- include('include/footer', { title: 'test' })%>
+    <%- include('include/footer', { title: '메인 페이지' }) %>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+      }
+
+      h1 {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 24px;
+      }
+
+      .slider-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 0;
+      }
+
+      .slider-container {
+        overflow: hidden;
+        width: 100%;
+        max-width: 800px; /* 최대 폭 */
+        margin: auto; /* 가운데 정렬 */
+      }
+
+      .product-list {
+        display: flex;
+        gap: 20px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        transition: transform 0.5s ease-in-out;
+      }
+
+      .product-card {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: calc(33.333% - 20px); /* 3개 표시 기준 */
+        text-align: center;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .product-image img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+      }
+
+      .product-info {
+        padding: 15px;
+        text-align: center;
+      }
+
+      .product-info h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .product-info p {
+        font-size: 14px;
+        color: #555;
+        margin: 5px 0;
+      }
+
+      .slider-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 10;
+        border-radius: 50%;
+      }
+
+      .slider-button.left {
+        left: 10px;
+      }
+
+      .slider-button.right {
+        right: 10px;
+      }
+
+      .slider-button:hover {
+        background-color: rgba(0, 0, 0, 0.8); /* 호버 시 배경 어둡게 */
+      }
+      @media (max-width: 768px) {
+        .product-card {
+          width: calc(50% - 20px); /* 2개 표시 기준 */
+        }
+      }
+
+      @media (max-width: 480px) {
+        .product-card {
+          width: 100%; /* 1개 표시 기준 */
+        }
+      }
+    </style>
+
+    <script>
+      const productList = document.querySelector('.product-list');
+      const productListWrapper = document.querySelector('.slider-container');
+      const leftButton = document.querySelector('.slider-button.left');
+      const rightButton = document.querySelector('.slider-button.right');
+
+      let scrollPosition = 0; // 현재 스크롤 위치
+      let cardWidth = 0; // 카드 하나의 폭
+
+      // 카드 크기 및 슬라이드 설정 업데이트
+      function updateSlider() {
+        const visibleCards = Math.floor(productListWrapper.clientWidth / 270); // 270: 카드 기본 너비 + 간격
+        cardWidth = productListWrapper.clientWidth / visibleCards; // 각 카드의 너비 조정
+        const maxScrollRight =
+          productList.scrollWidth - productListWrapper.clientWidth;
+
+        // 화살표 위치 업데이트
+        leftButton.style.left = `${
+          (productListWrapper.clientWidth - cardWidth * visibleCards) / 2
+        }px`;
+        rightButton.style.right = `${
+          (productListWrapper.clientWidth - cardWidth * visibleCards) / 2
+        }px`;
+
+        // 슬라이드 버튼 활성화/비활성화
+        leftButton.style.display = scrollPosition < 0 ? 'block' : 'none';
+        rightButton.style.display =
+          Math.abs(scrollPosition) < maxScrollRight ? 'block' : 'none';
+      }
+
+      // 왼쪽으로 스크롤
+      function sideLeft() {
+        scrollPosition += cardWidth + 20; // 카드 너비 + 간격
+        if (scrollPosition > 0) {
+          scrollPosition = 0; // 왼쪽 경계
+        }
+        productList.style.transform = `translateX(${scrollPosition}px)`;
+        updateSlider();
+      }
+
+      // 오른쪽으로 스크롤
+      function sideRight() {
+        const maxScrollRight =
+          productList.scrollWidth - productListWrapper.clientWidth;
+        scrollPosition -= cardWidth + 20; // 카드 너비 + 간격
+        if (Math.abs(scrollPosition) > maxScrollRight) {
+          scrollPosition = -maxScrollRight; // 오른쪽 경계
+        }
+        productList.style.transform = `translateX(${scrollPosition}px)`;
+        updateSlider();
+      }
+
+      // 초기화 및 리사이즈 이벤트 처리
+      window.addEventListener('resize', updateSlider);
+      document.addEventListener('DOMContentLoaded', () => {
+        updateSlider();
+      });
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.product-card');
+        cards.forEach((card) => {
+          card.addEventListener('click', () => {
+            const link = card.getAttribute('data-link');
+            if (link) {
+              // 새 창의 크기와 위치 설정
+              // 새 창 크기 설정
+              const popupWidth = 800; // 새 창의 너비
+              const popupHeight = 1000; // 새 창의 높이
+
+              // 현재 화면 크기 계산
+              const screenWidth = window.screen.width;
+              const screenHeight = window.screen.height;
+
+              // 새 창의 위치 계산 (가운데)
+              const left = (screenWidth - popupWidth) / 2;
+              const top = (screenHeight - popupHeight) / 2;
+
+              // 새 창 열기
+              const windowFeatures = `width=${popupWidth},height=${popupHeight},top=${top},left=${left},resizable=no,scrollbars=yes`;
+              window.open(link, '_blank', windowFeatures);
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>

@@ -1,4 +1,4 @@
--- Active: 1734662496645@@175.121.178.197@3306@cobra09
+-- Active: 1732688614523@@127.0.0.1@3306@cobra09
 
 /*
 - notion의 DB정리 페이지 참고
@@ -22,6 +22,9 @@ FLUSH PRIVILEGES;
 SELECT User, Host FROM mysql.user;
 
 ALTER TABLE user ADD COLUMN salt VARCHAR(255) NOT NULL;
+
+ALTER TABLE product MODIFY COLUMN deadline DATETIME NOT NULL;
+
 
 -- Category 테이블 생성
 CREATE TABLE Category (
@@ -67,6 +70,17 @@ CREATE TABLE Order_item (
     FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE -- 사용자 참조
 );
 
+-- 찜 기능 테이블
+CREATE TABLE Wishlists (
+    wishlist_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    product_key INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE, -- 사용자 삭제 시 관련 데이터도 삭제
+    FOREIGN KEY (product_key) REFERENCES Product(product_key) ON DELETE CASCADE,
+    UNIQUE (user_id, product_key)
+);
+
 -- 테이블 잘 만들어졌는지 확인
 DESC category;
 
@@ -75,6 +89,8 @@ DESC user;
 DESC product;
 
 DESC order_item;
+
+DESC Wishlists;
 
 -- 테스트를 위해 테이블에 데이터 삽입
 /*
@@ -95,37 +111,42 @@ INSERT INTO
         email,
         password,
         nickname,
-        salt
+        salt,
+        user_type
     )
 VALUES (
-        'soo@naver.com',
-        "1234",
+        'test@naver.com',
+        "1fe2eeeb2bc899ca1ec855549557d858a5371f51509db90346f63dd16e109bc2ddb370ac9f96f52cdc9d100bd126317ad793df70b3e1347226cb51918af61d40",
         "soo",
-        "1234"
+        "43c03ab8122ba157830a2f968b98d786"
+        ,"1"
     ),
     (
-        'jin@naver.com',
-        '5678',
+        'soo@naver.com',
+        '1fe2eeeb2bc899ca1ec855549557d858a5371f51509db90346f63dd16e109bc2ddb370ac9f96f52cdc9d100bd126317ad793df70b3e1347226cb51918af61d40',
         "jin",
-        "5678"
+        "43c03ab8122ba157830a2f968b98d786",
+        "1"
     );
 
 -- product 테이블에 데이터 삽입
 
---이미지 경로 문제때문에 실제 파일명으로 입력받아야함
-INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
-VALUES
-('Smartphone', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
-('T-Shirt', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
-('Novel', '2024-12-20', 10, 50, 'novel.jpg', 3, 1);
+INSERT INTO wishlists (user_id, product_key) VALUES (30,33);
 
-INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+--이미지 경로 문제때문에 실제 파일명으로 입력받아야함
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id,net_price)
+VALUES
+('Smartphone', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1,500),
+('T-Shirt', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2,300),
+('Novel', '2024-12-20', 10, 50, 'novel.jpg', 3, 1,200);
+
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)
 VALUES
 ('Smartphone11', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
 ('T-Shirt11', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
 ('Novel11', '2024-12-20', 10, 50, 'novel.jpg', 3, 1);
 
-INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, host_id)
+INSERT INTO Product (name, deadline, price, max_quantity, image, category_id, user_id)
 VALUES
 ('Smartphone22', '2024-12-31', 999, 100, 'smartphone.jpg', 1, 1),
 ('T-Shirt22', '2024-12-25', 19, 200, 'tshirt.jpg', 2, 2),
@@ -197,20 +218,26 @@ VALUES (
         '010-5678-1234'
     );
 
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, user_id, product_key, createdAt, updatedAt) VALUES ("1 댓글이다.",1,1,1,1,1,'2024-01-01 10:00:00','2024-01-01 10:00:00');
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, parent_id, user_id, product_key, createdAt, updatedAt) VALUES ("1 댓글에 대댓글이다.",1,2,2,2,1,'2024-01-01 10:00:00','2024-01-01 10:00:00')
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, parent_id, user_id, product_key, createdAt, updatedAt) VALUES ("2 댓글이다.",2,1,1,1,2,'2024-01-01 10:00:00','2024-01-01 10:00:00')
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, parent_id, user_id, product_key, createdAt, updatedAt) VALUES ("2 댓글의 대댓글이다.",2,2,2,2,2,'2024-01-01 10:00:00','2024-01-01 10:00:00')
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, parent_id, user_id, product_key, createdAt, updatedAt) VALUES ("3 댓글이다.",3,1,1,1,3,'2024-01-01 10:00:00','2024-01-01 10:00:00')
+INSERT INTO Comment (content, comment_group, comment_order, comment_depth, parent_id, user_id, product_key, createdAt, updatedAt) VALUES ("3 댓글의 대댓글이다.",3,2,2,2,3,'2024-01-01 10:00:00','2024-01-01 10:00:00')
+
 -- 테이블에 다 데이터 담겨있는지 확인
 SELECT * FROM category;
-<<<<<<< HEAD
-=======
 
 SELECT * FROM user;
 
 SELECT * FROM product;
 
 SELECT * FROM order_item;
->>>>>>> develop
 
 SELECT * FROM user;
 
 SELECT * FROM product;
 
 SELECT * FROM order_item;
+
+SELECT * FROM comment;
