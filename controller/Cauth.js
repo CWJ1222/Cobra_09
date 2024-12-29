@@ -253,19 +253,12 @@ exports.loginKakaoUser = async (req, res, next) => {
         )}`,
       })(req, res, () => {
         const redirectUrl = req.session.redirectUrl || '/';
-        res.status(200).send({
-          isLogin: true,
-          nickname: createResult.nickname,
-          redirectUrl, // 로그인 성공 후 리다이렉트할 URL
-          message: '로그인 성공 했습니다.',
-        });
-
         res.redirect(`${redirectUrl || '/'}`);
         // res.status(200).send({
         //   isLogin: true,
-        //   redirectUrl,
         //   nickname: createResult.nickname,
-        //   message: '회원가입 후 로그인 성공',
+        //   redirectUrl, // 로그인 성공 후 리다이렉트할 URL
+        //   message: '로그인 성공 했습니다.',
         // });
       });
     } else {
@@ -370,6 +363,9 @@ exports.unlinkKakaoUser = (req, res) => {
       })
         .then((result) => {
           console.log('카카오 탈퇴결과', result);
+          res
+            .status(200)
+            .send({ isSuccess: true, message: '카카오 연결 끊기 완료' });
           // res.status(200).send({ message: '회원 탈퇴가 완료되었습니다.' });
         })
         .catch((err) => {
