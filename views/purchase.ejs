@@ -245,7 +245,7 @@
     const getItemsByCategory = async (categoryId) => {
       try {
         const res = await axios.get(`/products/${categoryId}`);
-        console.log('API 응답 데이터:', res.data); // 응답 데이터 확인
+        // console.log('API 응답 데이터:', res.data); // 응답 데이터 확인
         if (Array.isArray(res.data)) {
           updateProductGrid(res.data); // 배열일 경우 업데이트
         } else {

@@ -33,12 +33,6 @@ app.use(
   })
 );
 
-// 세션 체크
-app.use('*', (req, res, next) => {
-  console.log('req.session', req.session.user);
-  next();
-});
-
 // 토큰 만료 검증
 app.use(authController.checkExpireKakaoToken);
 
@@ -50,11 +44,6 @@ const productRouter = require('./routes/product');
 const memberRouter = require('./routes/member');
 const commentRouter = require('./routes/comment');
 const hostRouter = require('./routes/host');
-
-app.use('*', (req, res, next) => {
-  console.log('req.session', req.session);
-  next();
-});
 
 app.use('/', purchaseRouter);
 app.use('/', indexRouter);

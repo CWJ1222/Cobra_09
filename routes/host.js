@@ -23,15 +23,13 @@ const profileUpload = multer({
   },
 });
 
-// router.get('/', authController.isSessionValid, hostController.renderHostPage);
-
 // 판매 페이지 접근 시 세션 확인
 router.get('/', (req, res) => {
   if (!req.session || !req.session.user) {
     // 세션이 없을 경우 JSON으로 응답
     return res.status(401).json({
       isLoggedIn: false,
-      message: '로그인 후 이용하세요.',
+      // message: '로그인 후 이용하세요.',
     });
   }
 

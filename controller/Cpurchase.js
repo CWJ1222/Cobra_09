@@ -8,7 +8,7 @@ exports.purchasePage = async (req, res) => {
     // Product 테이블에서 모든 데이터 가져오기
     const products = await Product.findAll();
     // fe: 데이터 확인
-    console.log('상품', products);
+    // console.log('상품', products);
 
     // 데이터를 purchaseTest.ejs로 전달
     res.render('purchase', {
@@ -33,20 +33,15 @@ exports.buyForm = async (req, res) => {
     // 세션에서 사용자 ID 가져오기
     const userId = req.session.user ? req.session.user.user_pk : null;
 
-    // 사용자 ID가 없으면 로그인 페이지로 리다이렉트
-    // if (!userId) {
-    //   return res.redirect('/auth/login');
-    // }
-    // 로그인 후 원래 가려 했던 페이지로 이동하기
     if (!userId) {
       // 세션에 redirectUrl 저장
       req.session.redirectUrl = `/buyform/${req.params.product_key}`;
       return res.redirect('/auth/login'); // 쿼리스트링 제거
     }
     const product_key = req.params.product_key;
-    console.log('product_key', product_key);
+    // console.log('product_key', product_key);
     const comments = await getCommentsByProduct(product_key);
-    console.log('commentsByProduct는   ', comments);
+    // console.log('commentsByProduct는   ', comments);
     res.render('buyForm', {
       product,
       userId,

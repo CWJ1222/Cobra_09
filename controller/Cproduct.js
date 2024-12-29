@@ -13,7 +13,7 @@ exports.getAllProducts = (req, res) => {
     ],
   })
     .then((products) => {
-      console.log('전체 상품 데이터:', products);
+      // console.log('전체 상품 데이터:', products);
       res.status(200).render('purchase', {
         products,
         currentPage: 'product',
@@ -46,7 +46,7 @@ exports.getItemsByCategory = (req, res) => {
     ],
   })
     .then((result) => {
-      console.log('result', result); // 반환 데이터 확인
+      // console.log('result', result); // 반환 데이터 확인
       res.status(200).json(result); // 배열로 반환
     })
     .catch((err) => {

@@ -1,34 +1,16 @@
 const db = require('../models');
 const axios = require('axios');
+const { hashPassword, verifyPassword } = require('../utils/common');
 require('dotenv').config();
-
-const crypto = require('crypto');
-
-// 비밀번호 암호화 함수
-function hashPassword(password) {
-  const salt = crypto.randomBytes(16).toString('hex'); // 랜덤 salt 생성
-  const hash = crypto
-    .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
-    .toString('hex'); // 해시 생성
-  return { salt, hash };
-}
-
-// 비밀번호 검증 함수(탈퇴시)
-function verifyPassword(password, salt, hash) {
-  const newHash = crypto
-    .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
-    .toString('hex');
-  return newHash === hash;
-}
 
 // 세션이 있는지를 검증
 exports.isSessionValid = (req, res, next) => {
   if (req.session.user) {
     // 인증된 유저인 경우
-    console.log('세션이 존재하는 유저입니다.');
+    // console.log('세션이 존재하는 유저입니다.');
     next();
   } else {
-    console.log('세션이 존재하지 않는 유저입니다.');
+    // console.log('세션이 존재하지 않는 유저입니다.');
     // 인증안된 유저인 경우
     res.redirect('/auth/login');
   }
@@ -38,7 +20,7 @@ exports.isSessionValid = (req, res, next) => {
 exports.isSessionInvalid = (req, res, next) => {
   if (!req.session.user) {
     // 인증안된 유저인 경우
-    console.log('세션이 존재하지 않는 유저입니다.');
+    // console.log('세션이 존재하지 않는 유저입니다.');
     next();
   } else {
     // 인증된 유저인 경우
@@ -71,7 +53,7 @@ exports.loginUser = async (req, res) => {
         email: inputUserId,
       },
     });
-    console.log('resultUser', resultUser);
+    // console.log('resultUser', resultUser);
 
     // 404 not found
     if (!resultUser) {
@@ -95,7 +77,7 @@ exports.loginUser = async (req, res) => {
         isLogin: true, // 로그인 여부 추가
         user_type: resultUser.user_type,
       };
-      console.log('일반 로그인 후 세션:', req.session.user);
+      // console.log('일반 로그인 후 세션:', req.session.user);
 
       // 200 ok
       res.status(200).send({
@@ -134,7 +116,7 @@ exports.getKaKaoAuthCode = (req, res, next) => {
   const isEmpty = Object.keys(req.query).length;
   if (isEmpty) {
     req.auth_code = req.query;
-    console.log('auth_code', req.auth_code);
+    // console.log('auth_code', req.auth_code);
     next();
   } else {
     res.redirect('/');
@@ -157,7 +139,7 @@ exports.getKaKaoToken = (req, res, next) => {
     },
   })
     .then((result) => {
-      console.log('getKaKaoToken 토큰 응답', result.data);
+      // console.log('getKaKaoToken 토큰 응답', result.data);
       const {
         access_token,
         refresh_token,
@@ -173,7 +155,7 @@ exports.getKaKaoToken = (req, res, next) => {
         new Date().getTime() + refresh_token_expires_in * 1000
       );
 
-      console.log('getKaKaoToken에서 url 확인 1', req.session.redirectUrl);
+      // console.log('getKaKaoToken에서 url 확인 1', req.session.redirectUrl);
       req.session.user = {
         ...req.session.user,
         token: {
@@ -203,7 +185,7 @@ exports.getKakaoUserInfo = (req, res, next) => {
     },
   })
     .then((result) => {
-      console.log('카카오 로그인 회원정보', result.data);
+      // console.log('카카오 로그인 회원정보', result.data);
       req.kakao_user_info = {
         nickname: result.data.properties.nickname,
         email: result.data.kakao_account.email,
@@ -228,7 +210,7 @@ exports.loginKakaoUser = async (req, res, next) => {
       attributes: ['user_id', 'email', 'password', 'nickname', 'user_type'],
     });
 
-    console.log('서버에서 찾은 유저 결과', findResult);
+    // console.log('서버에서 찾은 유저 결과', findResult);
     // 존재하지 않는 유저라면 가입후 로그인 처리
     if (!findResult) {
       // password는 임의값으로 생성
@@ -239,7 +221,7 @@ exports.loginKakaoUser = async (req, res, next) => {
         salt: 'kakao_default',
         user_type: req.kakao_user_info.user_type, // salt 임의값
       });
-      console.log('카카오 유저 새로만든 정보', createResult);
+      // console.log('카카오 유저 새로만든 정보', createResult);
 
       req.session.user = {
         ...req.session.user,
@@ -254,12 +236,6 @@ exports.loginKakaoUser = async (req, res, next) => {
       })(req, res, () => {
         const redirectUrl = req.session.redirectUrl || '/';
         res.redirect(`${redirectUrl || '/'}`);
-        // res.status(200).send({
-        //   isLogin: true,
-        //   nickname: createResult.nickname,
-        //   redirectUrl, // 로그인 성공 후 리다이렉트할 URL
-        //   message: '로그인 성공 했습니다.',
-        // });
       });
     } else {
       req.session.user = {
@@ -273,7 +249,7 @@ exports.loginKakaoUser = async (req, res, next) => {
           'ko-KR'
         )}`,
       })(req, res, () => {
-        console.log('최종 세션', req.session);
+        // console.log('최종 세션', req.session);
         const redirectUrl = req.session.redirectUrl || '/'; // 기본값은 홈
         delete req.session.redirectUrl; // 사용 후 세션에서 삭제
         res.redirect(`${redirectUrl || '/'}`);
@@ -321,7 +297,7 @@ exports.logoutUser = async (req, res) => {
 // 카카오 로그아웃 처리
 // 사용자가 브라우저 카카오 브라우저창에서 처리한 후 리다이렉션 되는 uri api
 exports.logoutKaKaoUser = (req, res, next) => {
-  console.log('카카오 유저 로그아웃 실행');
+  // console.log('카카오 유저 로그아웃 실행');
   req.token_for_msg = req.session.user.token.access_token;
   req.session.destroy((err) => {
     if (err) {
@@ -337,7 +313,7 @@ exports.logoutKaKaoUser = (req, res, next) => {
     })(req, res, () => {
       res.clearCookie('connect.sid');
       res.redirect('/');
-      console.log('메세지 보낸 후 동작되는 부분');
+      // console.log('메세지 보낸 후 동작되는 부분');
     });
   });
 };
@@ -345,7 +321,7 @@ exports.logoutKaKaoUser = (req, res, next) => {
 // 카카오와 애플리케이션 연결 끊기(회원탈퇴 - 동의창 새로 띄우기)
 // 엑세스, 리프레쉬 토큰 만료처리(로그아웃)도 같이 됨
 exports.unlinkKakaoUser = (req, res) => {
-  console.log('req.body.access_token는    ', req.body);
+  // console.log('req.body.access_token는    ', req.body);
   axios({
     url: process.env.KAKAO_UNLINK_URI,
     method: 'post',
@@ -355,14 +331,14 @@ exports.unlinkKakaoUser = (req, res) => {
   })
     .then((result) => {
       // 카카오서버의 회원 id를 응답받음
-      console.log('카카오서버의 회원 id를 응답', result.data.id);
+      // console.log('카카오서버의 회원 id를 응답', result.data.id);
       db.User.destroy({
         where: {
           user_id: req.body.user_pk,
         },
       })
         .then((result) => {
-          console.log('카카오 탈퇴결과', result);
+          // console.log('카카오 탈퇴결과', result);
           res
             .status(200)
             .send({ isSuccess: true, message: '카카오 연결 끊기 완료' });
@@ -422,7 +398,7 @@ exports.checkExpireKakaoToken = (req, res, next) => {
         });
       } else {
         // 리프레쉬 토큰로 엑세스 토큰 재발급
-        console.log('엑세스 토큰 재발급 요청');
+        // console.log('엑세스 토큰 재발급 요청');
         axios({
           url: process.env.KAKAO_TOKEN_URI,
           method: 'post',
@@ -437,7 +413,7 @@ exports.checkExpireKakaoToken = (req, res, next) => {
         })
           .then((result) => {
             const { expires_in } = result.data;
-            console.log('엑세스 토큰 재발급 요청 결과', result.data);
+            // console.log('엑세스 토큰 재발급 요청 결과', result.data);
             req.session.user.token.access_token_expire = new Date(
               new Date().getTime() + expires_in * 1000
             );
@@ -472,7 +448,7 @@ exports.sendKakaoMsg = (template) => {
     }),
   };
   return (req, res, next) => {
-    console.log('메세지 보내기 함수에서의 req', req.token_for_msg);
+    // console.log('메세지 보내기 함수에서의 req', req.token_for_msg);
     axios({
       url: process.env.KAKAO_SEND_MSG_URI,
       method: 'post',

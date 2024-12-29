@@ -2,11 +2,8 @@
 const { Op, sequelize } = require('../models'); // sequelize 추가
 const { Category, Product, User, Order, Wishlists } = require('../models');
 const axios = require('axios');
+const { hashPassword } = require('../utils/common');
 
-// GET '/' : 메인 페이지 렌더링
-// exports.main = (req, res) => {
-//   res.render('index', { title: '홈페이지', currentPage: 'home' });
-// };
 // 메인 페이지에서 찜 많은 상품 순으로 나열
 exports.main = async (req, res) => {
   try {
@@ -28,7 +25,7 @@ exports.main = async (req, res) => {
       raw: true,
       nest: true,
     });
-    console.log(products);
+    // console.log(products);
     // 메인 페이지 렌더링
     res.render('index', {
       title: '메인 페이지',
@@ -55,24 +52,14 @@ exports.purchase = (req, res) => {
 exports.isSessionValid = (req, res, next) => {
   if (req.session.user) {
     // 인증된 유저인 경우
-    console.log(req.session.user);
+    // console.log(req.session.user);
     next();
   } else {
-    console.log(req.session.user);
+    // console.log(req.session.user);
     console.log('error');
   }
 };
 
-const crypto = require('crypto'); // 암호화를 위한 crypto 모듈
-
-// 비밀번호 암호화 함수
-function hashPassword(password) {
-  const salt = crypto.randomBytes(16).toString('hex'); // 랜덤 salt 생성
-  const hash = crypto
-    .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
-    .toString('hex'); // 해시 생성
-  return { salt, hash };
-}
 exports.postChangeUser = async (req, res) => {
   try {
     const userId = req.session.user.user_pk; // 세션에서 사용자 ID 가져오기
@@ -127,7 +114,7 @@ exports.postChangeUser = async (req, res) => {
 // GET '/host/lists' -> 내가 주선한 공동구매 물품 보여주는 API
 exports.getMyProducts = async (req, res) => {
   try {
-    console.log(req.session.user);
+    // console.log(req.session.user);
     const target = req.session.user.user_pk;
 
     const products = await Product.findAll({
@@ -179,25 +166,6 @@ exports.getMyJoins = async (req, res) => {
     });
   }
 };
-
-// GET '/join/list' -> 내가 구매한 물품 모두 보여주는 API
-// exports.getMyAllJoins = async (req, res) => {
-//   try {
-//     const target = req.session.user.user_pk;
-//     const orders = await Order.findAll({
-//       where: { user_id: target },
-//       attributes: ['quantity'],
-//       include: [{ model: Product, attributes: ['name', 'user_id'] }],
-//     });
-//     res.status(200).send({ isSuccess: true, orders });
-//   } catch (err) {
-//     console.log('err', err);
-//     res.status(500).send({
-//       isSuccess: false,
-//       message: '서버 오류가 발생했습니다.',
-//     });
-//   }
-// };
 
 // GET '/user/mypage' : 마이페이지 렌더링 + 사용자 정보 조회
 exports.renderMypage = async (req, res) => {
@@ -320,9 +288,9 @@ exports.deleteMyUser = async (req, res) => {
       });
     }
 
-    console.log('카카오 연결끊기 유저 타입 조회 시작', req.session);
+    // console.log('카카오 연결끊기 유저 타입 조회 시작', req.session);
     if (req.session.user.user_type === '2') {
-      console.log('카카오 연결끊기 유저 타입 조회 시작');
+      // console.log('카카오 연결끊기 유저 타입 조회 시작');
       const unlinkResult = await axios({
         url: 'http://localhost:8080/auth/kakao/unlink',
         method: 'post',
@@ -331,7 +299,7 @@ exports.deleteMyUser = async (req, res) => {
           user_pk: req.session.user.user_pk,
         },
       });
-      console.log('카카오 연결끊기 result 끝', unlinkResult);
+      // console.log('카카오 연결끊기 result 끝', unlinkResult);
     }
 
     // 세션 삭제

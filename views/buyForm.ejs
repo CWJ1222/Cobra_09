@@ -311,9 +311,9 @@
 
       const path = window.location.pathname;
       const product_id = path.split('/')[2];
-      console.log("product_id는",product_id)
+      // console.log("product_id는",product_id)
       const scrollY = window.sessionStorage.getItem("scrollY")
-      console.log("저장된 scrollY는     " , scrollY)
+      // console.log("저장된 scrollY는     " , scrollY)
       if(scrollY){
         // window.scrollTo(0,scrollY);
         document.documentElement.scrollTop = scrollY;
@@ -321,7 +321,7 @@
       }
 
       function addComment() {
-        console.log('댓글달기');
+        // console.log('댓글달기');
         const content = document.querySelector('.inputComment').value;
         axios({
           url: '/comments',

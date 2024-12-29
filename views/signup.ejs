@@ -257,24 +257,29 @@
         }
 
         // 서버로 데이터 전송
-        const data = { email, password, nickname };
-        console.log('회원가입 데이터', data);
+        // console.log('회원가입 데이터', data);
 
         try {
-          // POST /member/signup
+          const data = { email, password, nickname };
           const res = await axios.post('/member/signup', data);
 
           if (res.data.isSuccess) {
-            alert(`${nickname}님,` + res.data.message);
+            alert(`${nickname}님, ${res.data.message}`);
             window.location.href = '/auth/login';
           } else {
             errorMsg.style.display = 'block';
             errorMsg.innerText = res.data.message;
           }
         } catch (err) {
-          console.error('🚨회원가입 요청 중 에러 발생:', err);
+          console.error('🚨 회원가입 요청 중 에러 발생:', err);
           errorMsg.style.display = 'block';
-          errorMsg.innerText = res.data.message;
+
+          // 서버에서 반환된 오류 메시지 표시
+          if (err.response && err.response.data && err.response.data.message) {
+            errorMsg.innerText = err.response.data.message;
+          } else {
+            errorMsg.innerText = '서버 오류가 발생했습니다. 다시 시도해주세요.';
+          }
         }
       });
     });

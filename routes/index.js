@@ -5,8 +5,6 @@ const router = express.Router();
 // GET, main : 메인 페이지 렌더링
 router.get('/', controller.main);
 
-// router.get('/purchaseTest', controller.purchasepage); // 구매 페이지 purchase로 따로 만듬
-
 // GET, getMyProducts : 내가 주선한 공동구매 물품 가져오기
 router.get('/host/lists', controller.getMyProducts);
 
@@ -18,9 +16,6 @@ router.get('/host/list/:product_key', controller.getProduct);
 
 // 마이페이지 렌더링
 router.get('/user/mypage', controller.renderMypage);
-
-// 단일 상품 조회
-// router.get('/join/list', controller.getMyAllJoins);
 
 // PUT, postChangeUser : 내 정보 수정
 router.put('/user', controller.postChangeUser);
