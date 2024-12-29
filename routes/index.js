@@ -20,7 +20,7 @@ router.get('/host/list/:product_key', controller.getProduct);
 router.get('/user/mypage', controller.renderMypage);
 
 // 단일 상품 조회
-router.get('/join/list', controller.getMyAllJoins);
+// router.get('/join/list', controller.getMyAllJoins);
 
 // PUT, postChangeUser : 내 정보 수정
 router.put('/user', controller.postChangeUser);

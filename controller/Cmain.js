@@ -181,23 +181,23 @@ exports.getMyJoins = async (req, res) => {
 };
 
 // GET '/join/list' -> 내가 구매한 물품 모두 보여주는 API
-exports.getMyAllJoins = async (req, res) => {
-  try {
-    const target = req.session.user.user_pk;
-    const orders = await Order.findAll({
-      where: { user_id: target },
-      attributes: ['quantity'],
-      include: [{ model: Product, attributes: ['name', 'user_id'] }],
-    });
-    res.status(200).send({ isSuccess: true, orders });
-  } catch (err) {
-    console.log('err', err);
-    res.status(500).send({
-      isSuccess: false,
-      message: '서버 오류가 발생했습니다.',
-    });
-  }
-};
+// exports.getMyAllJoins = async (req, res) => {
+//   try {
+//     const target = req.session.user.user_pk;
+//     const orders = await Order.findAll({
+//       where: { user_id: target },
+//       attributes: ['quantity'],
+//       include: [{ model: Product, attributes: ['name', 'user_id'] }],
+//     });
+//     res.status(200).send({ isSuccess: true, orders });
+//   } catch (err) {
+//     console.log('err', err);
+//     res.status(500).send({
+//       isSuccess: false,
+//       message: '서버 오류가 발생했습니다.',
+//     });
+//   }
+// };
 
 // GET '/user/mypage' : 마이페이지 렌더링 + 사용자 정보 조회
 exports.renderMypage = async (req, res) => {
