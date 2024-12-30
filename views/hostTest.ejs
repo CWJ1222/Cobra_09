@@ -181,6 +181,7 @@
       // 실제가격 입력 시 판매가격의 최대값 업데이트
       netPriceInput.addEventListener('input', () => {
         const netPrice = parseFloat(netPriceInput.value);
+        const price = parseFloat(priceInput.value);
 
         if (!isNaN(netPrice) && netPrice > 0) {
           priceInput.max = netPrice; // 판매가격 최대값 설정
@@ -188,9 +189,10 @@
           priceInput.max = ''; // 제한 제거
         }
 
-        // 판매가격이 최대값보다 큰 경우 초기화
-        if (parseFloat(priceInput.value) > netPrice) {
-          priceInput.value = ''; // 값을 초기화
+        // 판매가격이 실제가격보다 크면 경고 메시지
+        if (!isNaN(price) && price > netPrice) {
+          alert('판매가격은 실제가격 이하로 설정해야 합니다.');
+          priceInput.value = netPrice; // 최대값으로 설정
         }
       });
 
