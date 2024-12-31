@@ -39,9 +39,8 @@ exports.buyForm = async (req, res) => {
       return res.redirect('/auth/login'); // 쿼리스트링 제거
     }
     const product_key = req.params.product_key;
-    // console.log('product_key', product_key);
     const comments = await getCommentsByProduct(product_key);
-    // console.log('commentsByProduct는   ', comments);
+
     res.render('buyForm', {
       product,
       userId,
