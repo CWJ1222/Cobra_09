@@ -150,6 +150,30 @@
     border-radius: 5px;
   }
 
+  .commentContainer .editCommentButton {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .commentContainer .editCommentButton input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .commentContainer .editCommentButton button {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: var( --color-primary);
+    border: none;
+    border-radius: 5px;
+  }
+
 
   .commentBox {
     display: flex;
@@ -243,13 +267,13 @@
 
 
     <div class="inputCommentContainer">
-      <input type="text" class="inputComment" required></ㅇ>
+      <input type="text" class="inputComment" required/>
       <button onclick="addComment()">댓글 등록</button>
     </div>
     
     <div class="commentListContainer">
       <% if(comments.length){ %> <% for (let i = 0; i < comments.length; i++){%>
-        <div class="commentWrapper" style=<%= "margin-left:"+ comments[i].comment_depth * 60+"px"%>
+        <div class="commentWrapper" style=<%= "margin-left:"+ comments[i].comment_depth * 60+"px"%>>
               <!-- reply icon 추가 (depth가 1이상일때만)-->
             <% if(comments[i].comment_depth > 0){ %>
               <span class="replyIcon"></span>
@@ -259,24 +283,48 @@
             
           >
             <div class="commentBox">
-              <div class="nickname"><%=comments[i].user.nickname %></div>
-              <div class="content"><%=comments[i].content %></div>
+              <div class="nickname"><%=comments[i].dataValues.user.nickname %></div>
+              <div class="content">
+                <% if(comments[i].dataValues.parent_user_nickname){ %>
+                    @<%=comments[i].dataValues.parent_user_nickname %> 
+                  <% } %>
+                  <%= comments[i].content %>
+              </div>
               <div class="createdAt">
                 <%=new Date( comments[i].createdAt).toLocaleString("ko-KR") %>
               </div>
             </div>
 
-            <div class="replyButton<%= comments[i].comment_id %> replyButton">
-              <button onclick="toggleReplyBox('<%=comments[i].comment_id%>'); saveScrollPosition();">답글달기</button>
+            <!-- 수정 버튼 -->
+            <div class="actionButton<%= comments[i].comment_id %> actionButton">
+              <button class="reply" onclick="toggleActionElement('<%=comments[i].comment_id%>', 'reply'); saveScrollPosition();">답글</button>
+              <% if(comments[i].dataValues.user.user_id === userId){ %>
+              <button class="edit" onclick="toggleActionElement('<%=comments[i].comment_id%>', 'edit'); saveScrollPosition();">수정</button>
+              <button class="delete" onclick="deleteComment({
+                comment_id: '<%=comments[i].comment_id%>',
+                parent_id: '<%=comments[i].parent_id%>',
+              }); saveScrollPosition();">삭제</button>
+              <% } %>
             </div>
 
+            <!-- 댓글 추가 입력창 -->
             <div class="addReplyButton<%= comments[i].comment_id %> invisible addReplyButton" >
               <input type="text" class="replyInput<%= comments[i].comment_id %>"/>
               <button onclick="replyComment({
                 comment_id: '<%=comments[i].comment_id%>',
                 parent_id: '<%=comments[i].parent_id%>',
-              })">등록</button>
-              <button onclick="toggleReplyBox('<%=comments[i].comment_id%>')">취소</button>
+              })">답글 등록</button>
+              <button onclick="toggleActionElement('<%=comments[i].comment_id%>','replyCancel')">취소</button>
+            </div>
+
+            <!-- 댓글 수정 입력창 -->
+            <div class="editCommentButton<%= comments[i].comment_id %> invisible editCommentButton" >
+              <input type="text" class="editInput<%= comments[i].comment_id %>"/>
+              <button onclick="editComment({
+                comment_id: '<%=comments[i].comment_id%>',
+                parent_id: '<%=comments[i].parent_id%>',
+              })">댓글 수정</button>
+              <button onclick="toggleActionElement('<%=comments[i].comment_id%>','editCancel')">취소</button>
             </div>
           </li>
         </div>
@@ -311,17 +359,14 @@
 
       const path = window.location.pathname;
       const product_id = path.split('/')[2];
-      // console.log("product_id는",product_id)
       const scrollY = window.sessionStorage.getItem("scrollY")
-      // console.log("저장된 scrollY는     " , scrollY)
+
       if(scrollY){
-        // window.scrollTo(0,scrollY);
         document.documentElement.scrollTop = scrollY;
         window.sessionStorage.removeItem("scrollY")
       }
 
       function addComment() {
-        // console.log('댓글달기');
         const content = document.querySelector('.inputComment').value;
         axios({
           url: '/comments',
@@ -355,14 +400,15 @@
           },
         })
           .then((result) => {
-            console.log('답글 달기 성공', result);
             if(!result.data.isSuccess){
               alert(result.data.message);
+              window.location.href  = "/auth/login"
               return;
             }
+            console.log('답글 달기 성공', result);
             replyContent.value = '';
 
-            toggleReplyBox(commentInfo.comment_id);
+            toggleActionElement(commentInfo.comment_id, "replyCancel");
             window.location.href = `/buyform/${product_id}`;
           })
           .catch((err) => {
@@ -371,18 +417,66 @@
           });
       }
 
-      function toggleReplyBox (commentId){
-        console.log("commentId는",commentId)
-        const replyButton = document.querySelector(`.replyButton${commentId}`)
-        const addReplyButton = document.querySelector(`.addReplyButton${commentId}`)
-        console.log("replyButton는",replyButton)
-        console.log("addReplyButton",addReplyButton)
+      function editComment (commentInfo){
+        const editContent = document.querySelector(
+          `.editInput${commentInfo.comment_id}`
+        ).value;
+        axios({url : "/comments", method:"patch",data : {
+            content: editContent,
+            product_key: product_id,
+            comment_id: commentInfo.comment_id,
+        }}).then(result =>{
+          console.log('댓글 수정 성공', result);
+            if(!result.data.isSuccess){
+              alert(result.data.message);
+              return;
+            }
+            editContent.value = '';
 
-        replyButton.classList.toggle("invisible")
-        addReplyButton.classList.toggle("invisible")
-
-        
+            toggleActionElement(commentInfo.comment_id, "editCancel");
+            window.location.href = `/buyform/${product_id}`;
+        }).catch((err) => {
+            console.log("err는",err)
+            alert('댓글 수정 실패');
+          })
       }
+
+      function deleteComment(commentInfo){
+        axios({url:"/comments", method :"delete", data : {
+            product_key: product_id,
+            comment_id: commentInfo.comment_id,
+        }}).then(result =>{
+          if(!result.data.isSuccess){
+              alert(result.data.message);
+              window.location.href  = "/auth/login"
+              return;
+            }
+            window.location.href = `/buyform/${product_id}`;
+        }).catch((err) => {
+            console.log("err는",err)
+            alert('댓글 삭제 실패');
+          })
+      }
+
+      function toggleActionElement (commentId, action){
+        const addReplyButton = document.querySelector(`.addReplyButton${commentId}`)
+        const editCommentButton = document.querySelector(`.editCommentButton${commentId}`)
+
+        if(action==="reply"){
+          addReplyButton.classList.remove("invisible")
+          editCommentButton.classList.add("invisible") 
+        }else if(action==="edit"){
+          editCommentButton.classList.remove("invisible")
+          addReplyButton.classList.add("invisible")
+        }else if(action==="replyCancel"){
+          addReplyButton.classList.add("invisible")
+          editCommentButton.classList.add("invisible") 
+        }else if(action==="editCancel"){
+          addReplyButton.classList.add("invisible")
+          editCommentButton.classList.add("invisible") 
+        }
+      }
+
     </script>
   </body>
 </html>

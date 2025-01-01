@@ -84,9 +84,10 @@ async function arrangeOrder(maxOrder, baseComment, operation) {
       },
       {
         where: {
-          comment_group: baseComment.comment_group,
           comment_order: {
-            [db.Sequelize.Op.gt]: maxOrder + baseComment.comment_order,
+            [db.Sequelize.Op.gt]: maxOrder
+              ? maxOrder + baseComment.comment_order
+              : baseComment.comment_order,
           },
         },
       }
