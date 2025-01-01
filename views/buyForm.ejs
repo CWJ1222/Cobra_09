@@ -298,11 +298,13 @@
             <!-- 수정 버튼 -->
             <div class="actionButton<%= comments[i].comment_id %> actionButton">
               <button class="reply" onclick="toggleActionElement('<%=comments[i].comment_id%>', 'reply'); saveScrollPosition();">답글</button>
+              <% if(comments[i].dataValues.user.user_id === userId){ %>
               <button class="edit" onclick="toggleActionElement('<%=comments[i].comment_id%>', 'edit'); saveScrollPosition();">수정</button>
               <button class="delete" onclick="deleteComment({
                 comment_id: '<%=comments[i].comment_id%>',
                 parent_id: '<%=comments[i].parent_id%>',
               }); saveScrollPosition();">삭제</button>
+              <% } %>
             </div>
 
             <!-- 댓글 추가 입력창 -->
