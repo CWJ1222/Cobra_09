@@ -12,7 +12,16 @@ const {
 exports.writeComment = async (req, res) => {
   try {
     const { content, product_key, comment_id, parent_id } = req.body;
-    const user_id = req.session.user.user_pk;
+    const user_id = req.session.user?.user_pk;
+
+    if (!user_id) {
+      req.session.redirectUrl = `/buyform/${product_key}`;
+      res.send({
+        isSuccess: false,
+        message: '로그인이 필요합니다.',
+      });
+      return;
+    }
 
     const isReplyComment = parent_id >= 0 && comment_id;
     let baseComment;
@@ -63,33 +72,69 @@ exports.writeComment = async (req, res) => {
 
 // 댓글 삭제
 exports.removeComment = async (req, res) => {
-  const { product_id, comment_id } = req.body;
-  const user_id = req.session.user.user_pk;
+  ///// 댓글 삭제시 삭제된 댓글로만 표시
+  const { product_key, comment_id } = req.body;
+  const user_id = req.session.user?.user_pk;
 
-  try {
-    const destroyResult = await db.Comment.destroy({
-      where: {
-        comment_id,
-        user_id,
-        product_id,
-      },
-    });
-
-    res.send({
-      isSuccess: true,
-      message: '댓글 삭제 성공',
-    });
-  } catch (err) {
-    console.error('댓글 삭제 에러:', err);
+  if (!user_id) {
+    req.session.redirectUrl = `/buyform/${product_key}`;
     res.send({
       isSuccess: false,
-      message: '댓글 삭제 실패',
+      message: '로그인이 필요합니다.',
     });
+    return;
   }
+
+  try {
+    const result = await db.Comment.update(
+      { content: '삭제 처리된 댓글입니다.' },
+      {
+        where: {
+          comment_id,
+          user_id,
+          product_key,
+        },
+      }
+    );
+
+    if (result[0]) {
+      res.send({ isSuccess: true, message: '댓글 삭제 성공' });
+    } else {
+      res.send({
+        isSuccess: false,
+        message: '댓글을 삭제할 수 없습니다.',
+      });
+    }
+  } catch (err) {
+    res.send({ isSuccess: false, message: '서버 에러(댓글 삭제)' });
+  }
+
+  ///// 댓글 삭제시 기존 테이블에서 삭제 처리
+  // const { product_id, comment_id } = req.body;
+  // const user_id = req.session.user.user_pk;
+  // try {
+  //   const destroyResult = await db.Comment.destroy({
+  //     where: {
+  //       comment_id,
+  //       user_id,
+  //       product_id,
+  //     },
+  //   });
+  //   res.send({
+  //     isSuccess: true,
+  //     message: '댓글 삭제 성공',
+  //   });
+  // } catch (err) {
+  //   console.error('댓글 삭제 에러:', err);
+  //   res.send({
+  //     isSuccess: false,
+  //     message: '댓글 삭제 실패',
+  //   });
+  // }
 };
 
 exports.modifyComment = async (req, res) => {
-  const { product_id, content, comment_id } = req.body;
+  const { content, product_key, comment_id } = req.body;
   const user_id = req.session.user.user_pk;
 
   try {
@@ -99,7 +144,7 @@ exports.modifyComment = async (req, res) => {
         where: {
           comment_id,
           user_id,
-          product_id,
+          product_key,
         },
       }
     );
@@ -107,20 +152,20 @@ exports.modifyComment = async (req, res) => {
     if (result[0]) {
       res.send({ isSuccess: true, message: '댓글 수정 성공' });
     } else {
-      res.send({ isSuccess: false, message: '댓글 수정 실패' });
+      res.send({
+        isSuccess: false,
+        message: '댓글을 수정할 수 없습니다.',
+      });
     }
   } catch (err) {
     console.error('댓글 수정 에러:', err);
-    res.send({ isSuccess: false, message: '댓글 수정 실패' });
+    res.send({ isSuccess: false, message: '서버 에러(댓글 수정)' });
   }
 };
 
 exports.getCommentsByProduct = async (product_key) => {
-  // const product_key = req.params.id;
-  // console.log(req.params);
-
   try {
-    const comments = db.Comment.findAll({
+    const comments = await db.Comment.findAll({
       where: {
         product_key: product_key,
       },
@@ -140,10 +185,33 @@ exports.getCommentsByProduct = async (product_key) => {
         ['comment_depth', 'ASC'],
       ],
       include: [
-        { model: db.User, attributes: ['nickname', 'user_id'] },
-        { model: db.Product, attributes: ['product_key'] },
+        {
+          model: db.User,
+          attributes: ['nickname', 'user_id'],
+        },
       ],
     });
+    for (let comment of comments) {
+      if (!comment.parent_id) {
+        comment.dataValues.parent_user_nickname = null;
+        continue;
+      }
+      const parentComment = await db.Comment.findOne({
+        where: {
+          comment_id: comment.parent_id,
+        },
+        attributes: ['user_id'],
+      });
+
+      const parentNickName = await db.User.findOne({
+        where: {
+          user_id: parentComment.user_id,
+        },
+        attributes: ['nickname'],
+      });
+
+      comment.dataValues.parent_user_nickname = parentNickName.nickname;
+    }
     return comments;
   } catch (err) {
     console.log('댓글가져오기 에러', err);

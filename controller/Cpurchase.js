@@ -41,7 +41,6 @@ exports.buyForm = async (req, res) => {
     const product_key = req.params.product_key;
     // console.log('product_key', product_key);
     const comments = await getCommentsByProduct(product_key);
-    // console.log('commentsByProduct는   ', comments);
     res.render('buyForm', {
       product,
       userId,
